@@ -1,0 +1,27 @@
+char *yyget_text ( yyscan_t scanner );
+int yyget_leng ( yyscan_t scanner );
+FILE *yyget_in ( yyscan_t scanner );
+FILE *yyget_out ( yyscan_t scanner );
+int yyget_lineno ( yyscan_t scanner );
+YY_EXTRA_TYPE yyget_extra ( yyscan_t scanner );
+int  yyget_debug ( yyscan_t scanner );
+
+void yyset_debug ( int flag, yyscan_t scanner );
+void yyset_in  ( FILE * in_str , yyscan_t scanner );
+void yyset_out  ( FILE * out_str , yyscan_t scanner );
+void yyset_lineno ( int line_number , yyscan_t scanner );
+void yyset_extra ( YY_EXTRA_TYPE user_defined , yyscan_t scanner );
+
+
+
+DOCU for REENTRANT SCANNERS:  http://sector7.xray.aps.anl.gov/~dohnarms/programming/flex/html/Reentrant-Functions.html
+
+
+
+Every type can have its own:
+  definition of ==
+  definition of []
+  definition of toBoolean
+  definition of toString
+
+  constructor by literal assignment (array literal, number literal etc)

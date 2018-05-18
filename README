@@ -1,0 +1,123 @@
+//1. WHAT IS THIS PROJECT?
+    I am planning to create a new Programming Language.
+    The language will be called eurolang.
+
+    Its planned to be a general purpose, relatively low level programming language.
+
+
+
+//2. WHAT TYPE OF LANGUAGE?
+    All low-level magic like memory management and pointer arithmetic should be available, and built in the syntax.
+    No compromises here.
+    eurolang's PRIMARY goal is to be able to go as low level as C does.
+
+    At the same time, I plan to create a syntax that will be as programmer-friendly as it can get.
+    I want a modern, elegant syntax, like swift, kotlin or es6 javascript have.
+
+    I think that dealing with low level stuff, like memory management and pointer arithmetic,
+    is by itself messy enough.
+    It's awesome, but still, we have to admit that it's messy.
+
+    I want to ease that pain by creating a syntax that is as programmer-friendly as it can get.
+
+
+
+
+//3. WHERE I COME FROM?
+    I hope my personal preferences do no influence the future of this new language.
+    But still, I have to list them so that my biases can be known:
+
+    - I deeply appreciate languages like C and C++. Their contribution and influence is MONUMENTAL.
+      As you will notice from my code, I am not an expert on those languages. But still, I deeply respect them.
+      When I want to write something low-level, I will go to them without second thought.
+
+    - But as a whole, I am more of the java/kotlin/javascript/swifty type of guy.
+      These are the languages I enjoy to code on.
+      I find coding with js(es6+), or java(8+) a really nice experience.
+      And mainly, this is because I find their syntax to be really elegant.
+      Arrow functions, built-in array/map/function utils. I find them really nice.
+
+    - I love the import-export system of languages like javascript or python.
+      I find this much more deterministic, ordered, and intuitive than the copy-pasty #include of C/C++.
+      Every source file is an independent entity that declares what symbols to export, which to import, and where to import them from.
+      In eurolang, source files will not import other source files.
+      They will import "stuff" FROM other source files.
+
+    - My opinion on .h files
+      I appreciate the reason those exist.
+      But if I had to chose between having to work with 12 files open on my text editor, or 6,
+      I would probably choose 6.
+      And since I see that other languages managed to get rid of them, I think eurolang will be able too.
+
+      I think things that belong together should be written together.
+
+
+   - My opinion on type and function forward declarations.
+     I do not want that programmers in eurolang have to deal with issues such as,
+     if I use a function on line 7, but I declare it on like 17.
+     That sucks.
+     Programmer should focus on more important things
+
+     Same true for type declarations.
+
+
+   - My knowledge about C is limited.
+
+
+
+4. WHAT THE LANGUAGE WILL FOR SURE HAVE
+    - native support for real arrays, like C has. It turns our we need to separate an array from its length very rarely. But still, it should be positlbe.
+    - native support for "fake arrays" (like java, with a length property..)
+    - native support for lists (like js array, that one can push pop)
+
+    - Native support for map type, and xml-like type.
+
+    - char array literals (like C strings, in fact char[]).
+    - strings with length property (this is the way to go 99% of the times. So, native support for that)
+
+    - namespaces. Each source file belongs to one namespace. The namespace is the first thing to appear on the file.
+      Kind of like the java's package.
+    - functions as first-class data types. pointers to functions. function literals (arrow functions).
+    - basic OO support (class, interface, constructors, destructors, this)
+
+    - optional semicolons
+
+
+
+
+5. THINGS THAT WE WILL MAYBE HAVE
+    - var, const and val.
+    - function identifiers: setter, pure(...)
+    - auto-freed variables
+    - annotated blocks: @abc {}
+
+
+6. THINGS THAT WE WILL NOT HAVE
+    - tabulation for control flow, like python.
+    - the need for type and function forward declaration
+    - the need of .h files
+
+
+
+
+7. THE TECHINICAL DETAILS OF THIS PROJECT
+    - I write a compiler (in C) for the new language, as a gcc frontend.
+      As you will notice, I am not expert in C. Any advice welcome for this point. :)
+
+    - I use flex and bison to read the text.
+    - I try to unit test all of my code. Also my flex and bison syntax must be unit tested, because A LOT can go wrong there.
+
+    - My naming conventions are very java-ish. Please follow those
+            --- Types start with letter, like EulToken. variables and function names start with small letter, like myVar.
+            -- camelCase.
+            -- functions actual names have the form ClassName_funcName, like Compiler_compileNextSource()
+
+    - This will be free software.
+
+
+
+
+8. WHAT I EXPECT FROM THIS PROJECT
+    - To be realistic, nothing.
+      The most likely scenario is that I will be the only person care about that.
+      But still, it is a nice and fun experience to create a language and a compiler.
