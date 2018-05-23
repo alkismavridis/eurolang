@@ -8,10 +8,12 @@
 
 %code requires {
   #include <stdio.h>
-  #include "../core/EulToken.h"
-  #include "../Compiler.h"
-  #include "../Compiler.Functions.h"
-  #include "../core/EulToken.Functions.h"
+  #include "../constants/Constants.h"
+  #include "../core/EulNodeList/EulNodeList.h"
+  #include "../core/EulSourceFile/EulSourceFile.h"
+  #include "../core/EulProgram/EulProgram.h"
+  #include "../core/Compiler/Compiler.h"
+  #include "../core/EulToken/EulToken.h"
 
   #define YYSTYPE EulToken*
   #define YYDEBUG 1
@@ -104,6 +106,28 @@
   %token EulTokenType_SOURCE_FILE
 //endregion
 
+
+
+
+//region OPERATOR PRECEDENCE
+%right EulTokenType_TILDE EulTokenType_NOT EulTokenType_DECREASE EulTokenType_INCREASE
+%left EulTokenType_DOT
+%left EulTokenType_PERCENT EulTokenType_STAR EulTokenType_SLASH
+%left EulTokenType_PLUS EulTokenType_MINUS
+%left EulTokenType_LSHIFT EulTokenType_RSHIFT
+%left EulTokenType_LESS EulTokenType_LESS_EQUALS EulTokenType_MORE EulTokenType_MORE_EQUALS
+%left EulTokenType_NOT_EQUALS EulTokenType_NOT_SAME EulTokenType_EQUALS EulTokenType_SAME
+%left EulTokenType_BIN_AND
+%left EulTokenType_XOR
+%left EulTokenType_BIN_OR
+%left EulTokenType_AND
+%left EulTokenType_OR
+%right EulTokenType_QUESTION EulTokenType_COLON
+%right EulTokenType_ASSIGN EulTokenType_ASSIGN_MOD EulTokenType_ASSIGN_XOR EulTokenType_ASSIGN_AND EulTokenType_ASSIGN_STAR EulTokenType_ASSIGN_MINUS EulTokenType_ASSIGN_PLUS EulTokenType_ASSIGN_OR EulTokenType_ASSIGN_DIV EulTokenType_ASSIGN_LSHIFT EulTokenType_ASSIGN_RSHIFT
+%left EulTokenType_COMMA
+//endregion
+
+
 %start EulSyntaxType_SOURCE_FILE
 
 
@@ -113,60 +137,167 @@
 //=============================================   RULES   =============================================
 //=============================================           =============================================
 %%
+
+
+
+//========================= GROUPS OF TOKENTS =============================
 EulSyntaxType_VAR_KEYWORD
-  : EulTokenType_VAR
-  | EulTokenType_CONST
-  | EulTokenType_VAL
-  ;
+    : EulTokenType_VAR
+    | EulTokenType_CONST
+    | EulTokenType_VAL
+    ;
 
 EulSyntaxType_LITERAL
-  : EulTokenType_INT
-  | EulTokenType_FLOAT
-  | EulTokenType_STRING
-  | EulTokenType_CHAR
-  ;
-
-EulSyntaxType_PARAMETER_DECLARATION:
-  EulTokenType_ID EulTokenType_ASSIGN EulSyntaxType_EXPRESSION EulTokenType_SEMICOLON {
-
-  }
-
-EulSyntaxType_STATEMENT:
-  EulSyntaxType_VAR_KEYWORD EulSyntaxType_PARAMETER_DECLARATION {
-    EulToken* ret = $$;
-    $$ = malloc(sizeof(EulToken)); //TODO free this somewhere
-    //EulToken_initVarDeclaration($$, EulTokenType_VAR_DECLARATION);
-  }
+    : EulTokenType_INT
+    | EulTokenType_FLOAT
+    | EulTokenType_STRING
+    | EulTokenType_CHAR
+    ;
 
 
+EulSyntaxType_INFIX
+    : EulTokenType_PLUS
+    | EulTokenType_MINUS
+    | EulTokenType_NOT_EQUALS
+    | EulTokenType_NOT_SAME
+    | EulTokenType_PERCENT
+    | EulTokenType_ASSIGN_MOD
+    | EulTokenType_XOR
+    | EulTokenType_ASSIGN_XOR
+    | EulTokenType_BIN_AND
+    | EulTokenType_AND
+    | EulTokenType_ASSIGN_AND
+    | EulTokenType_STAR
+    | EulTokenType_ASSIGN_STAR
+    | EulTokenType_ASSIGN_MINUS
+    | EulTokenType_ASSIGN
+    | EulTokenType_EQUALS
+    | EulTokenType_SAME
+    | EulTokenType_ASSIGN_PLUS
+    | EulTokenType_BIN_OR
+    | EulTokenType_OR
+    | EulTokenType_ASSIGN_OR
+    | EulTokenType_SLASH
+    | EulTokenType_ASSIGN_DIV
+    | EulTokenType_DOT
+    | EulTokenType_LESS
+    | EulTokenType_LESS_EQUALS
+    | EulTokenType_LSHIFT
+    | EulTokenType_ASSIGN_LSHIFT
+    | EulTokenType_MORE
+    | EulTokenType_MORE_EQUALS
+    | EulTokenType_RSHIFT
+    | EulTokenType_ASSIGN_RSHIFT
+    ;
+
+EulSyntaxType_PREFIX
+    : EulTokenType_MINUS
+    | EulTokenType_TILDE
+    | EulTokenType_NOT
+    | EulTokenType_DECREASE
+    | EulTokenType_INCREASE
+    ;
+
+EulSyntaxType_SUFFIX
+    : EulTokenType_DECREASE
+    | EulTokenType_INCREASE
+    ;
 
 
 
-EulSyntaxType_EXPRESSION:
-  EulSyntaxType_LITERAL {
-    $$ = $1;
-  } |
-  EulTokenType_ID {
-    $$ = $1;
-  }
 
-
-
-EulSyntaxType_STATEMENTS:
-  EulSyntaxType_STATEMENT EulSyntaxType_STATEMENTS |
-  EulSyntaxType_STATEMENT {
-    $$ = malloc(sizeof(EulToken)); //TODO free this somewhere
-    //EulToken_initVarDeclaration($$, 123);
-  }
-
-
-
+//========================== ROOT STRUCTURES ==============================
 EulSyntaxType_SOURCE_FILE:
-  EulSyntaxType_STATEMENTS EulTokenType_EOF {
-    //compiler->src.root = $1->asNode;
-    //printf("EulSyntaxType_SOURCE_FILE Parsed successfully\n"); return 0;
-  }
+    EulSyntaxType_STATEMENTS EulTokenType_EOF {
+        //compiler->src.root = $1->asNode;
+        printf("EulSyntaxType_SOURCE_FILE Parsed successfully\n");
 
+        compiler->currentSource->statements = *($1->value.asList);
+
+        return 0;
+    }
+
+
+
+//============================== STATEMENTS  ==============================
+EulSyntaxType_STATEMENTS:
+    EulSyntaxType_STATEMENT EulSyntaxType_STATEMENTS {
+        printf("EulSyntaxType_STATEMENTS: EulSyntaxType_STATEMENT EulSyntaxType_STATEMENTS\n");
+
+        //No token is being created here. We just append the incoming statement to an existing list
+        EulNodeList_unshift($2->value.asList, $1);
+        $$ = $2;
+    } |
+    EulSyntaxType_STATEMENT {
+        printf("EulSyntaxType_STATEMENTS: EulSyntaxType_STATEMENT\n");
+
+        //create a List-type token (to hold the statementS) and push the first element
+        $$ = malloc(sizeof(EulToken));
+        EulToken_initListWith($$, $1);
+    }
+
+
+//TODO
+EulSyntaxType_STATEMENT:
+    EulSyntaxType_VAR_KEYWORD EulSyntaxType_PARAMETER_LIST EulTokenType_SEMICOLON {
+        printf("EulSyntaxType_STATEMENT: EulSyntaxType_VAR_KEYWORD EulSyntaxType_PARAMETER_LIST\n");
+
+        $$ = malloc(sizeof(EulToken)); //TODO free this somewhere
+        //EulToken_initVarDeclaration($$, EulTokenType_VAR_DECLARATION);
+    } |
+
+    EulSyntaxType_EXPRESSION EulTokenType_SEMICOLON {
+        $$ = malloc(sizeof(EulToken));
+        //TODO
+    }
+
+
+
+
+
+//============================== EXPRESSIONS  ==============================
+EulSyntaxType_EXPRESSION:
+    EulSyntaxType_LITERAL   { $$ = $1; } |
+    EulTokenType_ID         { $$ = $1; } |
+    EulTokenType_PARENTHESIS_OPEN EulSyntaxType_EXPRESSION EulTokenType_PARENTHESIS_CLOSE        { $$ = $1; } |
+
+    EulSyntaxType_EXPRESSION EulSyntaxType_INFIX EulSyntaxType_EXPRESSION {
+        //TODO
+    }
+
+    EulSyntaxType_PREFIX EulSyntaxType_EXPRESSION {
+        //TODO
+    }
+
+    EulSyntaxType_EXPRESSION EulSyntaxType_SUFFIX {
+        //TODO
+    }
+
+
+
+
+
+//======================== VAR DECLARATIONS AND FUNCTION PARAMETERS ============================
+
+
+//TODO
+EulSyntaxType_PARAMETER_DECLARATION:
+    EulTokenType_ID EulTokenType_ASSIGN EulSyntaxType_EXPRESSION {
+
+    } |
+    EulTokenType_ID {
+
+    }
+
+
+
+EulSyntaxType_PARAMETER_LIST:
+    EulSyntaxType_PARAMETER_LIST EulTokenType_COMMA EulSyntaxType_PARAMETER_DECLARATION {
+        //TODO
+    } |
+    EulSyntaxType_PARAMETER_DECLARATION {
+        //TODO
+    }
 
 %%
 

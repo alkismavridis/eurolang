@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <string.h>
-#include "../src/core/EulToken.h"
-#include "../src/Compiler.h"
-
-#include "../src/core/EulToken.Functions.h"
+#include "../src/core/EulNodeList/EulNodeList.h"
+#include "../src/core/EulSourceFile/EulSourceFile.h"
+#include "../src/core/EulProgram/EulProgram.h"
+#include "../src/core/Compiler/Compiler.h"
+#include "../src/core/EulToken/EulToken.h"
 
 
 
@@ -14,21 +15,28 @@
 
 
 #include "TestUtils.h"
-#include "lexer/VocabularyTest.h"
-#include "parser/SyntaxTest.h"
-#include "core/NodeTest.h"
 #include "core/NodeListTest.h"
 #include "core/SourceFileTest.h"
+#include "core/EulProgramTest.h"
+#include "core/CompilerTest.h"
+
+#include "lexer/VocabularyTest.h"
+#include "parser/SyntaxTest.h"
+
+
 
 
 int main() {
-	//core tests
-	NodeTest_runAllTests();
+	//1. core tests
 	NodeListTest_runAllTests();
 	SourceFileTest_runAllTests();
+	EulProgramTest_runAllTests();
+	CompilerTest_runAllTests();
 
-	//Lexer related tests
+	//2. Lexer related tests
 	VocabularyTest_runAllTests();
+
+	//3. Parser related tessts
 	SyntaxTest_runAllTests();
 
 

@@ -62,6 +62,10 @@
 
 
    - My knowledge about C is limited.
+     Any C/C++ magician mostly welcome to participate.
+     If you this kind of sorcerer, but you don't wanna participate, you could still provide technical/architectural advices.
+     Also precious!
+
 
 
 
@@ -102,7 +106,9 @@
 
 7. THE TECHINICAL DETAILS OF THIS PROJECT
     - I write a compiler (in C) for the new language, as a gcc frontend.
-      As you will notice, I am not expert in C. Any advice welcome for this point. :)
+      Special credits to Roger Ferrer Ibáñez for his gcctiny tutorial.
+      This was my code entry point.
+      Thanks, Roger :)
 
     - I use flex and bison to read the text.
     - I try to unit test all of my code. Also my flex and bison syntax must be unit tested, because A LOT can go wrong there.
@@ -111,6 +117,8 @@
             --- Types start with letter, like EulToken. variables and function names start with small letter, like myVar.
             -- camelCase.
             -- functions actual names have the form ClassName_funcName, like Compiler_compileNextSource()
+                I know, its a long and inconvenient, but I really hate having to think about naming conflicts.
+                Thats one extra reason why I want an es6-style import-export system for eurolang.
 
     - This will be free software.
 

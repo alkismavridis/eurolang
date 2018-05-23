@@ -69,18 +69,18 @@ void LexerUtils_skipMultiLineComment(Compiler* compiler) {
 
 
 void LexerUtils_skipSingleLineComment(Compiler* compiler) {
-  register int c;
-  void* scanner = compiler->scanner;
+    register int c;
+    void* scanner = compiler->scanner;
 
 
-	while (1) {
-		c = input(scanner); //we will stop in only 2 cases: \n and EOF. In any of these, we will reset yytext.
-    switch(c) {
-      case '\n':
-      case YY_NULL:
-        return;
+    while (1) {
+        c = input(scanner); //we will stop in only 2 cases: \n and EOF. In any of these, we will reset yytext.
+        switch(c) {
+            case '\n':
+                case YY_NULL:
+                return;
+        }
     }
-	}
 }
 //endregion
 
@@ -95,86 +95,76 @@ void LexerUtils_skipSingleLineComment(Compiler* compiler) {
   For ensuring best possible reusability, we will store this buffer at the Compiler object.
 */
 EulToken* LexerUtils_parseStringValue(Compiler* compiler) {
-  EulToken* ret = malloc(sizeof(EulToken));
-  ret->type = EulTokenType_STRING;
-  void* scanner = compiler->scanner;
+    void* scanner = compiler->scanner;
 
-  register int c;
-	compiler->stringBufferIndex = 0; //reset the buffer index
+    register int c;
+    compiler->stringBufferIndex = 0; //reset the buffer index
 
-  loop:
-  while (1) {
-  	switch(c = input(scanner)) {
-  		case '"':
-				Compiler_addToStringBuffer(compiler, '\0'); //terminate the string
-				ret->value.asString = malloc(compiler->stringBufferIndex); //make space for the string in token
-				strcpy(ret->value.asString, compiler->stringBuffer);	//copy the string
-				return ret;
+    while (1) {
+        switch(c = input(scanner)) {
+            case '"': {
+                EulToken* ret = malloc(sizeof(EulToken));
+                EulToken_initStringFromBuffer(ret, compiler);
+                return ret;
+            }
 
-  		//case '$':
-  			//Compiler_pushToken(EulTokenType_INTERPOLATED_VARIABLE_STRING);
-  			//return EulTokenType_INTERPOLATED_VARIABLE_STRING;
+            //case '$':
+                //Compiler_pushToken(EulTokenType_INTERPOLATED_VARIABLE_STRING);
+                //return EulTokenType_INTERPOLATED_VARIABLE_STRING;
 
-  		case '\n': {
-				Compiler_addToStringBuffer(compiler, '\n');
-  			continue; //loop
-  		}
+            case '\n': {
+                Compiler_addToStringBuffer(compiler, '\n');
+                continue;
+            }
 
-  		case '\\': {
-				int c2 = input(scanner);
-  			short int escaped = LexerUtils_toEscapedStringChar(c2);
+            case '\\': {
+                int c2 = input(scanner);
+                short int escaped = LexerUtils_toEscapedStringChar(c2);
 
-				//check if it failed
-  			if (escaped==-1) {
-          Compiler_makeLexerError(compiler, "Illegal escaped character inside String.");
-          free(ret);
-					return NULL;
-				}
+                //check if it failed
+                if (escaped==-1) {
+                    Compiler_makeLexerError(compiler, "Illegal escaped character inside String.");
+                    return 0;
+                }
 
-				//add the caracter to the buffer
-				Compiler_addToStringBuffer(compiler, (char)escaped);
-				break;
-  		}
+                //add the caracter to the buffer
+                Compiler_addToStringBuffer(compiler, (char)escaped);
+                break;
+            }
 
-      case YY_NULL: {
-        Compiler_makeLexerError(compiler, "End of file while parsing String.");
-        free(ret);
-        return NULL;
-      }
+            case YY_NULL: {
+                Compiler_makeLexerError(compiler, "End of file while parsing String.");
+                return 0;
+            }
 
-			default:
-				Compiler_addToStringBuffer(compiler, c);
-  	}
-  }
+            default:
+                Compiler_addToStringBuffer(compiler, c);
+        }
+    }
 
-  return ret;
+    return 0;
 }
 
 EulToken* LexerUtils_parseEscapedChar(Compiler* compiler) {
-  EulToken* ret = malloc(sizeof(EulToken));
-  ret->type = EulTokenType_CHAR;
+    int c = input(compiler->scanner);
+    const short int escaped = LexerUtils_toEscapedChar(c);
 
-  int c = input(compiler->scanner);
-	const short int escaped = LexerUtils_toEscapedChar(c);
+    //check for failure.
+    if (escaped==-1) {
+        Compiler_makeLexerError(compiler, "Illegal escaped character.");
+        return 0;
+    }
 
-	//check for failure.
-	if (escaped==-1) {
-		Compiler_makeLexerError(compiler, "Illegal escaped character.");
-    free(ret);
-		return NULL;
-	}
+    //read closing ' and return error if it is not found.
+    c = input(compiler->scanner);
+    if (c != '\'') {
+        Compiler_makeLexerError(compiler, "Closing ' expected in char literal.");
+        return 0;
+    }
 
-	//read closing ' and return error if it is not found.
-	c = input(compiler->scanner);
-	if (c != '\'') {
-		Compiler_makeLexerError(compiler, "Closing ' expected in char literal.");
-    free(ret);
-		return NULL;
-	}
-
-	//setup the token and return.
-	ret->value.asInt.value = escaped;
-	ret->value.asInt.size = 1;		//all escaped characters are 1 byte long
-	return ret;
+    //setup the token and return.
+    EulToken* ret = malloc(sizeof(EulToken));
+    EulToken_initEscapedChar(ret, escaped);
+    return ret;
 }
 //endregion

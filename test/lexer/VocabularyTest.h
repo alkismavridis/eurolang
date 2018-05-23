@@ -13,11 +13,14 @@ void VocabularyTest_checkIntToken(Compiler *compiler, unsigned long exected, uns
 	int type = yylex(&tok, compiler->scanner, compiler);
 
 	assertIntEquals(EulTokenType_INT, type, majorMessage, minorMessage);
-	assertIntEquals(exected, tok->value.asInt.value, majorMessage, minorMessage);
-	assertIntEquals(size, tok->value.asInt.size, majorMessage, minorMessage);
-	assertIntEquals(isUnsigned, tok->value.asInt.isUnsigned, majorMessage, minorMessage);
+	assertIntEquals(exected, tok->value.asInt->value, majorMessage, minorMessage);
+	assertIntEquals(size, tok->value.asInt->size, majorMessage, minorMessage);
+	assertIntEquals(isUnsigned, tok->value.asInt->isUnsigned, majorMessage, minorMessage);
 	assertIntEquals(line, yyget_lineno(compiler->scanner), majorMessage, minorMessage);
-	EulToken_deinit(tok);
+
+	//cleanup
+	tok->class->deinit(tok);
+	free(tok);
 }
 
 void VocabularyTest_checkFloatToken(Compiler *compiler, double exected, unsigned char size, double tolerance, unsigned int line, char* majorMessage, char* minorMessage) {
@@ -25,10 +28,13 @@ void VocabularyTest_checkFloatToken(Compiler *compiler, double exected, unsigned
 	int type = yylex(&tok, compiler->scanner, compiler);
 
 	assertIntEquals(EulTokenType_FLOAT, type, majorMessage, minorMessage);
-	assertDoubleEquals(exected, tok->value.asFloat.value, tolerance, majorMessage, minorMessage);
-	assertIntEquals(size, tok->value.asFloat.size, majorMessage, minorMessage);
+	assertDoubleEquals(exected, tok->value.asFloat->value, tolerance, majorMessage, minorMessage);
+	assertIntEquals(size, tok->value.asFloat->size, majorMessage, minorMessage);
 	assertIntEquals(line, yyget_lineno(compiler->scanner), majorMessage, minorMessage);
-	EulToken_deinit(tok);
+
+    //cleanup
+    tok->class->deinit(tok);
+    free(tok);
 }
 
 void VocabularyTest_checkCharToken(Compiler *compiler, unsigned long int exected, unsigned char size, unsigned int line, char* majorMessage, char* minorMessage) {
@@ -36,10 +42,13 @@ void VocabularyTest_checkCharToken(Compiler *compiler, unsigned long int exected
 	int type = yylex(&tok, compiler->scanner, compiler);
 
 	assertIntEquals(EulTokenType_CHAR, type, majorMessage, minorMessage);
-	assertIntEquals(exected, tok->value.asInt.value, majorMessage, minorMessage);
-	assertIntEquals(size, tok->value.asInt.size, majorMessage, minorMessage);
+	assertIntEquals(exected, tok->value.asInt->value, majorMessage, minorMessage);
+	assertIntEquals(size, tok->value.asInt->size, majorMessage, minorMessage);
 	assertIntEquals(line, yyget_lineno(compiler->scanner), majorMessage, minorMessage);
-	EulToken_deinit(tok);
+
+	//cleanup
+    tok->class->deinit(tok);
+    free(tok);
 }
 
 void VocabularyTest_checkStringToken(Compiler *compiler, char* expected, unsigned int line, char* majorMessage, char* minorMessage) {
@@ -49,17 +58,19 @@ void VocabularyTest_checkStringToken(Compiler *compiler, char* expected, unsigne
 	assertIntEquals(EulTokenType_STRING, type, majorMessage, minorMessage);
 	assertStringEquals(expected, tok->value.asString, majorMessage, minorMessage);
 	assertIntEquals(line, yyget_lineno(compiler->scanner), majorMessage, minorMessage);
-	EulToken_deinit(tok);
+
+	//cleanup
+    tok->class->deinit(tok);
+    free(tok);
 }
 
 /* If line:0 is passed, no check on line will be made*/
 void VocabularyTest_checkTokenType(Compiler *compiler, int expected, unsigned int line, char* majorMessage, char* minorMessage) {
-	EulToken* tok;
+	EulToken* tok; //No token should be allocated when calling this function. Still, we need to pass this parameter.
 	int type = yylex(&tok, compiler->scanner, compiler);
 
 	assertIntEquals(expected, type, majorMessage, minorMessage);
 	if (line>0) assertIntEquals(line, yyget_lineno(compiler->scanner), majorMessage, minorMessage);
-	if (tok != 0) EulToken_deinit(tok);
 }
 
 void VocabularyTest_checkIdToken(Compiler *compiler, char* name, unsigned int line, char* majorMessage, char* minorMessage) {
@@ -71,22 +82,21 @@ void VocabularyTest_checkIdToken(Compiler *compiler, char* name, unsigned int li
 	assertIntEquals(line, yyget_lineno(compiler->scanner), majorMessage, minorMessage);
 
 	//cleanup EulToken
-	EulToken_deinit(tok);
+	tok->class->deinit(tok);
 }
 //endregion
 
 
+
+
 void VocabularyTest_multiLineCommentTest(char* t) {
 	Compiler compiler;
-	FILE* myFile;
-	Compiler_init(&compiler, "", ({FILE* __fn__(char* ch){ return myFile; } __fn__; }), 0);
-	//Compiler_init(&compiler, 0);
+	Compiler_init(&compiler, 0);
 
 	VocabularyTest_startParsingString( &compiler, "123/*hello\n*1/2*3*/world" );
 	VocabularyTest_checkIntToken(&compiler, 123, 4, 0, 1, t, "A1");
 	VocabularyTest_checkIdToken(&compiler, "world", 2, t, "A2");
 	VocabularyTest_checkTokenType(&compiler, EulTokenType_EOF, 0, t, "A3");
-
 
 	//start at the end of the line. Change line during ***
 	VocabularyTest_startParsingString( &compiler, "123/*\n*1/2***\n3*/abc\n12" );
@@ -114,9 +124,9 @@ void VocabularyTest_multiLineCommentTest(char* t) {
 	Compiler_deinit(&compiler);
 }
 
-/*void VocabularyTest_singleLineCommentTest(char* t) {
+void VocabularyTest_singleLineCommentTest(char* t) {
 	Compiler compiler;
- 	Compiler_init(&compiler, 0);
+	Compiler_init(&compiler, 0);
 
 	//skip comments
 	VocabularyTest_startParsingString( &compiler, "123//comment1\nend++" );
@@ -240,7 +250,6 @@ void VocabularyTest_parseFloatTest(char* t) {
 void VocabularyTest_parseWordTest(char* t) {
 	Compiler compiler;
 	Compiler_init(&compiler, 0);
-
 
 	//int and float part present
 	VocabularyTest_startParsingString(&compiler, "hello123__ par123+hello_");
@@ -399,15 +408,15 @@ void VocabularyTest_operatorTest(char* t) {
 	VocabularyTest_checkTokenType(&compiler, EulTokenType_SLASH, 2, t, "B13");
 	VocabularyTest_checkIntToken(&compiler, 4, 4, 0, 2, t, "B14");
 	Compiler_deinit(&compiler);
-}*/
+}
 
 void VocabularyTest_runAllTests() {
-	//VocabularyTest_multiLineCommentTest("VocabularyTest_multiLineCommentTest");
-	/*VocabularyTest_singleLineCommentTest("VocabularyTest_singleLineCommentTest");
+	VocabularyTest_multiLineCommentTest("VocabularyTest_multiLineCommentTest");
+	VocabularyTest_singleLineCommentTest("VocabularyTest_singleLineCommentTest");
 	VocabularyTest_parseIntegerTest("VocabularyTest_parseIntegerTest"); //TODO hex and octals, e support
 	VocabularyTest_parseFloatTest("VocabularyTest_parseFloatTest");			//TODO e support
 	VocabularyTest_parseWordTest("VocabularyTest_parseWordTest");
 	VocabularyTest_parseCharTest("VocabularyTest_parseCharTest");				//TODO sizes, \u ??
 	VocabularyTest_parseStringTest("VocabularyTest_parseStringTest");		//TODO interpolation
-	VocabularyTest_operatorTest("VocabularyTest_operatorTest");					//TODO include all operators in unit tests */
+	VocabularyTest_operatorTest("VocabularyTest_operatorTest");					//TODO include all operators in unit tests
 }

@@ -5,6 +5,18 @@ PLEASE KEEP THIS FILE LATEST_ON_TOP SORTED
 
 
 
+2018.05.23
+    Today I focused on the target of what we must deliver to the backend: a tree.
+    It might be wise to get rid of the data structure that I try to implement for represeing the program,
+    and work directly with the tree structures.
+
+    I try to understand them. But the more I look ak them, the more chaotic they look.
+    And documentation is really bad.
+    I would really think this is some ancient, abandoned project, if the word "gcc" was not in written my url bar...
+    Terrible.
+
+    Number of developers: 1.
+
 
 
 
