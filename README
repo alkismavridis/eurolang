@@ -105,10 +105,10 @@
 
 
 7. THE TECHINICAL DETAILS OF THIS PROJECT
-    - I write a compiler (in C) for the new language, as a gcc frontend.
+    - I write a compiler (in C/C++) for the new language, using llvm.
       Special credits to Roger Ferrer Ibáñez for his gcctiny tutorial.
-      This was my code entry point.
-      Thanks, Roger :)
+      This was my code entry point, because, before switching to llvm, I was planning to make eurolang a gcc frontend
+      So, thanks, Roger :)
 
     - I use flex and bison to read the text.
     - I try to unit test all of my code. Also my flex and bison syntax must be unit tested, because A LOT can go wrong there.

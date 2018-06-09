@@ -1,3 +1,6 @@
+#pragma once
+
+
 //region UTIL FUNCTIONS
 /**
 		Returns the escaped character that can be found inside a string.
@@ -39,45 +42,58 @@ short int LexerUtils_toEscapedChar(int c) {
 
 
 
+//region LOCATION UTILS
+void EulScanner::advanceLine(yy::EulParser::location_type* loc) {
+    loc->end.lines();
+    loc->end.column = 1;
+}
+//endregion
+
+
+
 //region SKIPPING
-void LexerUtils_skipMultiLineComment(Compiler* compiler) {
-  void* scanner = compiler->scanner;
-  register int c;
+void EulScanner::skipMultiLineComment(Compiler* compiler, yy::EulParser::location_type* loc) {
+  int c;
 
   while (1) {
     //andvance the cursor
-    c = input(scanner);
-
+    c = this->yyinput();
     //check special cases
     switch(c) {
       case '*':
-        while ( (c = input(scanner)) == '*' ) ;            //eat repeating *
-        if ( c == '/' ) return;    /* found the end return a "to be ignored" token*/
-        else if (c=='\n') ; //yylineno is automatically set
+        loc->columns();
+
+        //eat possible repeating *
+        while ( (c = this->yyinput()) == '*' ) loc->columns();
+        loc->columns();
+
+        if ( c == '/' )  return;
+        else if (c=='\n') EulScanner::advanceLine(loc);
         break;
 
       case '\n':
-        //yylineno is automatically set
+        EulScanner::advanceLine(loc);
         break;
 
       case YY_NULL:
-        Compiler_makeLexerError(compiler, "End of file while parsing comment");
+        compiler->makeLexerError("End of file while parsing comment");
         return;
+
+      default: loc->columns();
     }
   }
 }
 
 
-void LexerUtils_skipSingleLineComment(Compiler* compiler) {
-    register int c;
-    void* scanner = compiler->scanner;
-
+void EulScanner::skipSingleLineComment(yy::EulParser::location_type* loc) {
+    int c;
 
     while (1) {
-        c = input(scanner); //we will stop in only 2 cases: \n and EOF. In any of these, we will reset yytext.
+        c = this->yyinput(); //we will stop in only 2 cases: \n and EOF. In any of these, we will reset yytext.
         switch(c) {
             case '\n':
-                case YY_NULL:
+            case YY_NULL:
+                EulScanner::advanceLine(loc);
                 return;
         }
     }
@@ -94,18 +110,16 @@ void LexerUtils_skipSingleLineComment(Compiler* compiler) {
 
   For ensuring best possible reusability, we will store this buffer at the Compiler object.
 */
-EulToken* LexerUtils_parseStringValue(Compiler* compiler) {
-    void* scanner = compiler->scanner;
-
-    register int c;
-    compiler->stringBufferIndex = 0; //reset the buffer index
+EulStringToken* EulScanner::parseStringValue(Compiler* compiler, yy::EulParser::location_type* loc) {
+    int c;
+    std::string& buffer = compiler->buffer;
+    buffer.clear();
 
     while (1) {
-        switch(c = input(scanner)) {
+        switch(c = this->yyinput()) {
             case '"': {
-                EulToken* ret = malloc(sizeof(EulToken));
-                EulToken_initStringFromBuffer(ret, compiler);
-                return ret;
+                loc->columns();
+                return new EulStringToken(buffer);
             }
 
             //case '$':
@@ -113,58 +127,64 @@ EulToken* LexerUtils_parseStringValue(Compiler* compiler) {
                 //return EulTokenType_INTERPOLATED_VARIABLE_STRING;
 
             case '\n': {
-                Compiler_addToStringBuffer(compiler, '\n');
+                buffer += '\n';
+                EulScanner::advanceLine(loc);
                 continue;
             }
 
             case '\\': {
-                int c2 = input(scanner);
+                loc->columns();
+
+                int c2 = this->yyinput();
+                loc->columns();
                 short int escaped = LexerUtils_toEscapedStringChar(c2);
 
                 //check if it failed
                 if (escaped==-1) {
-                    Compiler_makeLexerError(compiler, "Illegal escaped character inside String.");
+                    compiler->makeLexerError("Illegal escaped character inside String.");
                     return 0;
                 }
 
                 //add the caracter to the buffer
-                Compiler_addToStringBuffer(compiler, (char)escaped);
+                buffer +=  (char)escaped;
                 break;
             }
 
             case YY_NULL: {
-                Compiler_makeLexerError(compiler, "End of file while parsing String.");
+                compiler->makeLexerError("End of file while parsing String.");
                 return 0;
             }
 
             default:
-                Compiler_addToStringBuffer(compiler, c);
+                loc->columns();
+                buffer +=  c;
         }
     }
 
     return 0;
 }
 
-EulToken* LexerUtils_parseEscapedChar(Compiler* compiler) {
-    int c = input(compiler->scanner);
+EulCharToken* EulScanner::parseEscapedChar(Compiler* compiler, yy::EulParser::location_type* loc) {
+    int c = this->yyinput();
+    loc->columns();
+
+
     const short int escaped = LexerUtils_toEscapedChar(c);
 
     //check for failure.
     if (escaped==-1) {
-        Compiler_makeLexerError(compiler, "Illegal escaped character.");
+        compiler->makeLexerError("Illegal escaped character.");
         return 0;
     }
 
     //read closing ' and return error if it is not found.
-    c = input(compiler->scanner);
+    c = this->yyinput();
     if (c != '\'') {
-        Compiler_makeLexerError(compiler, "Closing ' expected in char literal.");
+        compiler->makeLexerError("Closing ' expected in char literal.");
         return 0;
     }
+    loc->columns();
 
-    //setup the token and return.
-    EulToken* ret = malloc(sizeof(EulToken));
-    EulToken_initEscapedChar(ret, escaped);
-    return ret;
+    return new EulCharToken(escaped, 1);
 }
 //endregion

@@ -1,23 +1,29 @@
-char *yyget_text ( yyscan_t scanner );
-int yyget_leng ( yyscan_t scanner );
-FILE *yyget_in ( yyscan_t scanner );
-FILE *yyget_out ( yyscan_t scanner );
-int yyget_lineno ( yyscan_t scanner );
-YY_EXTRA_TYPE yyget_extra ( yyscan_t scanner );
-int  yyget_debug ( yyscan_t scanner );
-
-void yyset_debug ( int flag, yyscan_t scanner );
-void yyset_in  ( FILE * in_str , yyscan_t scanner );
-void yyset_out  ( FILE * out_str , yyscan_t scanner );
-void yyset_lineno ( int line_number , yyscan_t scanner );
-void yyset_extra ( YY_EXTRA_TYPE user_defined , yyscan_t scanner );
-
-
-
 DOCU for REENTRANT SCANNERS:  http://sector7.xray.aps.anl.gov/~dohnarms/programming/flex/html/Reentrant-Functions.html
 
 
 
+/////////////////
+FLEX/BISON NOTES
+////////////////
+
+    Locations: a location has 2 positions: begin and end.
+    Those indicate where the token starter, and where it ended.
+
+    The strategy that we follow is that we set the start and end to equal values before every yylex call.
+    When we match a rule, we progress the end value, leaving the begin intact.
+
+    - YY_USER_ACTION Executed each time a rule matches, after yytext and yyleng were set, but before the action is triggered.
+    - location.step() changes the begin to be equal to the end. It does not affect the end.
+
+
+
+
+
+
+
+/////////
+EUL NOTES
+/////////
 Every type can have its own:
   definition of ==
   definition of []
@@ -25,3 +31,9 @@ Every type can have its own:
   definition of toString
 
   constructor by literal assignment (array literal, number literal etc)
+
+
+
+llvm will produce an ir asm file
+then, use llc testOut to create a .s assembly file
+

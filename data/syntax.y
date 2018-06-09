@@ -232,7 +232,7 @@ EulSyntaxType_STATEMENTS:
         printf("EulSyntaxType_STATEMENTS: EulSyntaxType_STATEMENT\n");
 
         //create a List-type token (to hold the statementS) and push the first element
-        $$ = malloc(sizeof(EulToken));
+        $$ = (EulToken*) malloc(sizeof(EulToken));
         EulToken_initListWith($$, $1);
     }
 
@@ -242,12 +242,12 @@ EulSyntaxType_STATEMENT:
     EulSyntaxType_VAR_KEYWORD EulSyntaxType_PARAMETER_LIST EulTokenType_SEMICOLON {
         printf("EulSyntaxType_STATEMENT: EulSyntaxType_VAR_KEYWORD EulSyntaxType_PARAMETER_LIST\n");
 
-        $$ = malloc(sizeof(EulToken)); //TODO free this somewhere
+        $$ = (EulToken*) malloc(sizeof(EulToken)); //TODO free this somewhere
         //EulToken_initVarDeclaration($$, EulTokenType_VAR_DECLARATION);
     } |
 
     EulSyntaxType_EXPRESSION EulTokenType_SEMICOLON {
-        $$ = malloc(sizeof(EulToken));
+        $$ = (EulToken*) malloc(sizeof(EulToken));
         //TODO
     }
 

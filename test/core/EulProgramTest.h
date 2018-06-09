@@ -1,98 +1,98 @@
 #pragma once
 
 
-void EulProgramTest_getAndCreate(char* t) {
-    EulProgram program;
-    EulProgram_init(&program);
 
-    //test initial state
-    assertIntEquals(0, EulNodeList_length(&program.sources), t, "A1");
+class EulProgramTest {
 
-    //test getting without creating while list is empty.
-    assertNull( EulProgram_getSource(&program, "someFileName.eul", 0), t, "A2");
-    assertIntEquals(0, EulNodeList_length(&program.sources), t, "A3");
+    //region SOURCE FILE ACCESSING
+    public: void static getAndCreateTest(const std::string& t) {
+        EulProgram program;
 
-    //test getOrCreate
-    EulToken *firstFile = EulProgram_getSource(&program, "someFileName.eul", 1);
-    assertNotNull(firstFile, t, "B1");
-    assertIntEquals(1, EulNodeList_length(&program.sources), t, "B2");
+        //test initial state
+        Assert::equals(0, program.sources.size(), t + "A1");
 
-    //get it with createFlag off.
-    firstFile = EulProgram_getSource(&program, "someFileName.eul", 0);
-    assertNotNull(firstFile, t, "C1");
-    assertStringEquals("someFileName.eul", firstFile->value.asSourceFile->id, t, "C2");
-    assertIntEquals(1, EulNodeList_length(&program.sources), t, "C3");
+        //test getting without creating while list is empty.
+        Assert::null( program.getSource("someFileName.eul", 0), t + "A2");
+        Assert::equals(0, program.sources.size(), t + "A3");
 
-    //get it with createFlag on
-    firstFile = EulProgram_getSource(&program, "someFileName.eul", 1);
-    assertNotNull(firstFile, t, "D1");
-    assertStringEquals("someFileName.eul", firstFile->value.asSourceFile->id, t, "D2");
-    assertIntEquals(1, EulNodeList_length(&program.sources), t, "D3");
+        //test getOrCreate
+        EulSourceFile *firstFile = program.getSource("someFileName.eul", 1);
+        Assert::notNull(firstFile, t +"B1");
+        Assert::equals(1, program.sources.size(), t + "B2");
 
-    //ask for a file that does not exists
-    firstFile = EulProgram_getSource(&program, "someFileName2.eul", 0);
-    assertNull(firstFile, t, "E1");
-    assertIntEquals(1, EulNodeList_length(&program.sources), t, "E2");
+        //get it with createFlag off.
+        firstFile = program.getSource("someFileName.eul", 0);
+        Assert::notNull(firstFile, t + "C1");
+        Assert::equals("someFileName.eul", firstFile->id, t + "C2");
+        Assert::equals(1, program.sources.size(), t + "C3");
 
-    //create a second file
-    EulToken* secondFile = EulProgram_getSource(&program, "someFileName2.eul", 1);
-    assertNotNull(secondFile, t, "F1");
-    assertStringEquals("someFileName2.eul", secondFile->value.asSourceFile->id, t, "F2");
-    assertIntEquals(2, EulNodeList_length(&program.sources), t, "F3");
+        //get it with createFlag on
+        firstFile = program.getSource("someFileName.eul", 1);
+        Assert::notNull(firstFile, t + "D1");
+        Assert::equals("someFileName.eul", firstFile->id, t + "D2");
+        Assert::equals(1, program.sources.size(), t + "D3");
 
-    //test getters
-    firstFile = EulProgram_getSource(&program, "someFileName.eul", 1);
-    assertNotNull(firstFile, t, "G1");
-    assertStringEquals("someFileName.eul", firstFile->value.asSourceFile->id, t, "G2");
+        //ask for a file that does not exists
+        firstFile = program.getSource("someFileName2.eul", 0);
+        Assert::null(firstFile, t + "E1");
+        Assert::equals(1, program.sources.size(), t + "E2");
 
-    firstFile = EulProgram_getSource(&program, "someFileName.eul", 0);
-    assertNotNull(firstFile, t, "G3");
-    assertStringEquals("someFileName.eul", firstFile->value.asSourceFile->id, t, "G4");
+        //create a second file
+        EulSourceFile* secondFile = program.getSource("someFileName2.eul", 1);
+        Assert::notNull(secondFile, t + "F1");
+        Assert::equals("someFileName2.eul", secondFile->id, t + "F2");
+        Assert::equals(2, program.sources.size(), t + "F3");
 
-    secondFile = EulProgram_getSource(&program, "someFileName2.eul", 1);
-    assertNotNull(secondFile, t, "G5");
-    assertStringEquals("someFileName2.eul", secondFile->value.asSourceFile->id, t, "G6");
+        //test getters
+        firstFile = program.getSource("someFileName.eul", 1);
+        Assert::notNull(firstFile, t + "G1");
+        Assert::equals("someFileName.eul", firstFile->id, t + "G2");
 
-    secondFile = EulProgram_getSource(&program, "someFileName2.eul", 0);
-    assertNotNull(secondFile, t, "G7");
-    assertStringEquals("someFileName2.eul", secondFile->value.asSourceFile->id, t, "G8");
+        firstFile = program.getSource("someFileName.eul", 0);
+        Assert::notNull(firstFile, t + "G3");
+        Assert::equals("someFileName.eul", firstFile->id, t + "G4");
 
-    assertIntEquals(2, EulNodeList_length(&program.sources), t, "G9");
+        secondFile = program.getSource("someFileName2.eul", 1);
+        Assert::notNull(secondFile, t + "G5");
+        Assert::equals("someFileName2.eul", secondFile->id, t + "G6");
 
-    EulProgram_deinit(&program);
-}
+        secondFile = program.getSource("someFileName2.eul", 0);
+        Assert::notNull(secondFile, t + "G7");
+        Assert::equals("someFileName2.eul", secondFile->id, t + "G8");
 
-void EulProgramTest_nextPendingSource(char* t) {
-    EulProgram program;
-    EulProgram_init(&program);
+        Assert::equals(2, program.sources.size(), t + "G9");
+    }
 
-    //add 3 files
-    EulToken *file1 = EulProgram_getSource(&program, "someFileName1.eul", 1);
-    EulToken *file2 = EulProgram_getSource(&program, "someFileName2.eul", 1);
-    EulToken *file3 = EulProgram_getSource(&program, "someFileName3.eul", 1);
-    assertNotNull(file1, t, "A1");
-    assertNotNull(file2, t, "A2");
-    assertNotNull(file3, t, "A3");
-    assertIntEquals(3, EulNodeList_length(&program.sources), t, "A4");
+    public: void static nextPendingSourceTest(const std::string& t) {
+        EulProgram program;
 
-    //test nextPending getter
-    assertPtrEquals(file1, EulProgram_nextPendingSource(&program), t, "B1");
+        //add 3 files
+        EulSourceFile *file1 = program.getSource("someFileName1.eul", 1);
+        EulSourceFile *file2 = program.getSource("someFileName2.eul", 1);
+        EulSourceFile *file3 = program.getSource("someFileName3.eul", 1);
+        Assert::notNull(file1, t + "A1");
+        Assert::notNull(file2, t + "A2");
+        Assert::notNull(file3, t + "A3");
+        Assert::equals(3, program.sources.size(), t + "A4");
 
-    file1->value.asSourceFile->isParsed = 1;
-    assertPtrEquals(file2, EulProgram_nextPendingSource(&program), t, "B2");
+        //test nextPending getter
+        Assert::equals(file1, program.nextPendingSource(), t + "B1");
 
-    file2->value.asSourceFile->isParsed = 1;
-    assertPtrEquals(file3, EulProgram_nextPendingSource(&program), t, "B3");
+        file1->isParsed = 1;
+        Assert::equals(file2, program.nextPendingSource(), t + "B2");
 
-    file3->value.asSourceFile->isParsed = 1;
-    assertNull(EulProgram_nextPendingSource(&program), t, "B4");
+        file2->isParsed = 1;
+        Assert::equals(file3, program.nextPendingSource(), t + "B3");
 
-    EulProgram_deinit(&program);
-}
-
+        file3->isParsed = 1;
+        Assert::null(program.nextPendingSource(), t + "B4");
+    }
+    //endregion
 
 
-void EulProgramTest_runAllTests() {
-  EulProgramTest_getAndCreate("EulProgramTest_getAndCreate");
-  EulProgramTest_nextPendingSource("EulProgramTest_nextPendingSource");
-}
+
+    public: static void runAll() {
+      getAndCreateTest("EulProgramTest.getAndCreate ");
+      nextPendingSourceTest("EulProgramTest.nextPendingSourceTest ");
+    }
+};

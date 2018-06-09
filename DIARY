@@ -5,9 +5,71 @@ PLEASE KEEP THIS FILE LATEST_ON_TOP SORTED
 
 
 
+2018.05.26
+    TITLE: Damn gcc. We switch to llvm.
+
+    GCC is a great tool when you take it ready and compile C/C++ programs. Fulls top.
+    Trying to create a GCC frontend is a horrible experience and I am abandoning gcc as a base for eul compiler.
+
+    The first thing I, or any newbie would have to do, to have a "hello world" compiler running,
+    is to download the whole GCC code, compile it, wait a TONE of time, having 10GB space on his/her hard disk occupied.
+    Just to get a hello world compiler!
+
+    Of course, I already have gcc installed on my machine, since I run Linux
+    So it would be logical to me that I would write a hello world frontend and have it running with my existing gcc,
+    somehow linked/loaded/plugged-id/whatever.
+
+    But, no. gcc architecture does not support that.
+    You have to build the WHOLE gcc, together with your hello world frontend.
+    No matter if you have it already installed on your machine.
+
+    In my view, half of the frontend-backend architecture idea is ruined this way.
+
+    But still, after some time, I was finally done with this build/compile horror and I got my hello world compiler,
+    thanks to the wonderful gcc-tiny tutorial.
+
+    I went on, I set up my lexer, unit tested it, set up a basic parser, and then I thought to try to link it with gcc backend,
+    to produce an actual executable, even if it would be a dummy one.
+    So, I tried to read about the trees that gcc backend expects to get. And then, a second disappointment came.
+
+    What I found out is that the official documentation about gcc-trees sucks even more than gcc architecture.
+
+    Important parts of the documentation are missing(!), like:
+    https://gcc.gnu.org/onlinedocs/gcc-4.3.4/gccint/Macros-and-Functions.html#Macros-and-Functions
+
+    And the parts that are present have very limited, or no usage examples. Here is how it looks like:
+    https://gcc.gnu.org/onlinedocs/gcc-4.3.4/gccint/Types.html#Types
+
+    Besides the lack of docs, the API itself is messy, not intuitive, and full of macros that lead to a horrible syntax,
+    for my taste.
+
+    My conclusion is that gcc is a great compiler, but a horrible base for a language frontend.
+    This is just my personal opinion and I don't mean to offend anybody, but as a frontend basis, gcc sucks.
+
+    Fortunately, there is llvm which looks like having FAR better architecture, and documentation.
+    Or, to put it more accurate, there is llvm, which HAS documentation for frontend developers.
+    This is the fair comparison to be made here.
+
+    And it happens to be so, that this documentation is really great. Just look at those:
+    http://llvm.org/doxygen/classllvm_1_1Constant.html
+    http://llvm.org/docs/tutorial/LangImpl03.html
+
+    I wish gcc team would take llvm project as an example, at least if they care about gcc being a frontend-friendly
+    platform. If this is not their priority, I get it and respect it. After all, it is a great compiler.
+    But I am really sorry for any frontend developer that will make the same mistake as me, to try to choose it
+    as a base for a new language.
+
+    I will now get rid of those 10GB from my hard disk, and also remove the tiny-specific files.
+    eul compiler goes ahead with llvm.
+
+
+
+
+
+
 2018.05.23
     Today I focused on the target of what we must deliver to the backend: a tree.
-    It might be wise to get rid of the data structure that I try to implement for represeing the program,
+    It might be wise to get rid of the data structure that I try to implement for representing the program,
     and work directly with the tree structures.
 
     I try to understand them. But the more I look ak them, the more chaotic they look.

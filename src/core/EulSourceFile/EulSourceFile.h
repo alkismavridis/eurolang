@@ -1,22 +1,25 @@
 #pragma once
 
 
-//region SOURCE
-typedef struct {
-	char* id;
-    char isParsed;		//indicates whether the compiler compiled this source file.
-
-	char* nameSpace;
-	EulNodeList imports; //not yet implemented
-	EulNodeList exports; //not yet implemented
-	EulNodeList symbols; //not yet implemented
-	EulNodeList statements;  //possible elements types on this list:
-} EulSourceFile;
 
 
+class EulSourceFile {
+    //region FIELDS
+	public: std::string id;
+    public: unsigned char isParsed;		/** indicates whether the compiler compiled this source file. */
+
+    public: std::string nameSpace;
+    public: std::forward_list<EulImportStatement> imports;
+    public: std::forward_list<EulExportStatement> exports;
+    public: std::map<std::string, EulSymbol*> symbols;
+    public: std::forward_list<EulStatement> statements;
+    //endregion
 
 
-//region LIFE CYCLE
-void EulSourceFile_init(EulToken* this, char* entryPoint);
-void EulSourceFile_deinit(EulToken* this);
-//endregion
+
+
+    //region LIFE CYCLE
+    public: EulSourceFile(const std::string& id);
+    public: ~EulSourceFile();
+    //endregion
+};
