@@ -21,7 +21,7 @@
 #include "./core/EulAst/EulStatement/EulStatement.h"
 #include "./core/EulAst/EulStatement/EulImportStatement.h"
 #include "./core/EulAst/EulStatement/EulExportStatement.h"
-#include "./core/EulAst/EulSymbol.h"
+#include "./core/EulAst/VarDeclaration.h"
 
 #include "./core/EulSourceFile/EulSourceFile.h"
 #include "./core/EulProgram/EulProgram.h"

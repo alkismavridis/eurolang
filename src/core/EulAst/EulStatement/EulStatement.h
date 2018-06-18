@@ -1,6 +1,6 @@
 #pragma once
 
-class EulStatement {
+class EulStatement : public EulAst {
     public: EulStatementType getStatementType();
-    public: EulAstType getAstType() { return STATEMENT; }
+    public: EulAstType getAstType();
 };

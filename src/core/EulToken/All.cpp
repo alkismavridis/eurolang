@@ -1,7 +1,8 @@
-/** On thi file, we will implement all methods from every header file on this "package". */
+/** On this file, we will implement all methods from every header file on this "package". */
 
 #include <string>
 #include <forward_list>
+#include <vector>
 #include <sstream>
 #include <map>
 #include <iostream>
@@ -18,11 +19,15 @@
 
 
 #include "../EulAst/EulAstType.h"
+#include "../EulAst/EulAst.h"
+
+#include "../EulAst/EulDeclaration/VarDeclaration.h"
+
+
 #include "../EulAst/EulStatement/EulStatementType.h"
 #include "../EulAst/EulStatement/EulStatement.h"
 #include "../EulAst/EulStatement/EulImportStatement.h"
 #include "../EulAst/EulStatement/EulExportStatement.h"
-#include "../EulAst/EulSymbol.h"
 
 
 #include "../EulSourceFile/EulSourceFile.h"
@@ -35,11 +40,15 @@
 EulToken::~EulToken() {}
 EulTokenType EulToken::getType() { return UNKNOWN; }
 
-std::ostream& operator<<(std::ostream& os, EulToken* tok) {
-    os << "EulToken";
-    return os;
+void EulToken::toJson(std::ostream& out, int tabs) {
+    out << "{\"type\":\"EulToken\"}" << std::endl;
 }
 
+
+std::ostream& operator<<(std::ostream& os, EulToken* tok) {
+    tok->toJson(os, 0);
+    return os;
+}
 //endregion
 
 
@@ -78,6 +87,18 @@ EulCharToken::EulCharToken(const char* text, unsigned int len, Compiler* compile
 
 
 EulTokenType EulCharToken::getType() { return CHAR; }
+
+void EulCharToken::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulCharToken\"," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"value\":'" <<  this->value << "'" << std::endl;
+
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
 //endregion
 
 
@@ -101,6 +122,18 @@ EulFloatToken::EulFloatToken(char* text) {
 
 
 EulTokenType EulFloatToken::getType() { return FLOAT; }
+
+void EulFloatToken::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulFloatToken\"," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"value\":" <<  this->value << std::endl;
+
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
 //endregion
 
 
@@ -112,6 +145,18 @@ EulIdToken::EulIdToken(const char* text, unsigned int length) {
 }
 
 EulTokenType EulIdToken::getType() { return ID; }
+
+void EulIdToken::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulIdToken\"," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"name\":\"" <<  this->name << "\"" << std::endl;
+
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
 //endregion
 
 
@@ -131,6 +176,19 @@ EulIntToken::EulIntToken(char* text) {
 }
 
 EulTokenType EulIntToken::getType() { return INT; }
+
+
+void EulIntToken::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulIntToken\"," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"value\":" <<  this->value << std::endl;
+
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
 //endregion
 
 
@@ -142,4 +200,16 @@ EulStringToken::EulStringToken(std::string& buf) {
 
 
 EulTokenType EulStringToken::getType() { return STRING; }
+
+void EulStringToken::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulStringToken\"," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"value\":\"" <<  this->value << "\"" << std::endl;
+
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
 //endregion

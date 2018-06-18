@@ -9,7 +9,7 @@
     # include "../lexer/EulScanner.impl.h"
 
     #undef  YY_DECL
-    #define YY_DECL int EulScanner::yylex( yy::EulParser::semantic_type * const yylval, yy::EulParser::location_type *loc, Compiler* compiler )
+    #define YY_DECL int EulScanner::yylex( yy::EulParser::semantic_type * const yylval, yy::EulParser::location_type *loc, EulParsingContext  *ctx )
 
     /* define yyterminate as this instead of NULL */
     #define yyterminate() return( EulParser::token::END )
@@ -137,37 +137,37 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 
 
 "\"" {
-    EulStringToken* ret = this->parseStringValue(compiler, loc);
-    if (compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    EulStringToken* ret = this->parseStringValue(ctx->compiler, loc);
+    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
 
     yylval->build<EulStringToken*>() = ret;
     return yy::EulParser::token::STRING;
 }
 
 "'\\" {
-    EulCharToken* ret = this->parseEscapedChar(compiler, loc);
-    if (compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    EulCharToken* ret = this->parseEscapedChar(ctx->compiler, loc);
+    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
 
     yylval->build<EulCharToken*>() = ret;
     return yy::EulParser::token::CHAR;
 }
 
 "'"{ANY_UNICODE}"'"	{
-    EulCharToken* ret = new EulCharToken(yytext, yyleng, compiler);
-    if (compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    EulCharToken* ret = new EulCharToken(yytext, yyleng, ctx->compiler);
+    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
 
     yylval->build<EulCharToken*>() = ret;
     return yy::EulParser::token::CHAR;
 }
 
 "/*"  {
-    this->skipMultiLineComment(compiler, loc);
-    if (compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    this->skipMultiLineComment(ctx->compiler, loc);
+    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
 }
 
 "//"	{
     this->skipSingleLineComment(loc);
-    if (compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
     return yy::EulParser::token::NL;
 }
 
@@ -178,7 +178,7 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 <<EOF>> return yy::EulParser::token::END;
 
 . {
-  compiler->makeLexerError("Unexpected character\n");
+  ctx->compiler->makeLexerError("Unexpected character\n");
   return yy::EulParser::token::ERROR;
 }
 

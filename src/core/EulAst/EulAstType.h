@@ -1,6 +1,9 @@
 #pragma once
 
 enum EulAstType {
+    NO_TYPE,
     STATEMENT,
-    SYMBOL
+    SYMBOL,
+    PARAM_DECLARATION,
+    EXPRESSION
 };

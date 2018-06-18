@@ -1,3 +1,4 @@
+
 #pragma once
 
 /**
@@ -7,6 +8,11 @@
 class EulToken {
     public: virtual ~EulToken();
     public: virtual EulTokenType getType();
+
+
+    //region SERIALIZING
+    public: virtual void toJson(std::ostream& out, int tabs);
+    //endregion
 };
 
 std::ostream& operator<<(std::ostream& os, EulToken* tok);

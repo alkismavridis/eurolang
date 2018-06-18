@@ -13,6 +13,7 @@
     # include <string>
     # include <map>
     # include <forward_list>
+    # include <vector>
 
     #include "../core/EulToken/EulTokenType.h"
     #include "../core/EulToken/EulToken.h"
@@ -23,15 +24,27 @@
     #include "../core/EulToken/EulIdToken.h"
     #include "../core/EulAst/EulAstType.h"
     #include "../core/EulAst/EulAst.h"
-    #include "../core/EulAst/EulSymbol.h"
     #include "../core/EulAst/EulStatement/EulStatementType.h"
     #include "../core/EulAst/EulStatement/EulStatement.h"
     #include "../core/EulAst/EulStatement/EulImportStatement.h"
     #include "../core/EulAst/EulStatement/EulExportStatement.h"
 
+
+    #include "../core/EulAst/EulExpression/EulExpressionType.h"
+    #include "../core/EulAst/EulExpression/EulExpression.h"
+    #include "../core/EulAst/EulExpression/EulInfixExp.h"
+    #include "../core/EulAst/EulExpression/EulSuffixExp.h"
+    #include "../core/EulAst/EulExpression/EulPrefixExp.h"
+    #include "../core/EulAst/EulExpression/EulTokenExp.h"
+
+
+    #include "../core/EulAst/EulDeclaration/VarDeclaration.h"
+    #include "../core/EulAst/EulStatement/VarDeclarationStatement.h"
+
     #include "../core/EulSourceFile/EulSourceFile.h"
     #include "../core/EulProgram/EulProgram.h"
     #include "../core/Compiler/Compiler.h"
+    #include "../parser/EulParsingContext.h"
 
 
 
@@ -50,15 +63,14 @@
 
 // The parsing context.
 %parse-param { EulScanner &scanner }
-%parse-param { Compiler  *compiler  }
-%lex-param   { Compiler *compiler }
+%parse-param { EulParsingContext  *ctx  }
+%lex-param   { EulParsingContext  *ctx }
 
 
 %code {
     #include <iostream>
     #include <cstdlib>
     #include <fstream>
-
     #include "../lexer/EulScanner.h"
 
 
@@ -69,7 +81,7 @@
 }
 
 %define api.value.type variant
-// %define parse.assert
+%define parse.assert
 
 
 
@@ -146,11 +158,9 @@
     <EulIdToken*> ID
 ;
 
-%destructor { std::cout << "I destruct!!" << std::endl; } <*>
+%destructor {  } <*>
 
 
-
-%token <std::string> IDENTIFIER "identifier"
 
 
 %locations
@@ -159,21 +169,202 @@
 %printer { yyoutput << $$; } <*>;
 
 
+
+
+
+//region NON TERMINALS
+%type  <EulSourceFile*> source_file
+
+%type  <std::vector<EulStatement*>*> statements
+%type  <EulStatement*> statement
+
+%type  <std::vector<VarDeclaration*>*> parameter_declarations
+%type  <VarDeclaration*> parameter_declaration
+
+%type  <EulToken*> expression
+%type  <std::vector<EulToken*>*> expressions
+
+%type  <int> var_keyword
+//endregion
+
+
+
+//region OPERATOR PRECEDENCE
+
+%right ASSIGN ASSIGN_MOD ASSIGN_XOR ASSIGN_AND ASSIGN_STAR ASSIGN_MINUS ASSIGN_PLUS ASSIGN_OR ASSIGN_DIV ASSIGN_LSHIFT ASSIGN_RSHIFT
+%right QUESTION COLON
+%left OR
+%left AND
+%left BIN_OR
+%left XOR
+%left BIN_AND
+%left NOT_EQUALS NOT_SAME EQUALS SAME
+%left LESS LESS_EQUALS MORE MORE_EQUALS
+%left LSHIFT RSHIFT
+%left PLUS MINUS
+%left PERCENT STAR SLASH
+%right TILDE NOT DECREASE INCREASE
+%left DOT
+
+//endregion
+
+
+
+%start source_file
+
+
+
+//=============================================           =============================================
+//=============================================   RULES   =============================================
+//=============================================           =============================================
 %%
-list_option : END | list END;
 
-list
-  : item
-  | list item
-  ;
 
-item
-  : IF   { std::cout << "IF\n"; }
-  ;
 
+//========================== ROOT STRUCTURES ==============================
+source_file
+    : statements END {
+        ctx->sourceFile->statements = $1;
+        return 0;
+    }
+    | END { return 0; }
+    ;
+
+
+
+//============================== STATEMENTS  ==============================
+statements:
+    statements statement {
+        if ($1 == nullptr) $1 = new std::vector<EulStatement*>();
+        $1->push_back($2);
+        $$ = $1;
+    } |
+    statement {
+        $$ = new std::vector<EulStatement*>();
+        $$->push_back($1);
+    }
+
+
+
+var_keyword
+    : VAR { $$ = token::VAR; }
+    | CONST { $$ = token::CONST; }
+    | VAL { $$ = token::VAL; }
+    ;
+
+statement:
+
+    var_keyword parameter_declarations SEMICOLON {
+        $$ = new VarDeclarationStatement($1, $2);
+    } |
+
+    expression SEMICOLON {
+    }
+
+
+
+
+
+//============================== EXPRESSIONS  ==============================
+expression
+    : INT { $$ = $1; }
+    | FLOAT { $$ = $1; }
+    | STRING { $$ = $1; }
+    | CHAR { $$ = $1; }
+    | ID   { $$ = $1; }
+
+    | expression PLUS expression { $$ = new EulInfixExp($1, token::PLUS, $3); }
+    | expression MINUS expression { $$ = new EulInfixExp($1, token::MINUS, $3); }
+    | expression NOT_EQUALS expression { $$ = new EulInfixExp($1, token::NOT_EQUALS, $3); }
+    | expression NOT_SAME expression { $$ = new EulInfixExp($1, token::NOT_SAME, $3); }
+    | expression PERCENT expression { $$ = new EulInfixExp($1, token::PERCENT, $3); }
+    | expression ASSIGN_MOD expression { $$ = new EulInfixExp($1, token::ASSIGN_MOD, $3); }
+    | expression XOR expression { $$ = new EulInfixExp($1, token::XOR, $3); }
+    | expression ASSIGN_XOR expression { $$ = new EulInfixExp($1, token::ASSIGN_XOR, $3); }
+    | expression BIN_AND expression { $$ = new EulInfixExp($1, token::BIN_AND, $3); }
+    | expression AND expression { $$ = new EulInfixExp($1, token::AND, $3); }
+    | expression ASSIGN_AND expression { $$ = new EulInfixExp($1, token::ASSIGN_STAR, $3); }
+    | expression STAR expression { $$ = new EulInfixExp($1, token::STAR, $3); }
+    | expression ASSIGN_STAR expression { $$ = new EulInfixExp($1, token::ASSIGN_STAR, $3); }
+    | expression ASSIGN_MINUS expression { $$ = new EulInfixExp($1, token::ASSIGN_MINUS, $3); }
+    | expression ASSIGN expression { $$ = new EulInfixExp($1, token::ASSIGN, $3); }
+    | expression EQUALS expression { $$ = new EulInfixExp($1, token::EQUALS, $3); }
+    | expression SAME expression { $$ = new EulInfixExp($1, token::SAME, $3); }
+    | expression ASSIGN_PLUS expression { $$ = new EulInfixExp($1, token::ASSIGN_PLUS, $3); }
+    | expression BIN_OR expression { $$ = new EulInfixExp($1, token::BIN_OR, $3); }
+    | expression OR expression { $$ = new EulInfixExp($1, token::OR, $3); }
+    | expression ASSIGN_OR expression { $$ = new EulInfixExp($1, token::ASSIGN_OR, $3); }
+    | expression SLASH expression { $$ = new EulInfixExp($1, token::SLASH, $3); }
+    | expression ASSIGN_DIV expression { $$ = new EulInfixExp($1, token::ASSIGN_DIV, $3); }
+    | expression DOT expression { $$ = new EulInfixExp($1, token::DOT, $3); }
+    | expression LESS expression { $$ = new EulInfixExp($1, token::LESS, $3); }
+    | expression LESS_EQUALS expression { $$ = new EulInfixExp($1, token::LESS_EQUALS, $3); }
+    | expression LSHIFT expression { $$ = new EulInfixExp($1, token::LSHIFT, $3); }
+    | expression ASSIGN_LSHIFT expression { $$ = new EulInfixExp($1, token::ASSIGN_LSHIFT, $3); }
+    | expression MORE expression { $$ = new EulInfixExp($1, token::MORE, $3); }
+    | expression MORE_EQUALS expression { $$ = new EulInfixExp($1, token::MORE_EQUALS, $3); }
+    | expression RSHIFT expression { $$ = new EulInfixExp($1, token::RSHIFT, $3); }
+    | expression ASSIGN_RSHIFT expression { $$ = new EulInfixExp($1, token::ASSIGN_RSHIFT, $3); }
+
+    | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE        { $$ = $2; }
+    | expression PARENTHESIS_OPEN expressions PARENTHESIS_CLOSE        {  }     %prec DOT
+    | expression SQUARE_OPEN expressions SQUARE_CLOSE        {  }               %prec DOT
+
+
+    | MINUS expression { $$ = new EulPrefixExp(token::MINUS, $2); } %prec NOT
+    | TILDE expression { $$ = new EulPrefixExp(token::TILDE, $2); }
+    | NOT expression { $$ = new EulPrefixExp(token::NOT, $2); }
+    | DECREASE expression { $$ = new EulPrefixExp(token::DECREASE, $2); }
+    | INCREASE expression { $$ = new EulPrefixExp(token::INCREASE, $2); }
+
+    | expression DECREASE { $$ = new EulSuffixExp($1, token::DECREASE); }
+    | expression INCREASE { $$ = new EulSuffixExp($1, token::INCREASE); }
+    ;
+
+
+
+expressions:
+    expressions COMMA expression {
+        if ($1 == nullptr) $1 = new std::vector<EulToken*>();
+        $1->push_back($3);
+        $$ = $1;
+    } |
+    expression {
+        $$ = new std::vector<EulToken*>();
+        $$->push_back($1);
+    } |
+    %empty { $$ = nullptr; }
+    ;
+
+
+
+
+//======================== VAR DECLARATIONS AND FUNCTION PARAMETERS ============================
+parameter_declaration:
+    ID ASSIGN expression {
+        $$ = new VarDeclaration($1, $3);
+    } |
+    ID {
+        $$ = new VarDeclaration($1, nullptr);
+    }
+    ;
+
+
+
+parameter_declarations:
+    parameter_declarations COMMA parameter_declaration {
+        if ($1 == nullptr) $1 = new std::vector<VarDeclaration*>();
+        $1->push_back($3);
+        $$ = $1;
+    } |
+    parameter_declaration {
+        $$ = new std::vector<VarDeclaration*>();
+        $$->push_back($1);
+    }
+    ;
 %%
 
 
-void yy::EulParser::error( const location_type &l, const std::string &err_message ) {
-   std::cerr << "Error: " << err_message << " at " << l << "\n";
-}
+    void yy::EulParser::error( const location_type &l, const std::string &err_message ) {
+       std::cerr << "Error: " << err_message << " at " << l << "\n";
+    }

@@ -238,7 +238,8 @@ EulSyntaxType_STATEMENTS:
 
 
 //TODO
-EulSyntaxType_STATEMENT:
+EulSyntaxType_STATEMENT://========================== ROOT STRUCTURES ==============================
+
     EulSyntaxType_VAR_KEYWORD EulSyntaxType_PARAMETER_LIST EulTokenType_SEMICOLON {
         printf("EulSyntaxType_STATEMENT: EulSyntaxType_VAR_KEYWORD EulSyntaxType_PARAMETER_LIST\n");
 

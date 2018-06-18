@@ -4,8 +4,8 @@
 #include <map>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 
-#include "Assert.h"
 
 #include "../src/constants/Constants.h"
 
@@ -24,7 +24,7 @@
 #include "../src/core/EulAst/EulStatement/EulStatement.h"
 #include "../src/core/EulAst/EulStatement/EulImportStatement.h"
 #include "../src/core/EulAst/EulStatement/EulExportStatement.h"
-#include "../src/core/EulAst/EulSymbol.h"
+#include "../src/core/EulAst/EulDeclaration/VarDeclaration.h"
 
 #include "../src/core/EulSourceFile/EulSourceFile.h"
 #include "../src/core/EulProgram/EulProgram.h"
@@ -33,12 +33,19 @@
 #include "../src/lexer/EulScanner.h"
 
 
+#include "Assert.h"
+
+
+
 #include "./core/EulTokenTest.h"
 #include "./core/EulSourceFileTest.h"
 #include "./core/EulProgramTest.h"
 #include "./core/CompilerTest.h"
 
 #include "./lexer/EulScannerTest.h"
+#include "./parser/EulParserTest.h"
+
+
 
 
 int main() {
@@ -53,6 +60,7 @@ int main() {
 
 
     //3. Parser tests
+    EulParserTest::runAll();
 
 
     //4. Core generation Tests

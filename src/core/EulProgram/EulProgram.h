@@ -11,7 +11,7 @@
 */
 class EulProgram {
     //region FIELDS
-    public: EulSourceFile* entryPoint;	//a token of type EulTokenType_SOURCE_FILE than indicates where the program starts.
+    //public: EulSourceFile* entryPoint;	//a token of type EulTokenType_SOURCE_FILE than indicates where the program starts.
     public: std::map<std::string, EulSourceFile*> sources; /** all source files encountered until now. Parsed and not yet parsed (imported, waiting for parsing). */
     //endregion
 

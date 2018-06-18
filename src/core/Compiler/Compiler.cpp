@@ -1,13 +1,19 @@
 #include <string>
 #include <forward_list>
+#include <vector>
 #include <map>
+
+#include "../EulToken/EulTokenType.h"
+#include "../EulToken/EulToken.h"
+#include "../EulToken/EulIdToken.h"
 
 #include "../EulAst/EulStatement/EulStatementType.h"
 #include "../EulAst/EulAstType.h"
+#include "../EulAst/EulAst.h"
 #include "../EulAst/EulStatement/EulStatement.h"
 #include "../EulAst/EulStatement/EulImportStatement.h"
 #include "../EulAst/EulStatement/EulExportStatement.h"
-#include "../EulAst/EulSymbol.h"
+#include "../EulAst/EulDeclaration/VarDeclaration.h"
 
 #include "../EulSourceFile/EulSourceFile.h"
 #include "../EulProgram/EulProgram.h"
@@ -29,7 +35,7 @@ Compiler::Compiler(void (*onError)(Compiler* ths)) {
   this->errorCode = ErrorType_NO_ERROR;
 
   //4. setup the parser
-  this->currentSource = 0;
+  this->currentSource = nullptr;
 }
 
 
@@ -60,8 +66,9 @@ void Compiler::compile(EulSourceFile *target, std::istream *input) {
     this->currentSource = target;
 
     //2. Setup a scanner and a parser
+    EulParsingContext ctx(this, target);
     EulScanner scanner(input);
-    yy::EulParser parser(scanner, this);
+    yy::EulParser parser(scanner, &ctx);
 
     //3. Parse the source file
     parser.parse();

@@ -1,12 +1,13 @@
 #pragma once
 
-class EulExportStatement {
-
-
-
-
+class EulExportStatement : public EulStatement{
     //region OVERRIDES
-    public: EulStatementType getStatementType() { return EXPORT; }
-    public: EulAstType getAstType() { return STATEMENT; }
+    public: EulStatementType getStatementType();
+    //endregion
+
+
+
+    //region SERIALIZING
+    public: virtual void toJson(std::ostream& out, int tabs);
     //endregion
 };

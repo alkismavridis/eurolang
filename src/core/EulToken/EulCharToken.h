@@ -11,7 +11,7 @@ class Compiler;
 */
 class EulCharToken : public EulToken {
     //region FIELDS
-    public: unsigned long long int value;
+    public: unsigned long int value;
     public: unsigned char size; //in bytes
     //endregion
 
@@ -21,6 +21,12 @@ class EulCharToken : public EulToken {
     //region LIFE CYCLE
     public: EulCharToken(unsigned long int value, unsigned char size);
     public: EulCharToken(const char* text, unsigned int len, Compiler* compiler);
+    //endregion
+
+
+
+    //region SERIALIZING
+    public: virtual void toJson(std::ostream& out, int tabs);
     //endregion
 
 

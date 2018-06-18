@@ -6,5 +6,5 @@
 */
 class EulAst : public EulToken {
     public: virtual EulAstType getAstType();
-    public: virtual EulTokenType getType() { return AST; }
+    public: virtual EulTokenType getType();
 };

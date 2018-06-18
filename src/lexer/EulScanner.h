@@ -11,10 +11,7 @@
 
 class EulScanner : public yyFlexLexer {
     //region FIELDS
-    /* yyval ptr */
     private: yy::EulParser::semantic_type *yylval = nullptr;
-    /* location ptr */
-    //private: yy::EulParser::location_type *loc    = nullptr;
     //endregion
 
 
@@ -22,9 +19,7 @@ class EulScanner : public yyFlexLexer {
 
 
 
-    public: EulScanner(std::istream *in) : yyFlexLexer(in) {
-       // loc = new yy::EulParser::location_type();
-    };
+    public: EulScanner(std::istream *in) : yyFlexLexer(in) {};
 
 
 
@@ -51,5 +46,5 @@ class EulScanner : public yyFlexLexer {
 
    //get rid of override virtual function warning
     using FlexLexer::yylex;
-    public: virtual int yylex( yy::EulParser::semantic_type * const lval, yy::EulParser::location_type *location, Compiler *compiler );
+    public: virtual int yylex( yy::EulParser::semantic_type * const lval, yy::EulParser::location_type *location, EulParsingContext  *ctx );
 };

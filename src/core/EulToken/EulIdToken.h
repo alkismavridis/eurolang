@@ -19,5 +19,11 @@ class EulIdToken : public EulToken {
 
 
 
+    //region SERIALIZING
+    public: virtual void toJson(std::ostream& out, int tabs);
+    //endregion
+
+
+
     public: virtual EulTokenType getType();
 };

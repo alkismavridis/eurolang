@@ -84,6 +84,112 @@ class Assert {
     	exit(1);
     }
     //endregion
+
+
+
+
+    //region TOKEN TYPES + VALUES
+    public: static EulIntToken* intToken(EulToken* token, unsigned long int value, unsigned char size, char isUnsigned, const std::string& label) {
+        Assert::equals(EulTokenType::INT, token->getType(), label + "__tokenType");
+
+        EulIntToken* intTok = (EulIntToken*)token;
+        Assert::equals(value, intTok->value, label + "__value");
+        Assert::equals(size, intTok->size, label + "__size");
+        Assert::equals(isUnsigned, intTok->isUnsigned, label + "__isUnsigned");
+
+        return intTok;
+    }
+
+
+    public: static EulFloatToken* floatToken(EulToken* token, double value, unsigned char size, const std::string& label) {
+        Assert::equals(EulTokenType::FLOAT, token->getType(), label + "__tokenType");
+
+        EulFloatToken* floatTok = (EulFloatToken*)token;
+        Assert::equals(value, floatTok->value, label + "__value");
+        Assert::equals(size, floatTok->size, label + "__size");
+
+        return floatTok;
+    }
+
+    public: static EulIdToken* idToken(EulToken* token, const std::string& name, const std::string& label) {
+        Assert::equals(EulTokenType::ID, token->getType(), label + "__tokenType");
+
+        EulIdToken* idTok = (EulIdToken*)token;
+        Assert::equals(name, idTok->name, label + "__name");
+
+        return idTok;
+    }
+
+    public: static EulCharToken* charToken(EulToken* token, unsigned long long int value, unsigned char size, const std::string& label) {
+        Assert::equals(EulTokenType::CHAR, token->getType(), label + "__tokenType");
+
+        EulCharToken* charTok = (EulCharToken*)token;
+        Assert::equals(value, charTok->value, label + "__value");
+        Assert::equals(size, charTok->size, label + "__size");
+
+        return charTok;
+    }
+
+    public: static EulStringToken* stringToken(EulToken* token, const std::string value, const std::string& label) {
+        Assert::equals(EulTokenType::STRING, token->getType(), label + "__tokenType");
+
+        EulStringToken* strTok = (EulStringToken*)token;
+        Assert::equals(value, strTok->value, label + "__value");
+
+        return strTok;
+    }
+    //endregion
+
+
+
+    //region TOKEN TYPES
+    public: static EulAst* ast(EulToken* token, const std::string& label) {
+        Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
+        EulAst* ret = (EulAst*)token;
+        return ret;
+    }
+
+    public: static EulExpression* expression(EulToken* token, const std::string& label) {
+        Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
+        EulAst* ast = (EulAst*)token;
+
+        Assert::equals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
+        return (EulExpression*)ast;
+    }
+
+    public: static EulInfixExp* infixExp(EulToken* token, const std::string& label) {
+        Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
+        EulAst* ast = (EulAst*)token;
+
+        Assert::equals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
+        EulExpression* exp = (EulExpression*)ast;
+
+        Assert::equals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), label + "__expressionType");
+        return (EulInfixExp*)exp;
+    }
+
+    public: static EulPrefixExp* prefixExp(EulToken* token, const std::string& label) {
+        Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
+        EulAst* ast = (EulAst*)token;
+
+        Assert::equals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
+        EulExpression* exp = (EulExpression*)ast;
+
+        Assert::equals(EulExpressionType::PREFIX_EXP, exp->getExpressionType(), label + "__expressionType");
+        return (EulPrefixExp*)exp;
+    }
+
+    public: static EulSuffixExp* suffixExp(EulToken* token, const std::string& label) {
+        Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
+        EulAst* ast = (EulAst*)token;
+
+        Assert::equals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
+        EulExpression* exp = (EulExpression*)ast;
+
+        Assert::equals(EulExpressionType::SUFFIX_EXP, exp->getExpressionType(), label + "__expressionType");
+        return (EulSuffixExp*)exp;
+    }
+    //endregion
 };
 
 
