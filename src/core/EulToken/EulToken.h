@@ -12,6 +12,7 @@ class EulToken {
 
     //region SERIALIZING
     public: virtual void toJson(std::ostream& out, int tabs);
+    public: static void toJson(std::ostream& out, std::vector<EulToken*>* tokens, int tabs);
     //endregion
 };
 

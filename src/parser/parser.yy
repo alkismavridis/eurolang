@@ -24,6 +24,8 @@
     #include "../core/EulToken/EulIdToken.h"
     #include "../core/EulAst/EulAstType.h"
     #include "../core/EulAst/EulAst.h"
+    #include "../core/EulAst/EulType/EulType.h"
+    #include "../core/EulAst/EulSymbol/EulSymbol.h"
     #include "../core/EulAst/EulStatement/EulStatementType.h"
     #include "../core/EulAst/EulStatement/EulStatement.h"
     #include "../core/EulAst/EulStatement/EulImportStatement.h"
@@ -36,6 +38,9 @@
     #include "../core/EulAst/EulExpression/EulSuffixExp.h"
     #include "../core/EulAst/EulExpression/EulPrefixExp.h"
     #include "../core/EulAst/EulExpression/EulTokenExp.h"
+    #include "../core/EulAst/EulExpression/EulFunctionCallExp.h"
+    #include "../core/EulAst/EulExpression/EulArrayAccessExp.h"
+    #include "../core/EulAst/EulStatement/EulExpStatement.h"
 
 
     #include "../core/EulAst/EulDeclaration/VarDeclaration.h"
@@ -43,8 +48,11 @@
 
     #include "../core/EulSourceFile/EulSourceFile.h"
     #include "../core/EulProgram/EulProgram.h"
+    #include "../core/Compiler/EulError/EulError.h"
     #include "../core/Compiler/Compiler.h"
     #include "../parser/EulParsingContext.h"
+
+    #include "../parser/EulParserUtils.impl.h"
 
 
 
@@ -180,6 +188,7 @@
 
 %type  <std::vector<VarDeclaration*>*> parameter_declarations
 %type  <VarDeclaration*> parameter_declaration
+%type  <EulType*> eul_type
 
 %type  <EulToken*> expression
 %type  <std::vector<EulToken*>*> expressions
@@ -205,7 +214,7 @@
 %left PERCENT STAR SLASH
 %right TILDE NOT DECREASE INCREASE
 %left DOT
-
+%precedence PARENTHESIS_OPEN SQUARE_OPEN
 //endregion
 
 
@@ -225,9 +234,10 @@
 source_file
     : statements END {
         ctx->sourceFile->statements = $1;
+        $$ = nullptr;
         return 0;
     }
-    | END { return 0; }
+    | END { $$ = nullptr; return 0; }
     ;
 
 
@@ -236,12 +246,12 @@ source_file
 statements:
     statements statement {
         if ($1 == nullptr) $1 = new std::vector<EulStatement*>();
-        $1->push_back($2);
+        if ($2!=nullptr) $1->push_back($2);
         $$ = $1;
     } |
     statement {
         $$ = new std::vector<EulStatement*>();
-        $$->push_back($1);
+        if ($1!=nullptr) $$->push_back($1);
     }
 
 
@@ -253,12 +263,16 @@ var_keyword
     ;
 
 statement:
-
     var_keyword parameter_declarations SEMICOLON {
         $$ = new VarDeclarationStatement($1, $2);
+        EulParserUtils::addSymbolsToSourceFile($1, $2, ctx);
     } |
 
     expression SEMICOLON {
+        $$ = new EulExpStatement($1);
+    } |
+    NL {
+        $$ = nullptr;
     }
 
 
@@ -307,8 +321,8 @@ expression
     | expression ASSIGN_RSHIFT expression { $$ = new EulInfixExp($1, token::ASSIGN_RSHIFT, $3); }
 
     | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE        { $$ = $2; }
-    | expression PARENTHESIS_OPEN expressions PARENTHESIS_CLOSE        {  }     %prec DOT
-    | expression SQUARE_OPEN expressions SQUARE_CLOSE        {  }               %prec DOT
+    | expression PARENTHESIS_OPEN expressions PARENTHESIS_CLOSE        {  $$ = new EulFunctionCallExp($1, $3); }
+    | expression SQUARE_OPEN expression SQUARE_CLOSE        { $$ = new EulArrayAccessExp($1, $3 ); }
 
 
     | MINUS expression { $$ = new EulPrefixExp(token::MINUS, $2); } %prec NOT
@@ -340,12 +354,25 @@ expressions:
 
 
 //======================== VAR DECLARATIONS AND FUNCTION PARAMETERS ============================
+eul_type:
+    ID {
+        $$ = new EulType($1->name);
+        delete $1;
+    }
+    ;
+
 parameter_declaration:
     ID ASSIGN expression {
-        $$ = new VarDeclaration($1, $3);
+        $$ = new VarDeclaration($1, nullptr, $3);
     } |
     ID {
-        $$ = new VarDeclaration($1, nullptr);
+        $$ = new VarDeclaration($1, nullptr, nullptr);
+    } |
+    ID COLON eul_type {
+        $$ = new VarDeclaration($1, $3, nullptr);
+    } |
+    ID COLON eul_type ASSIGN expression {
+        $$ = new VarDeclaration($1, $3, $5);
     }
     ;
 

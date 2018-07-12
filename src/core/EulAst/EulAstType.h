@@ -5,5 +5,7 @@ enum EulAstType {
     STATEMENT,
     SYMBOL,
     PARAM_DECLARATION,
-    EXPRESSION
+    EXPRESSION,
+    EUL_TYPE,
+    EUL_SYMBOL
 };

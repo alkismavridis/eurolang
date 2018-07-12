@@ -76,7 +76,7 @@ void EulScanner::skipMultiLineComment(Compiler* compiler, yy::EulParser::locatio
         break;
 
       case YY_NULL:
-        compiler->makeLexerError("End of file while parsing comment");
+        compiler->addError(EulErrorType::LEXER, "End of file while parsing comment");
         return;
 
       default: loc->columns();
@@ -141,7 +141,7 @@ EulStringToken* EulScanner::parseStringValue(Compiler* compiler, yy::EulParser::
 
                 //check if it failed
                 if (escaped==-1) {
-                    compiler->makeLexerError("Illegal escaped character inside String.");
+                    compiler->addError(EulErrorType::LEXER, "Illegal escaped character inside String.");
                     return 0;
                 }
 
@@ -151,7 +151,7 @@ EulStringToken* EulScanner::parseStringValue(Compiler* compiler, yy::EulParser::
             }
 
             case YY_NULL: {
-                compiler->makeLexerError("End of file while parsing String.");
+                compiler->addError(EulErrorType::LEXER, "End of file while parsing String.");
                 return 0;
             }
 
@@ -173,14 +173,14 @@ EulCharToken* EulScanner::parseEscapedChar(Compiler* compiler, yy::EulParser::lo
 
     //check for failure.
     if (escaped==-1) {
-        compiler->makeLexerError("Illegal escaped character.");
+        compiler->addError(EulErrorType::LEXER, "Illegal escaped character.");
         return 0;
     }
 
     //read closing ' and return error if it is not found.
     c = this->yyinput();
     if (c != '\'') {
-        compiler->makeLexerError("Closing ' expected in char literal.");
+        compiler->addError(EulErrorType::LEXER, "Closing ' expected in char literal.");
         return 0;
     }
     loc->columns();

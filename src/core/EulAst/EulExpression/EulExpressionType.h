@@ -5,5 +5,7 @@ enum EulExpressionType {
     PREFIX_EXP,
     SUFFIX_EXP,
     INFIX_EXP,
-    TOKEN
+    TOKEN,
+    FUNCTION_CALL,
+    ARRAY_ACCESS
 };

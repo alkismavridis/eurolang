@@ -128,9 +128,7 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::END, t + "C3");
 
         //end of file while parsing. This must generate an appropriate error.
-        compiler.clearError();
-        Assert::equals(ErrorType_NO_ERROR, compiler.errorCode, t + "D1");
-
+        compiler.clearErrors();
         stream = std::stringstream("123/*\nabcdefgh\n12");
         scanner.switch_streams(&stream);
         loc.initialize();
@@ -139,8 +137,9 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "D3");
 
 
-        Assert::equals(ErrorType_LEXER, compiler.errorCode, t + "D4");
-        Assert::equals("End of file while parsing comment", compiler.errorMessage, t + "D5");
+        Assert::equals(1, compiler.errors.size(), t + "D4");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "D4");
+        Assert::equals("End of file while parsing comment", compiler.errors[0]->message, t + "D5");
    }
 
 
@@ -442,42 +441,42 @@ class EulScannerTest {
 
 
         //test failed escaped sequenses
-        compiler.clearError();
-        Assert::equals(ErrorType_NO_ERROR, compiler.errorCode, t + "E1");
+        compiler.clearErrors();
 
         stream = std::stringstream("'\\w'");
         scanner.switch_streams(&stream);
         loc.initialize();
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "E2");
         checkLocation(&loc, 1, 1, 1, 4, t + "E2_loc");
-        Assert::equals(ErrorType_LEXER, compiler.errorCode, t + "E3");
-        Assert::equals("Illegal escaped character.", compiler.errorMessage, t + "E4");
+        Assert::equals(1, compiler.errors.size(), t + "E3");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "E4");
+        Assert::equals("Illegal escaped character.", compiler.errors[0]->message, t + "E5");
 
 
         //EOF during escaped character
-        compiler.clearError();
-        Assert::equals(ErrorType_NO_ERROR, compiler.errorCode, t + "F1");
+        compiler.clearErrors();
 
         stream = std::stringstream("'\\");
         scanner.switch_streams(&stream);
         loc.initialize();
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "F2");
         checkLocation(&loc, 1, 1, 1, 4, t + "F2_loc");
-        Assert::equals(ErrorType_LEXER, compiler.errorCode, t + "F3");
-        Assert::equals("Illegal escaped character.", compiler.errorMessage, t + "F4");
+        Assert::equals(1, compiler.errors.size(), t + "F3");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "F4");
+        Assert::equals("Illegal escaped character.", compiler.errors[0]->message, t + "F5");
 
 
         //To many characters after escaped sequence error
-        compiler.clearError();
-        Assert::equals(ErrorType_NO_ERROR, compiler.errorCode, t + "G1");
+        compiler.clearErrors();
 
         stream = std::stringstream("'\\nnn'");
         scanner.switch_streams(&stream);
         loc.initialize();
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "G2");
         checkLocation(&loc, 1, 1, 1, 4, t + "G2_loc");
-        Assert::equals(ErrorType_LEXER, compiler.errorCode, t + "G3");
-        Assert::equals("Closing ' expected in char literal.", compiler.errorMessage, t + "G4");
+        Assert::equals(1, compiler.errors.size(), t + "G3");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "G4");
+        Assert::equals("Closing ' expected in char literal.", compiler.errors[0]->message, t + "G5");
     }
 
 
@@ -512,40 +511,40 @@ class EulScannerTest {
         checkLocation(&loc, 2, 20, 2, 23, "B2_loc");
 
         //EOF during string parsing
-        compiler.clearError();
-        Assert::equals(ErrorType_NO_ERROR, compiler.errorCode, t + "C1");
+        compiler.clearErrors();
+        Assert::equals(0, compiler.errors.size(), t + "C1");
 
         stream = std::stringstream("\" End of file will be found before string is closed.");
         scanner.switch_streams(&stream);
         loc.initialize();
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "C2");
         checkLocation(&loc, 1, 1, 1, 53, t + "C2_loc");
-        Assert::equals(ErrorType_LEXER, compiler.errorCode, t + "C3");
-        Assert::equals("End of file while parsing String.", compiler.errorMessage, t + "C4");
+        Assert::equals(1, compiler.errors.size(), t + "C3");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "C3");
+        Assert::equals("End of file while parsing String.", compiler.errors[0]->message, t + "C4");
 
         //non existent escape character
-        compiler.clearError();
-        Assert::equals(ErrorType_NO_ERROR, compiler.errorCode, t + "D1");
+        compiler.clearErrors();
 
         stream = std::stringstream("\"this escaped character does NOT exist: \\y \"");
         scanner.switch_streams(&stream);
         loc.initialize();
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "D2");
         checkLocation(&loc, 1, 1, 1, 43, t + "D2_loc"); //43 is the location that the error happened
-        Assert::equals(ErrorType_LEXER, compiler.errorCode, t + "D3");
-        Assert::equals("Illegal escaped character inside String.", compiler.errorMessage, t + "D4");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "D3");
+        Assert::equals("Illegal escaped character inside String.", compiler.errors[0]->message, t + "D4");
 
         //EOF during escaped character
-        compiler.clearError();
-        Assert::equals(ErrorType_NO_ERROR, compiler.errorCode, t + "E1");
+        compiler.clearErrors();
 
         stream = std::stringstream("\" EOF during weird situation: \\");
         scanner.switch_streams(&stream);
         loc.initialize();
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "E2");
         checkLocation(&loc, 1, 1, 1, 33, t + "E2_loc");
-        Assert::equals(ErrorType_LEXER, compiler.errorCode, t + "E3");
-        Assert::equals("Illegal escaped character inside String.", compiler.errorMessage, t + "E4");
+        Assert::equals(1, compiler.errors.size(), t + "E3");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "E3");
+        Assert::equals("Illegal escaped character inside String.", compiler.errors[0]->message, t + "E4");
     }
     //endregion
 

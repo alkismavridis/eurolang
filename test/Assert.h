@@ -138,6 +138,17 @@ class Assert {
 
         return strTok;
     }
+
+    public: static EulType* eulType(EulToken* token, const std::string& name, const std::string& label) {
+        Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
+        EulAst* ast = (EulAst*)token;
+
+        Assert::equals(EulAstType::EUL_TYPE, ast->getAstType(), label + "__astType");
+        EulType* type = (EulType*)ast;
+
+        Assert::equals(name, type->name, label + "__typeName");
+        return type;
+    }
     //endregion
 
 
@@ -188,6 +199,37 @@ class Assert {
 
         Assert::equals(EulExpressionType::SUFFIX_EXP, exp->getExpressionType(), label + "__expressionType");
         return (EulSuffixExp*)exp;
+    }
+
+    public: static EulFunctionCallExp* funcCall(EulToken* token, const std::string& label) {
+        Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
+        EulAst* ast = (EulAst*)token;
+
+        Assert::equals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
+        EulExpression* exp = (EulExpression*)ast;
+
+        Assert::equals(EulExpressionType::FUNCTION_CALL, exp->getExpressionType(), label + "__expressionType");
+        return (EulFunctionCallExp*)exp;
+    }
+
+    public: static EulArrayAccessExp* arrayAccess(EulToken* token, const std::string& label) {
+        Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
+        EulAst* ast = (EulAst*)token;
+
+        Assert::equals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
+        EulExpression* exp = (EulExpression*)ast;
+
+        Assert::equals(EulExpressionType::ARRAY_ACCESS, exp->getExpressionType(), label + "__expressionType");
+        return (EulArrayAccessExp*)exp;
+    }
+
+
+    public: static EulStatement* statement(EulToken* token, const std::string& label) {
+        Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
+        EulAst* ast = (EulAst*)token;
+
+        Assert::equals(EulAstType::STATEMENT, ast->getAstType(), label + "__astType");
+        return (EulStatement*)ast;
     }
     //endregion
 };

@@ -4,7 +4,7 @@
     # include <cstdlib>
     # include <string>
     # include "EulParser.tab.hh"
-    # include "../constants/Constants.h"
+    # include "../core/Compiler/EulError/EulError.h"
     # include "../lexer/EulScanner.h"
     # include "../lexer/EulScanner.impl.h"
 
@@ -138,7 +138,7 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 
 "\"" {
     EulStringToken* ret = this->parseStringValue(ctx->compiler, loc);
-    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    if (ctx->compiler->errors.size() != 0) return yy::EulParser::token::ERROR;
 
     yylval->build<EulStringToken*>() = ret;
     return yy::EulParser::token::STRING;
@@ -146,7 +146,7 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 
 "'\\" {
     EulCharToken* ret = this->parseEscapedChar(ctx->compiler, loc);
-    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    if (ctx->compiler->errors.size() != 0) return yy::EulParser::token::ERROR;
 
     yylval->build<EulCharToken*>() = ret;
     return yy::EulParser::token::CHAR;
@@ -154,7 +154,7 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 
 "'"{ANY_UNICODE}"'"	{
     EulCharToken* ret = new EulCharToken(yytext, yyleng, ctx->compiler);
-    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    if (ctx->compiler->errors.size() != 0) return yy::EulParser::token::ERROR;
 
     yylval->build<EulCharToken*>() = ret;
     return yy::EulParser::token::CHAR;
@@ -162,12 +162,12 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 
 "/*"  {
     this->skipMultiLineComment(ctx->compiler, loc);
-    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    if (ctx->compiler->errors.size() != 0) return yy::EulParser::token::ERROR;
 }
 
 "//"	{
     this->skipSingleLineComment(loc);
-    if (ctx->compiler->errorCode != ErrorType_NO_ERROR) return yy::EulParser::token::ERROR;
+    if (ctx->compiler->errors.size() != 0) return yy::EulParser::token::ERROR;
     return yy::EulParser::token::NL;
 }
 
@@ -178,7 +178,7 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 <<EOF>> return yy::EulParser::token::END;
 
 . {
-  ctx->compiler->makeLexerError("Unexpected character\n");
+  ctx->compiler->addError(EulErrorType::LEXER, "Unexpected character\n");
   return yy::EulParser::token::ERROR;
 }
 

@@ -1,53 +1,34 @@
 /** On this file, we will implement all methods from every header file on this "package". */
 
-#include <string>
-#include <forward_list>
-#include <vector>
-#include <sstream>
-#include <map>
-#include <iostream>
-
-
-#include "../../constants/Constants.h"
-#include "EulTokenType.h"
-#include "EulToken.h"
-#include "EulCharToken.h"
-#include "EulFloatToken.h"
-#include "EulIdToken.h"
-#include "EulIntToken.h"
-#include "EulStringToken.h"
-
-
-#include "../EulAst/EulAstType.h"
-#include "../EulAst/EulAst.h"
-
-#include "../EulAst/EulDeclaration/VarDeclaration.h"
-
-
-#include "../EulAst/EulStatement/EulStatementType.h"
-#include "../EulAst/EulStatement/EulStatement.h"
-#include "../EulAst/EulStatement/EulImportStatement.h"
-#include "../EulAst/EulStatement/EulExportStatement.h"
-
-
-#include "../EulSourceFile/EulSourceFile.h"
-#include "../EulProgram/EulProgram.h"
-#include "../Compiler/Compiler.h"
-
-
 
 //region BASE CLASS
 EulToken::~EulToken() {}
 EulTokenType EulToken::getType() { return UNKNOWN; }
 
 void EulToken::toJson(std::ostream& out, int tabs) {
-    out << "{\"type\":\"EulToken\"}" << std::endl;
+    out << "{\"type\":\"EulToken\"}";
 }
 
 
 std::ostream& operator<<(std::ostream& os, EulToken* tok) {
     tok->toJson(os, 0);
     return os;
+}
+
+void EulToken::toJson(std::ostream& out, std::vector<EulToken*>* tokens, int tabs) {
+    out << "[" << std::endl;
+
+    for (auto const& t : *tokens) {
+        for (int i=tabs; i>=0; --i) out << "\t";
+
+        if (t!=nullptr) t->toJson(out, tabs+1);
+        else out << "null";
+
+        out << "," << std::endl;
+    }
+
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "]";
 }
 //endregion
 
@@ -80,7 +61,7 @@ EulCharToken::EulCharToken(const char* text, unsigned int len, Compiler* compile
             break;
 
         default:
-            compiler->makeLexerError("Invalid char size");
+            compiler->addError(EulErrorType::LEXER, "Invalid char size");
             return;
     }
 }
@@ -129,7 +110,7 @@ void EulFloatToken::toJson(std::ostream& out, int tabs) {
     out << "\"type\":\"EulFloatToken\"," << std::endl;
 
     for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"value\":" <<  this->value << std::endl;
+    out << "\"value\": " <<  this->value << std::endl;
 
     for (int i=tabs-1; i>=0; --i) out << "\t";
     out << "}";
@@ -184,7 +165,13 @@ void EulIntToken::toJson(std::ostream& out, int tabs) {
     out << "\"type\":\"EulIntToken\"," << std::endl;
 
     for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"value\":" <<  this->value << std::endl;
+    out << "\"value\":" <<  this->value << "," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"size\":" <<  (int) this->size << "," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"isUnsigned\": " <<  (int) this->isUnsigned << std::endl;
 
     for (int i=tabs-1; i>=0; --i) out << "\t";
     out << "}";

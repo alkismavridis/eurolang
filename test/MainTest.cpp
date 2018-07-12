@@ -1,3 +1,4 @@
+//region EXTERNAL IMPORTS
 #include <iostream>
 #include <forward_list>
 #include <sstream>
@@ -5,8 +6,11 @@
 #include <cstdlib>
 #include <cstring>
 #include <vector>
+//endregion
 
 
+
+//region APP HEADERS AND TEST UTILS
 #include "../src/constants/Constants.h"
 
 #include "../src/core/EulToken/EulTokenType.h"
@@ -19,6 +23,8 @@
 
 #include "../src/core/EulAst/EulAstType.h"
 #include "../src/core/EulAst/EulAst.h"
+#include "../src/core/EulAst/EulType/EulType.h"
+#include "../src/core/EulAst/EulSymbol/EulSymbol.h"
 
 #include "../src/core/EulAst/EulStatement/EulStatementType.h"
 #include "../src/core/EulAst/EulStatement/EulStatement.h"
@@ -28,14 +34,19 @@
 
 #include "../src/core/EulSourceFile/EulSourceFile.h"
 #include "../src/core/EulProgram/EulProgram.h"
+#include "../src/core/Compiler/EulError/EulError.h"
 #include "../src/core/Compiler/Compiler.h"
-
 #include "../src/lexer/EulScanner.h"
 
-
 #include "Assert.h"
+//endregion
 
 
+
+
+
+//region IMPLEMENTATIONS
+#include "../src/core/Core.module.h"
 
 #include "./core/EulTokenTest.h"
 #include "./core/EulSourceFileTest.h"
@@ -44,6 +55,11 @@
 
 #include "./lexer/EulScannerTest.h"
 #include "./parser/EulParserTest.h"
+//endregion
+
+
+
+
 
 
 

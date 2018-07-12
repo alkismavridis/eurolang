@@ -21,10 +21,8 @@ class Compiler {
     */
     public: EulProgram program;
 
-
-    //error related fields
-    public: unsigned char errorCode;
-    public: std::string errorMessage;
+    /** *Here we will store the error object, if any happens. */
+    public: std::vector<EulError*> errors;
     //endregion
 
 
@@ -32,6 +30,7 @@ class Compiler {
 
     //region LIFE CYCLE
     public: Compiler(void (*onError)(Compiler*));
+    public: ~Compiler();
     public: void reset(); //ths is just for unit testing purposes. It re-initializes the src field.
     //endregion
 
@@ -50,9 +49,8 @@ class Compiler {
 
 
     //region ERROR RELATED ACTIONS
-    public: void makeLexerError(const std::string& message);
-    public: void makeSemanticError(const std::string& message);
-    public: void makeFileNotFoundError(const std::string& message);
-    public: void clearError();
+    public: void addError(const EulError& error);
+    public: void addError(int errorType, const std::string& message);
+    public: void clearErrors();
     //endregion
 };

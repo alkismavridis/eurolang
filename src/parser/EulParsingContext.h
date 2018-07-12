@@ -6,7 +6,7 @@
     will be available during parsing.
 
     It will contain a reference to the currently parsing EulSourceFile, to the compiler itself,
-    and will contain temporary data that the parser needs, such as state flags, scope stack andmore.
+    and will contain temporary data that the parser needs, such as state flags, scope stack and more.
 */
 class EulParsingContext {
     //region FIELDS

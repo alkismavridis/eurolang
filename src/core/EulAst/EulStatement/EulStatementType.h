@@ -4,5 +4,6 @@ enum EulStatementType {
     UNKNOWN_STATEMENT,
     VAR_DECLARATION,
     IMPORT,
-    EXPORT
+    EXPORT,
+    EXPRESSION_STATEMENT
 };

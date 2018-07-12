@@ -13,6 +13,7 @@ class EulProgram {
     //region FIELDS
     //public: EulSourceFile* entryPoint;	//a token of type EulTokenType_SOURCE_FILE than indicates where the program starts.
     public: std::map<std::string, EulSourceFile*> sources; /** all source files encountered until now. Parsed and not yet parsed (imported, waiting for parsing). */
+    public: std::map<std::string, EulSymbol*> globalDeclarations;
     //endregion
 
 
@@ -20,6 +21,10 @@ class EulProgram {
     //region LIFE CYCLE
     public: EulProgram();
     public: ~EulProgram();
+
+
+    private: void initGlobals();
+    public: void reset();
     //endregion
 
 
@@ -38,7 +43,7 @@ class EulProgram {
       Otherwise, NULL will be returned.
 
     */
-    EulSourceFile* getSource(const std::string& id, unsigned char createIfNotExists);
+    public: EulSourceFile* getSource(const std::string& id, unsigned char createIfNotExists);
 
     /**
       Will be probably called by the Compiler object every time it needs to get the next source file.
@@ -47,6 +52,6 @@ class EulProgram {
       Please note that only parsed files go to this list.
       Files that are founded to be "imported", but not yet parsed, are stored int a different list.
     */
-    EulSourceFile* nextPendingSource();
+    public: EulSourceFile* nextPendingSource();
     //endregion
 };

@@ -1,6 +1,6 @@
 #pragma once
 
 class EulStatement : public EulAst {
-    public: EulStatementType getStatementType();
+    public: virtual EulStatementType getStatementType();
     public: EulAstType getAstType();
 };

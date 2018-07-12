@@ -1,17 +1,18 @@
 #pragma once
 
-class VarDeclaration : public EulAst {
+class EulSymbol : public EulAst {
     //region FIELDS
-    public: EulIdToken* id;
+    public: int changeType; //one of yy::EulParser::token
+    public: std::string name;
     public: EulType* varType;
-    public: EulToken* value; //either an expression or a IntToken, CharToken etc.
+    public: EulToken* value;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: VarDeclaration(EulIdToken* id, EulType* varType, EulToken* value);
-    public: virtual ~VarDeclaration();
+    public: EulSymbol(int changeType, const std::string& name, EulType* varType, EulToken* value);
+    public: virtual ~EulSymbol();
     //endregion
 
 
@@ -19,7 +20,6 @@ class VarDeclaration : public EulAst {
     //region SERIALIZING
     public: virtual void toJson(std::ostream& out, int tabs);
     //endregion
-
 
 
 

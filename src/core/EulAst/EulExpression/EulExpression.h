@@ -1,6 +1,6 @@
 #pragma once
 
-class EulExpression : public EulAst {
+class EulExpression : public EulStatement {
     //region OVERRIDES
     public: EulAstType getAstType();
     public: virtual EulExpressionType getExpressionType();

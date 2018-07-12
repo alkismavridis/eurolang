@@ -93,7 +93,7 @@ void emmitObjCode(Module* module) {
     }
 
     legacy::PassManager pass;
-    auto FileType = TargetMachine::CGFT_ObjectFile;
+    auto FileType = TargetMachine::CodeGenFileType::CGFT_ObjectFile;
 
     if (TargetMachine->addPassesToEmitFile(pass, dest, FileType)) {
       errs() << "TargetMachine can't emit a file of this type";
