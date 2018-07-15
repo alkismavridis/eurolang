@@ -1,4 +1,8 @@
 /** On this file, we will implement all methods from every header file on this "package". */
+#pragma once
+
+#include "EulAst.CodeGen.impl.h"
+
 
 
 
@@ -372,14 +376,15 @@ EulAstType EulType::getAstType() { return EUL_TYPE; }
 
 
 //region EUL SYMBOL
-EulSymbol::EulSymbol(int changeType, const std::string& name, EulType* varType, EulToken* value) {
+EulSymbol::EulSymbol(int changeType, EulType* varType, EulToken* value, char destroyContent) {
     this->changeType = changeType;
-    this->name = name;
     this->varType = varType;
     this->value = value;
+    this->destroyContent = destroyContent;
 }
 
 EulSymbol::~EulSymbol() {
+    if (!destroyContent) return;
     if (this->varType!=nullptr) delete this->varType;
     if (this->value!=nullptr) delete this->value;
 }
@@ -391,9 +396,6 @@ void EulSymbol::toJson(std::ostream& out, int tabs) {
 
     for (int i=tabs; i>=0; --i) out << "\t";
     out << "\"changeType\": " << this->changeType << "," << std::endl;
-
-    for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"name\":\"" << this->name << "\"," << std::endl;
 
     //print var type
     for (int i=tabs; i>=0; --i) out << "\t";

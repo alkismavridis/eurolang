@@ -1,5 +1,6 @@
 #include "./EulToken/EulToken.module.h"
 #include "./EulAst/EulAst.module.h"
+#include "./EulScope/EulScope.impl.h"
 #include "./EulSourceFile/EulSourceFile.impl.h"
 #include "./EulProgram/EulProgram.impl.h"
 #include "./Compiler/Compiler.module.h"

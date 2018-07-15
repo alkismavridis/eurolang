@@ -1,30 +1,17 @@
 #pragma once
 
 
-
-
-
-    # include <iostream>
-
-
 class EulParserUtils {
     //region SYMBOL DECLARATIONS
-    public: static void addSymbolsToSourceFile(int changeType, std::vector<VarDeclaration*>* newDeclarations, EulParsingContext* ctx) {
+    /*public: static void addSymbolsToSourceFile(int changeType, std::vector<VarDeclaration*>* newDeclarations, EulParsingContext* ctx) {
         if (newDeclarations == nullptr) return;
 
 
-        std::map<std::string, EulSymbol*>* alreadyDeclaredSymbols = &ctx->sourceFile->symbols;
+        EulScope* scope = &ctx->sourceFile->scope;
         for (auto const& decl : *newDeclarations) {
-            const std::string name = decl->id->name;
-
-            //1. Check if symbol is already declared in the scope
-            if(ctx->sourceFile->getSymbol(name) != nullptr) {
-                ctx->compiler->addError(EulErrorType::SEMANTIC, "Illegal attempt to redefine symbol: " + name);
-                return;
-            }
-
-            alreadyDeclaredSymbols->operator[](name) = new EulSymbol(changeType, name, decl->varType, decl->value);
+            const bool success = scope->declare(decl->id->name, new EulSymbol(changeType, decl->varType, decl->value, 0));
+            if (!success) ctx->compiler->addError(EulErrorType::SEMANTIC, "Duplicate symbol declaration: "+decl->id->name);
         }
-    }
+    }*/
     //endregion
 };

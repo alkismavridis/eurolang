@@ -11,17 +11,18 @@ class EulSourceFile {
     public: std::string nameSpace;
     //public: std::forward_list<EulImportStatement> imports;
     //public: std::forward_list<EulExportStatement> exports;
-    public: std::map<std::string, EulSymbol*> symbols;              /** NOTE: contents of symbols map are NOT destructed. */
     public: std::vector<EulStatement*>* statements; /** Can be null for empty files. */
 
-    public: std::map<std::string, EulSymbol*>* globalDeclarations; /** NOTE: globalDeclarations is NOT destructed. */
+    public: EulScope scope;
+
+    public: llvm::Module* llvmModule;
     //endregion
 
 
 
 
     //region LIFE CYCLE
-    public: EulSourceFile(const std::string& id, std::map<std::string, EulSymbol*>* globalDeclarations);
+    public: EulSourceFile(const std::string& id, EulScope* globalScope);
     public: ~EulSourceFile();
     //endregion
 

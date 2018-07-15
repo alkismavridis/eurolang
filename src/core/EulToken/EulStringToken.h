@@ -12,7 +12,7 @@ class EulStringToken : public EulToken {
 
 
     //region LIFE CYCLE
-    public: EulStringToken(std::string& buf);
+    public: EulStringToken(const std::string& buf);
     //endregion
 
 
@@ -22,4 +22,5 @@ class EulStringToken : public EulToken {
 
 
     public: virtual EulTokenType getType();
+    public: llvm::Value* generateValue(EulCodeGenerator* gen);
 };

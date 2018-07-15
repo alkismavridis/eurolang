@@ -16,7 +16,6 @@ class EulParserTest {
         yy::EulParser parser(scanner, &ctx);
         parser.parse();
 
-
         //2. Parse the source file
         Assert::equals(EulTokenType::AST, file->statements->operator[](0)->getType(), t + "A2");
         Assert::equals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](0))->getAstType(), t + "A3");
@@ -59,27 +58,6 @@ class EulParserTest {
         Assert::equals(8, ((EulIntToken*)((VarDeclarationStatement*)file->statements->operator[](3))->declarations->operator[](0)->value)->value, t + "D8");
         Assert::null(((VarDeclarationStatement*)file->statements->operator[](3))->declarations->operator[](0)->varType, t + "D9");
 
-        //3. Check symbol declarations
-        Assert::notNull(file->symbols["x"], t + "Decl_1");
-        Assert::equals(yy::EulParser::token::VAR, file->symbols["x"]->changeType, t + "Decl_1_changeType");
-        Assert::equals("x", file->symbols["x"]->name, t + "Decl_1_changeType");
-        Assert::null(file->symbols["x"]->varType, t + "Decl_1_varType");
-        Assert::equals(((VarDeclarationStatement*)file->statements->operator[](0))->declarations->operator[](0)->value, file->symbols["x"]->value, t + "Decl_1_value");
-
-        Assert::notNull(file->symbols["y"], t + "Decl_2");
-        Assert::equals(yy::EulParser::token::VAR, file->symbols["y"]->changeType, t + "Decl_2_changeType");
-        Assert::equals("y", file->symbols["y"]->name, t + "Decl_2_changeType");
-        Assert::null(file->symbols["y"]->varType, t + "Decl_2_varType");
-        Assert::null(file->symbols["y"]->value, t + "Decl_2_value");
-
-        //z was declared 2 times. Only the first must be persisted. The second must have produced an error.
-        Assert::notNull(file->symbols["z"], t + "Decl_3");
-        Assert::equals(yy::EulParser::token::VAR, file->symbols["z"]->changeType, t + "Decl_3_changeType");
-        Assert::equals("z", file->symbols["z"]->name, t + "Decl_3_changeType");
-        Assert::eulType(file->symbols["z"]->varType, "UInt16", t + "Decl_3_varType");
-        Assert::equals(((VarDeclarationStatement*)file->statements->operator[](2))->declarations->operator[](0)->value, file->symbols["z"]->value, "Decl_3_value");
-
-
 
         //3. Parse the source file
         compiler.clearErrors();
@@ -110,23 +88,6 @@ class EulParserTest {
         Assert::equals(EulTokenType::CHAR, ((VarDeclarationStatement*)file->statements->operator[](0))->declarations->operator[](2)->value->getType(), t + "G2");
         Assert::equals('\n', ((EulCharToken*)((VarDeclarationStatement*)file->statements->operator[](0))->declarations->operator[](2)->value)->value, t + "G3");
         Assert::null(((VarDeclarationStatement*)file->statements->operator[](0))->declarations->operator[](2)->varType, t + "G4");
-
-        //5. Check symbol declarations in source file scope
-        Assert::that(file->symbols.find("x") != file->symbols.end(), "H1");
-        Assert::equals(file->symbols["x"]->changeType, yy::EulParser::token::VAR, "H2");
-        Assert::null(file->symbols["x"]->varType, "H3");
-        Assert::equals(file->symbols["x"]->value, ((VarDeclarationStatement*)file->statements->operator[](0))->declarations->operator[](0)->value, "H4");
-
-        Assert::that(file->symbols.find("y") != file->symbols.end(), "H4");
-        Assert::equals(file->symbols["y"]->changeType, yy::EulParser::token::VAR, "H5");
-        Assert::equals("String", file->symbols["y"]->varType->name, "H6");
-        Assert::null(file->symbols["y"]->value, "H7");
-
-
-        Assert::that(file->symbols.find("z") != file->symbols.end(), "H8");
-        Assert::equals(file->symbols["z"]->changeType, yy::EulParser::token::VAR, "H9");
-        Assert::null(file->symbols["z"]->varType, "H10");
-        Assert::equals(file->symbols["z"]->value, ((VarDeclarationStatement*)file->statements->operator[](0))->declarations->operator[](2)->value, "H11");
     }
 
 

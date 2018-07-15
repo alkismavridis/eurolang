@@ -24,5 +24,6 @@ class EulInfixExp : public EulExpression {
 
     //region OVERRIDES
     public: EulExpressionType getExpressionType();
+    public: llvm::Value* generateValue(EulCodeGenerator* gen);
     //endregion
 };

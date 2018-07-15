@@ -7,13 +7,21 @@
 
 %code requires
 {
+    //region UGGLY FORWARD DECLARATIONS
     class EulScanner;
+    class EulCodeGenerator;
+    namespace llvm {
+        class Value;
+        class Module;
+    }
+    //endregion
 
 
     # include <string>
     # include <map>
     # include <forward_list>
     # include <vector>
+    #include <memory>
 
     #include "../core/EulToken/EulTokenType.h"
     #include "../core/EulToken/EulToken.h"
@@ -46,6 +54,7 @@
     #include "../core/EulAst/EulDeclaration/VarDeclaration.h"
     #include "../core/EulAst/EulStatement/VarDeclarationStatement.h"
 
+    #include "../core/EulScope/EulScope.h"
     #include "../core/EulSourceFile/EulSourceFile.h"
     #include "../core/EulProgram/EulProgram.h"
     #include "../core/Compiler/EulError/EulError.h"
@@ -101,6 +110,7 @@
     VAR
     CONST
     VAL
+    NAMESPACE
 
     PLUS
     MINUS
@@ -265,7 +275,7 @@ var_keyword
 statement:
     var_keyword parameter_declarations SEMICOLON {
         $$ = new VarDeclarationStatement($1, $2);
-        EulParserUtils::addSymbolsToSourceFile($1, $2, ctx);
+        //EulParserUtils::addSymbolsToSourceFile($1, $2, ctx);
     } |
 
     expression SEMICOLON {

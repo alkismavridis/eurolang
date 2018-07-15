@@ -32,6 +32,13 @@
 
 
 
+//region UGGLY, DISGUSTING FORWARD DECLARATIONS
+class EulCodeGenerator;
+//endregion
+
+
+
+
 //region APP HEADERS
 #include "../src/constants/Constants.h"
 
@@ -54,13 +61,14 @@
 #include "../src/core/EulAst/EulStatement/EulExportStatement.h"
 #include "../src/core/EulAst/EulDeclaration/VarDeclaration.h"
 
+#include "../src/core/EulScope/EulScope.h"
 #include "../src/core/EulSourceFile/EulSourceFile.h"
 #include "../src/core/EulProgram/EulProgram.h"
 #include "../src/core/Compiler/EulError/EulError.h"
 #include "../src/core/Compiler/Compiler.h"
 #include "../src/lexer/EulScanner.h"
 
-#include "../src/llvm/EulLlvmExporter.h"
+#include "../src/llvm/EulCodeGenerator.h"
 //endregion
 
 
@@ -71,7 +79,7 @@
 
 //region IMPLEMENTATIONS
 #include "../src/core/Core.module.h"
-#include "../src/llvm/EulLlvmExporter.module.h"
+#include "../src/llvm/EulCodeGenerator.module.h"
 #include "../src/cli/EulcCli.module.h"
 //endregion
 
@@ -94,13 +102,11 @@ int main( const int argc, const char **argv ) {
     try {
         EulCliParams params(argc, argv);
         Compiler comp(handleError);
-        EulLlvmExporter llvmExporter;
+        EulCodeGenerator codeGen(&comp);
 
         auto fileEntries = params.inputFiles.begin();
         comp.compile(fileEntries->first, fileEntries->second);
-
-
-        llvmExporter.produceOutput(&comp, params.outputFile);
+        codeGen.produceOutput(params.outputFile);
 
 
         //report errors

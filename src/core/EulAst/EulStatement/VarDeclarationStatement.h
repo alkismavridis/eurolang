@@ -25,5 +25,6 @@ class VarDeclarationStatement : public EulStatement {
 
     //region OVERRIDES
     public: EulStatementType getStatementType();
+    public: void generateCode(EulCodeGenerator* gen);
     //endregion
 };

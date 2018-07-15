@@ -1,4 +1,18 @@
-void EulLlvmExporter::makeMain(llvm::Module* module, llvm::IRBuilder<>* builder) {
+#pragma once
+
+
+
+//region LIFE CYCLE
+EulCodeGenerator::EulCodeGenerator(Compiler* comp) : builder(context) {
+    this->compiler = comp;
+}
+//endregion
+
+
+
+
+//region GENERATOR SETUP
+void EulCodeGenerator::makeMain(llvm::Module* module, llvm::IRBuilder<>* builder) {
     //1. Setup function
     llvm::Function* mainFunc = (llvm::Function*)module->getOrInsertFunction("main", llvm::IntegerType::get(module->getContext(), 32), NULL);
     llvm::BasicBlock *block = llvm::BasicBlock::Create(module->getContext(), "entry", mainFunc);
@@ -9,10 +23,12 @@ void EulLlvmExporter::makeMain(llvm::Module* module, llvm::IRBuilder<>* builder)
         llvm::ConstantInt::get(llvm::IntegerType::get(module->getContext(), 32), 42, true)
     );
 }
+//endregion
 
 
 
 
+//region OMMITING OUTPUT
 void emmitObjCode(llvm::Module* module, const std::string& outputFileName) {
     auto targetTriple = llvm::sys::getDefaultTargetTriple();
 
@@ -70,25 +86,48 @@ void omitIRAssembly(llvm::Module* module, const std::string& outputFileName) {
     llvm::raw_fd_ostream out(outputFileName, code, llvm::sys::fs::OpenFlags::F_None);
     module->print(out, nullptr);
 }
+//endregion
 
 
 
 
-void EulLlvmExporter::produceOutput(Compiler* compiler, const std::string& outputFileName) {
-    std::cout << "I will produce the output" <<std::endl;
+//region AST PARSING
+void EulCodeGenerator::parse(EulSourceFile* file) {
+    //1. initialize the files module
+    makeMain(file->llvmModule, &builder); //TODO this should happen only once, and not for each file
 
-    static llvm::LLVMContext context;
-    static std::unique_ptr<llvm::Module> dummyModule;
-    static llvm::IRBuilder<> builder(context);
-
-    // Make the module, which holds all the code.
-    dummyModule = llvm::make_unique<llvm::Module>("main22", context);
-    dummyModule->getOrInsertGlobal("myGlob", llvm::Type::getInt64Ty(context));
-    dummyModule->getOrInsertGlobal("myGlob2", llvm::Type::getInt32Ty(context));
-
-    //ommit object file
-    //emmitObjCode(dummyModule.get(), outputFileName);
-    omitIRAssembly(dummyModule.get(), outputFileName);
-
-
+    //2. Parse every statement.
+    //for (auto stmt : *file->statements) stmt->generateStatement(this);
 }
+
+void EulCodeGenerator::doPreParsing(EulSourceFile* file) {
+    //TODO
+}
+//endregion
+
+
+
+//region API
+void EulCodeGenerator::produceOutput(const std::string& outputFileName) {
+    auto sources = this->compiler->program.sources;
+
+    //1. Initialize all modules
+    for (auto const& source : sources) {
+        source.second->llvmModule = new llvm::Module(source.second->id, this->context);
+    }
+
+    //2. Pre parse
+    for (auto const& source : sources) this->doPreParsing(source.second);
+
+    //3. Parse and omit the code
+    for (auto const& source : sources) {
+        this->parse(source.second);
+        //emmitObjCode(source.second->llvmModule, outputFileName);
+
+        omitIRAssembly(source.second->llvmModule, outputFileName);
+    }
+
+    //dummyModule->getOrInsertGlobal("myGlob", llvm::Type::getInt64Ty(context));
+    //dummyModule->getOrInsertGlobal("myGlob2", llvm::Type::getInt32Ty(context));
+}
+//endregion

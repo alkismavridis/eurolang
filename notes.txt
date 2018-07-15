@@ -20,6 +20,42 @@ FLEX/BISON NOTES
 
 
 
+////////////////
+   LLVM NOTES
+////////////////
+    Context:
+        It is EVERYTHING! This is the wrapper of all Modules.
+
+    Module:
+        Think of it as a source file.
+        Eventhow, this definition can become a bit mode flexible, if it has to. (For example, it could mean a class also)
+
+
+    IRBuilder:
+        http://llvm.org/doxygen/classllvm_1_1IRBuilder.html
+        http://llvm.org/doxygen/classllvm_1_1IRBuilderBase.html
+
+        A uniform API for creating instructions and inserting them into a basic block:
+        either at the end of a BasicBlock, or at a specific iterator location in a block.
+
+        The builder "remembers" in which block we are inserting commands into. dont forget to call builder.SetInsertPoint()
+        before you insert anything.
+
+
+    Function:
+        http://llvm.org/doxygen/classllvm_1_1Function.html
+        This represents a Function in all it's mighty!
+
+    BasicBlock:
+        http://llvm.org/doxygen/classllvm_1_1BasicBlock.html#details
+        This represents a single basic block in LLVM. A basic block is simply a container of instructions that execute sequentially.
+        THis inherits from Value. Thus, it can be referenced by instructions as such.
+        For example, control flow.
+
+
+
+
+
 
 /////////
 EUL NOTES
@@ -36,4 +72,3 @@ Every type can have its own:
 
 llvm will produce an ir asm file
 then, use llc testOut to create a .s assembly file
-

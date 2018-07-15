@@ -5,7 +5,6 @@ class Compiler;
 
 
 
-
 /**
     This represents a char token. Chars in eul can have various sizes, just like ints.
 */
@@ -33,4 +32,5 @@ class EulCharToken : public EulToken {
 
 
     public: virtual EulTokenType getType();
+    public: llvm::Value* generateValue(EulCodeGenerator* gen);
 };

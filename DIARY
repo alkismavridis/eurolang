@@ -2,6 +2,35 @@ PLEASE KEEP THIS FILE LATEST_ON_TOP SORTED
 
 
 
+2018.07.15
+    TITLE llvm: diving deep.
+    The compiler first steps (flex and bison) got much more mature.
+    In the syntax level, we now have a good support of expressions, operator precedence,
+    function calls with multiple parameters, variable declarations including basic type support (no generics yet),
+    and variable Scopes with smart getters.
+    All of this is unit tested.
+
+    In the LLVM level, we just spit out a return 42; program, successfully using user-define path locations.
+    I am learning to use basic LLVM classes, and inserting them deep into the AST classes.
+    My long term idea is to maybe remove the intermediate AST step.
+    It would be MAYBE possible to produce directly the llvm stuff INSIDE bison calls. This would be of course make
+    the compiler faster, and less memory-consuming. So I have to try my best to achieve this goal.
+
+    In practice this means that I will slowly replace my AST implementations with llvm classes.
+    Those will be ready to be inserted to llvm modules. The step after the parser will then do minimal job.
+    Once all of old AST are gone, I can delete them.
+
+    Lets see how this turns out...
+    Only one is for sure: I will have to spend a BIG amount of time, just to learn LLVM.
+    Watch tutorials, read docs, to implement a little bit more of eulc, refactoring eulc, and so on...
+
+    It it A LOT to learn.
+    Fortunately, the docs look very good, and the llvm funny-assembly language itself looks very well made.
+    Learning and experimenting with llvm is how the next step of eulc will look like...
+
+    Probably during this stage, the first actual language features will be created.
+    I hope I make the correct decisions on that point, because, after all, that IS the whole point.
+
 
 
 

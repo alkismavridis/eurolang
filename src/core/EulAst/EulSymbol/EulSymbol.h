@@ -3,15 +3,15 @@
 class EulSymbol : public EulAst {
     //region FIELDS
     public: int changeType; //one of yy::EulParser::token
-    public: std::string name;
     public: EulType* varType;
     public: EulToken* value;
+    public: char destroyContent;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulSymbol(int changeType, const std::string& name, EulType* varType, EulToken* value);
+    public: EulSymbol(int changeType, EulType* varType, EulToken* value, char destroyContent);
     public: virtual ~EulSymbol();
     //endregion
 

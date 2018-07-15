@@ -1,5 +1,10 @@
 /** On this file, we will implement all methods from every header file on this "package". */
 
+#pragma once
+
+
+#include "EulToken.CodeGen.impl.h"
+
 
 //region BASE CLASS
 EulToken::~EulToken() {}
@@ -181,7 +186,7 @@ void EulIntToken::toJson(std::ostream& out, int tabs) {
 
 
 //region STRING VALUE
-EulStringToken::EulStringToken(std::string& buf) {
+EulStringToken::EulStringToken(const std::string& buf) {
     this->value.assign(buf);
 }
 

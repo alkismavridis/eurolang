@@ -32,6 +32,8 @@
 #include "../src/core/EulAst/EulStatement/EulExportStatement.h"
 #include "../src/core/EulAst/EulDeclaration/VarDeclaration.h"
 
+#include "../src/core/EulScope/EulScope.h"
+
 #include "../src/core/EulSourceFile/EulSourceFile.h"
 #include "../src/core/EulProgram/EulProgram.h"
 #include "../src/core/Compiler/EulError/EulError.h"
@@ -49,6 +51,7 @@
 #include "../src/core/Core.module.h"
 
 #include "./core/EulTokenTest.h"
+#include "./core/EulScopeTest.h"
 #include "./core/EulSourceFileTest.h"
 #include "./core/EulProgramTest.h"
 #include "./core/CompilerTest.h"
@@ -70,6 +73,7 @@ int main() {
 	EulSourceFileTest::runAll();
 	EulProgramTest::runAll();
 	CompilerTest::runAll();
+	EulScopeTest::runAll();
 
 	//2. Lexer tests
 	EulScannerTest::runAll();
