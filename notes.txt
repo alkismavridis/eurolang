@@ -72,3 +72,528 @@ Every type can have its own:
 
 llvm will produce an ir asm file
 then, use llc testOut to create a .s assembly file
+
+
+
+/////////////////////////
+COMPILING PROCCESS - llvm
+/////////////////////////
+    We initialize llvm before parsing.
+    This means that we can fully access llvm calls inside bison file.
+    Bison can talk directly to EulCodeGenContext. This can be helpful some times, for example to use actual llvm types in the AST.
+
+    Still, we will have to parse and save the whole AST before the actual parsing will start.
+    During this parsing, we can have a simple strategy, that wil shape EUL language'a nature:
+
+    In the begining we have the global scope, and a main function. The whole program lives in this scope.
+    Every time a scope opens (including the global one) two things happen: the pre parsing and the regular parsing.
+
+
+    PRE-PARSING
+        - It happens within bison.
+        - It processes only about declaration statements that do not need to be forward declared.
+        - This includes function declarations, class and struct declarations, type definitions.
+        - Sometimes this can mean digging a little within the statement, like class definitions a bit to build the type information.
+        - We DO NOT execute statements, we DO NOT evaluate expressions, even if we encounter one. We do not process sub scopes.
+
+        USEFUL BECAUSE: Everything that we setup here can be used wherever in the scope, and its sub-scopes, even before it actually appears on the file!
+        GOAL ACHIEVED: We do not need to forward declare those symbols.
+        GOAL ACHIEVED: We can implement a scoped pre-processor. This can be useful for all sort of stuff.
+
+    REGULAR PARSING
+        - We evaluate expressions and parse statements.
+        - We dive into the sub scopes: every sub scope will perform its own pre-parsing and parsing.
+
+    The global scope consists of all the source files, one after the other in the order with they were imported.
+    We will pre-parse them all, and then regular parse them all, then we are done.
+
+
+
+
+
+
+//////////////////////////
+//////////LLVM///////////
+/////////////////////////
+
+
+===== MODULE =====
+    - functions
+    - global variables
+    - symbol table entries
+
+    In general, a module is made up of a list of global values.
+    NOTE: Both functions and global variables are global values.
+
+    Global values are represented by a pointer to a memory location.
+
+    Every global value has a linkage type and a Visibility styles:
+
+
+
+
+
+==== Linkage Types ====
+    APPLIES TO: Global variables and functions.
+    DEFAULT: external
+    NOTE: function declaration can be ONLY external or extern_weak
+
+
+
+
+    - Possible values -
+      vvvvvvvvvvvvvvv
+
+    private:
+        Global values with “private” linkage are only directly accessible by objects in the current module.
+        This doesn’t show up in any symbol table in the object file.
+
+    internal
+        Similar to private, but the value shows as a local symbol (STB_LOCAL in the case of ELF) in the object file.
+        This corresponds to the notion of the ‘static‘ keyword in C.
+
+    available_externally
+        Globals with “available_externally” linkage are never emitted into the object file corresponding to the LLVM module.
+        They exist to allow inlining and other optimizations to take place given knowledge of the definition of the global, which is known to be somewhere outside the module. Globals with available_externally linkage are allowed to be discarded at will, and are otherwise the same as linkonce_odr. This linkage type is only allowed on definitions, not declarations.
+
+
+    linkonce
+        Globals with “linkonce” linkage are merged with other globals of the same name when linkage occurs.
+        This can be used to implement some forms of inline functions, templates, or other code which must
+        be generated in each translation unit that uses it, but where the body may be overridden with a
+        more definitive definition later.
+
+        Unreferenced linkonce globals are allowed to be discarded!!!
+        Note that linkonce linkage does not actually allow the optimizer to inline the body of this
+        function into callers because it doesn’t know if this definition of the function is the
+        definitive definition within the program or whether it will be overridden by a stronger definition.
+        To enable inlining and other optimizations, use “linkonce_odr” linkage.
+
+
+    weak
+        “weak” linkage has the same merging semantics as linkonce linkage, except that unreferenced
+        globals with weak linkage may not be discarded.
+        This is used for globals that are declared “weak” in C source code.
+
+    common
+        Symbols with “common” linkage are merged in the same way as weak symbols,
+        and they may not be deleted if unreferenced.
+        common symbols may not have an explicit section, must have a zero initializer,
+        and may not be marked ‘constant‘. Functions and aliases may not have common linkage.
+
+
+    appending
+        “appending” linkage may only be applied to global variables of pointer to array type.
+        When two global variables with appending linkage are linked together, the two
+        global arrays are appended together.
+
+        This is the LLVM, typesafe, equivalent of having the system linker append together “sections”
+        with identical names when .o files are linked.
+
+    extern_weak
+        The semantics of this linkage follow the ELF object file model: the symbol is weak until linked,
+            if not linked, the symbol becomes null instead of being an undefined reference.
+
+
+
+    linkonce_odr, weak_odr
+        Some languages allow differing globals to be merged, such as two functions with different semantics.
+        Other languages, such as C++, ensure that only equivalent globals are ever merged
+        (the “one definition rule” — “ODR”). Such languages can use the linkonce_odr and weak_odr linkage types
+        to indicate that the global will only be merged with equivalent globals.
+
+        These linkage types are otherwise the same as their non-odr versions.
+
+    external
+        If none of the above identifiers are used, the global is externally visible, meaning that it
+        participates in linkage and can be used to resolve external symbol references.
+
+
+
+
+==== Calling Conventions ====
+    //TODO read about Calling Conventions
+
+
+
+
+
+==== Visibility styles ====
+    APPLIES TO: Global Variables and Functions
+    DEFAULT: default
+
+
+    NOTE: A symbol with internal or private linkage must have default visibility.
+
+    - “default” - Default style
+        On targets that use the ELF object file format, default visibility means that the
+        declaration is visible to other modules.
+        In shared libraries, it means that the declared entity may be overridden.
+
+    - “hidden” - Hidden style
+        Two declarations of an object with hidden visibility refer to the same object
+        if they are in the same shared object.
+        Usually, hidden visibility indicates that the symbol will not be placed into the dynamic
+        symbol table, so no other module (executable or shared library) can reference it directly.
+
+    - “protected” - Protected style
+        On ELF, protected visibility indicates that the symbol will be placed in the dynamic symbol table,
+        but that references within the defining module will bind to the local symbol.
+        That is, the symbol cannot be overridden by another module.
+
+
+
+
+==== DLL Storage Classes ====
+    //TODO read about DLL Storage Classes
+
+
+
+
+
+==== Thread Local Storage Models ====
+    APPLIES TO: Global Variables, Functions and Aliases
+
+    - localdynamic: For variables that are only used within the current shared library.
+    - initialexec:  For variables in modules that will not be loaded dynamically.
+    - localexec: For variables defined in the executable and only used within it.
+
+
+    NOTE: A model can also be specified in a alias, but then it only governs how the alias is accessed. It will not have any effect in the aliasee.
+
+
+==== Structure Types ====
+
+
+
+
+GLOBAL VARIABLE DECLARATION
+    Global variables define regions of memory allocated at compilation time instead of run-time.
+    Global variable definitions must be initialized.
+    Global variables in other translation units can also be declared, in which case they don’t have an initializer.
+
+    A variable may be defined as a global constant, which indicates that the contents of the variable will never
+    be modified (enabling better optimization, allowing the global data to be placed in the read-only section
+    of an executable, etc).
+
+    Note that variables that need runtime initialization cannot be marked constant
+    as there is a store to the variable.
+
+    Global variables always define a pointer to their “content” type because they describe a regio n of memory.
+    Global variables can be marked with unnamed_addr which indicates that the address is not significant, only the content.
+
+    An explicit alignment may be specified for a global, which must be a power of 2.
+    If not present, or if the alignment is set to zero,
+    the alignment of the global is set by the target to whatever it feels convenient.
+    If an explicit alignment is specified, the global is forced to have exactly that alignment.
+
+
+
+    [@<GlobalVarName> =]
+        [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal]
+        [unnamed_addr] [AddrSpace] [ExternallyInitialized]
+        <global | constant> <Type> [<InitializerConstant>]
+        [, section "name"] [, comdat [($name)]]
+        [, align <Alignment>]
+
+
+==== FUNCTIONS ====
+    define
+        [linkage] [visibility] [DLLStorageClass]
+        [cconv] [ret attrs]
+        <ResultType> @<FunctionName> ([argument list])
+        [unnamed_addr] [fn Attrs] [section "name"] [comdat [($name)]]
+        [align N] [gc] [prefix Constant] [prologue Constant]
+        [personality Constant] { ... }
+
+
+
+==== Aliases ====
+    Aliases, unlike function or variables, don’t create any new data.
+    They are just a new symbol and metadata for an existing position.
+
+
+    Aliases have a name and an aliasee that is either a global value or a constant expression.
+    Aliases that are not unnamed_addr are guaranteed to have the same address as the aliasee expression.
+    unnamed_addr ones are only guaranteed to point to the same content.
+
+   @<Name> =
+        [Linkage] [Visibility] [DLLStorageClass] [ThreadLocal] [unnamed_addr] alias <AliaseeTy> @<Aliasee>
+
+
+
+==== Comdats ====
+    Starting with $
+    //TODO
+
+
+==== Named Metadata ====
+    Starting with !
+
+
+
+==== Parameter Attributes ====
+    The return type and each parameter of a function type may have a set of parameter attributes associated with them.
+
+    EXAMPLES:
+    - declare i32 @printf(i8* noalias nocapture, ...)
+    - declare i32 @atoi(i8 zeroext)
+    - declare signext i8 @returns_signed_char()
+
+
+    SOME OF THE VALUES VALUES:
+    - zeroext
+    - signext
+    - returned
+    - nonnull (LLVM cannot force that. It is good for optimizing, but we must garatee this during calling)
+        //TODO
+
+
+
+
+==== Garbage Collector Strategy Names ====
+    Each function may specify a garbage collector strategy name, which is simply a string.
+    The supported values of name includes those built in to LLVM and any provided by loaded plugins.
+    SYNTAX: define void @f() gc "name" { ... }
+
+
+
+==== Attribute Groups ====
+    Just to keep readable our .ll files
+    Starting with #
+    EXAMPLE: attributes #0 = { alwaysinline alignstack=4 }
+
+
+==== Function Attributes ====
+    Function attributes are set to communicate additional information about a function.
+
+    SOME VALUES:
+    - alignstack<n>
+    - alwaysinline
+    - builtin
+    - inlinehint
+    - noreturn
+    - nounwind (no exceptions are thrown)
+    - readnone (something like PURE)
+
+
+
+==== Data Layout ====
+    //TODO read
+    small vs big endian, the size of a pointer and stuff like that.
+
+
+
+==== Target Triple ====
+    ARCHITECTURE-VENDOR-OPERATING_SYSTEM   or:
+    ARCHITECTURE-VENDOR-OPERATING_SYSTEM-ENVIRONMENT
+
+    This information is passed along to the backend so that it generates code for the proper architecture.
+
+
+
+
+============== TYPES ===============
+    - void: no size, no value, no fun
+    - integer type: i8, i55, i1 etc: from 1 - 2^23-1 (about 8 million) bits!!!!
+    - Floating Point Types:
+        # half
+        # float
+        # double
+        # fp128
+        # x86_fp80
+        # ppc_fp128
+    - X86_mmx Type (limited instructions, no arrays)
+    - pointer type
+        specifies memory locations.
+        Note that LLVM does not permit pointers to void (void*)
+        nor does it permit pointers to labels (label*).
+        Use i8* instead.
+
+        SYNTAX: <type> *
+        EXAMPLES:
+            - [4 x i32]*                // A pointer to array of four i32 values.
+            - i32 (i32*) *              A pointer to a function that takes an i32*, returning an i32.
+            - i32 addrspace(5)*
+
+
+    - vector type
+        Vector types are used when multiple primitive data
+        are operated in parallel using a single instruction (SIMD).
+
+        The number of elements is a constant integer value larger than 0
+
+        SYNTAX: < <# elements> x <elementtype> >
+        EXAMPLES:
+            # <4 x i32>                     // Vector of 4 32-bit integer values.
+            # <8 x float>
+            # <2 x i64>
+            # <4 x i64*>                    //Vector of 4 pointers to 64-bit integer values.
+
+
+    - Label type: represents code labels
+
+    - metadata type:
+        The metadata type represents embedded metadata.
+        No derived types may be created from metadata except for function arguments.
+
+    - array type
+        arranges elements sequentially in memory
+
+        SYNTAX: [<# elements> x <elementtype>]
+        EXAMPLES:
+            # [40 x i32]
+            # [41 x i32]
+            # [4 x i8]
+            # [3 x [4 x i32]]
+            # [12 x [10 x float]]
+            # [2 x [3 x [4 x i16]]]
+
+        There is no restriction on indexing beyond the end of the array implied by a static type
+
+
+    - Structure Type
+        The structure type is used to represent a collection of
+        data members together in memory.
+
+        The elements of a structure may be any type that has a size.
+
+        Structures may optionally be “packed” structures, which indicate that the alignment of the struct is one byte.
+        In non-packed structs, padding between field types is inserted as defined by the DataLayout string in the module.
+
+        Structures can either be “literal” or “identified”.
+        # A literal structure is defined inline with other types (e.g. {i32, i32}*)
+        # identified types are always defined at the top level with a name
+
+        SYNTAX:
+            # %T1 = type { <type list> }     ; Identified normal struct type
+            # %T2 = type <{ <type list> }>   ; Identified packed struct type
+
+        EXAMPLES:
+            # { i32, i32, i32 }
+            # { float, i32 (i32) * }        //A pair, where the first element is a float and the second element is a pointer to a function that takes an i32, returning an i32.
+            # <{ i8, i32 }>                 //A packed struct known to be 5 bytes in size.
+
+
+
+
+
+
+    - function Type:
+        <returntype> (<parameter list>)
+
+        examples:
+            # i32 (i32)
+            # float (i16, i32 *) *
+            # i32 (i8*, ...)
+            # {i32, i32} (i32)	            // <------- returns a struct
+
+
+    - Opaque Structure Types
+        corresponds (for example) to the C notion of a forward declared structure.
+        represent named structure types that do not have a body specified.
+
+        SYNTAX
+        # %X = type opaque
+        # %52 = type opaque
+
+
+
+========= Constants ==========
+    # true (i1)
+    # false (i1)
+    # Integer constants (4, 123, -56)
+    # Floating point constants:
+        Floating point constants use standard decimal notation (e.g. 123.421),
+        exponential notation (e.g. 1.23421e+2),
+        or a more precise hexadecimal notation
+        The assembler requires the exact decimal value of a floating-point constant
+        the assembler accepts 1.25 but rejects 1.3 because 1.3 is a repeating decimal in binary.
+    # null
+
+    # Structure constants
+        Structure constants must have structure type,
+
+        and the number and types of elements must match those specified by the type.
+        EXAMPLE:
+            { i32 4, float 17.0, i32* @G }     //where “@G” is declared as “@G = external global i32
+
+    # Array constants:
+        Array constants must have array type, and the number and types of
+        elements must match those specified by the type
+        SYNTAX: [ i32 42, i32 11, i32 74 ]
+        As a special case, character array constants may also be represented as a double-quoted
+        string using the c prefix. For example: c"Hello World\0A\00"
+
+    # Vector constants
+        SYNTAX: < i32 42, i32 11, i32 74, i32 100 >
+
+    # zeroinitializer: a value to zero of any type, including scalar and aggregate types
+    # Metadata node
+        SYNTAX: !{!0, !{!2, !0}, !"test"}
+        Metadata can reference constant values, for example: !{!0, i32 0, i8* @global, i64 (i64)* @function, !"str"}
+        metadata is a place to attach additional information such as debug info
+
+    # Global Variable and Function Addresses:
+        @X = global i32 17
+        @Y = global i32 42
+        @Z = global [2 x i32*] [ i32* @X, i32* @Y ]
+
+    # Undefined Values
+        The string ‘undef‘ can be used anywhere a constant is expected,
+        expept ‘label‘ or ‘void‘.
+
+        Undefined values are useful because they indicate to the compiler that the program is well defined no matter what value is used.
+        This gives the compiler more freedom to optimize
+
+        EXAMPLE:
+        %A = add %X, undef
+        %C = undef
+        %A = xor undef, undef        //This example points out that two ‘undef‘ operands are not necessarily the same
+
+
+======== Addresses of Basic Blocks =======
+    //TODO
+
+
+
+======== Constant Expressions ========
+    - Constant expressions are used to allow expressions involving other constants to be used as constants
+    - Constant expressions may be of any first class type and may involve any LLVM operation that does not have side effects
+
+
+
+======= METADATA =======
+    - DICompileUnit: information about a compile unit
+        !0 = !DICompileUnit(language: DW_LANG_C99, file: !1, producer: "clang",
+                            isOptimized: true, flags: "-O2", runtimeVersion: 2,
+                            splitDebugFilename: "abc.debug", emissionKind: 1,
+                            enums: !2, retainedTypes: !3, subprograms: !4,
+                            globals: !5, imports: !6)
+
+
+    - DIFile: DIFile nodes represent files
+          !0 = !DIFile(filename: "path/to/file", directory: "/path/to/dir")
+
+    - DIBasicType: DIBasicType nodes represent primitive types, such as int, bool and float. tag
+        !0 = !DIBasicType(name: "unsigned char", size: 8, align: 8, encoding: DW_ATE_unsigned_char)
+
+    - DISubroutineType: represent subroutine types
+        !0 = !BasicType(name: "int", size: 32, align: 32, DW_ATE_signed)
+        !1 = !BasicType(name: "char", size: 8, align: 8, DW_ATE_signed_char)
+        !2 = !DISubroutineType(types: !{null, !0, !1}) ; void (int, char)
+
+    - DIDerivedType: nodes represent types derived from other types, such as qualified types.
+        !0 = !DIBasicType(name: "unsigned char", size: 8, align: 8, encoding: DW_ATE_unsigned_char)
+        !1 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !0, size: 32, align: 32)
+
+    - DICompositeType: represent types composed of other types, like structures and unions
+
+    - DISubrange: elements for DW_TAG_array_type variants of DICompositeType. count: -1 indicates an empty array.
+
+    - DIEnumerator: elements for DW_TAG_enumeration_type variants of DICompositeType.
+
+    - DITemplateTypeParameter: type parameters to generic source language constructs
+
+    - DITemplateValueParameter: value parameters to generic source language constructs.
+       - ... and more ...

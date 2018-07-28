@@ -3,14 +3,14 @@
 class EulInfixExp : public EulExpression {
     //region LIFE CYCLE
     public: EulToken* left;
-    public: int operatorType;
+    public: EulOperator* oper;
     public: EulToken* right;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulInfixExp(EulToken* left, int operatorType, EulToken* right);
+    public: EulInfixExp(EulToken* left, EulOperator* oper, EulToken* right);
     public: ~EulInfixExp();
     //endregion
 
@@ -24,6 +24,6 @@ class EulInfixExp : public EulExpression {
 
     //region OVERRIDES
     public: EulExpressionType getExpressionType();
-    public: llvm::Value* generateValue(EulCodeGenerator* gen);
+    public: llvm::Value* generateValue(EulCodeGenContext* ctx);
     //endregion
 };

@@ -3,13 +3,13 @@
 class EulPrefixExp : public EulExpression {
     //region LIFE CYCLE
     public: EulToken* exp;
-    public: int operatorType;
+    public: EulOperator* oper;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulPrefixExp(int operatorType, EulToken* exp);
+    public: EulPrefixExp(EulOperator* oper, EulToken* exp);
     public: virtual ~EulPrefixExp();
     //endregion
 
@@ -23,6 +23,6 @@ class EulPrefixExp : public EulExpression {
 
     //region OVERRIDES
     public: EulExpressionType getExpressionType();
-    public: llvm::Value* generateValue(EulCodeGenerator* gen);
+    public: llvm::Value* generateValue(EulCodeGenContext* ctx);
     //endregion
 };

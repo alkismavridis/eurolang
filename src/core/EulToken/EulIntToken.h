@@ -6,7 +6,7 @@
 class EulIntToken : public EulToken {
     //region FIELDS
     public: unsigned long int value;
-    public: unsigned char size; //in bytes
+    public: unsigned char size; //in bits
     public: char isUnsigned;
     //endregion
 
@@ -25,5 +25,6 @@ class EulIntToken : public EulToken {
 
 
     public: virtual EulTokenType getType();
-    public: llvm::Value* generateValue(EulCodeGenerator* gen);
+    public: llvm::Value* generateValue(EulCodeGenContext* ctx);
+    public: llvm::Type* generateType(EulCodeGenContext* ctx);
 };

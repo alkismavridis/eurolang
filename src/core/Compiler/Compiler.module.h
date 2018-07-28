@@ -1,4 +1,5 @@
 //INCLUDE INTERNAL IMPLEMENTATIONS
+#pragma once
 #include "./EulError/EulError.impl.h"
 
 
@@ -8,10 +9,12 @@
 Compiler::Compiler(void (*onError)(Compiler* ths)) {
     this->onError = onError;
     this->currentSource = nullptr;
+    this->codeGen = new EulCodeGenContext(this->program.llvmContext, this->program.globalModule);
 }
 
 Compiler::~Compiler() {
     this->clearErrors();
+    delete this->codeGen;
 }
 
 
@@ -25,6 +28,9 @@ void Compiler::reset() {
 
     //reset program
     this->program.reset();
+
+    delete this->codeGen;
+    this->codeGen = new EulCodeGenContext(this->program.llvmContext, this->program.globalModule);
 }
 //endregion
 
@@ -43,7 +49,7 @@ void Compiler::compile(EulSourceFile *target, std::istream *input) {
     this->currentSource = target;
 
     //2. Setup a scanner and a parser
-    EulParsingContext ctx(this, target);
+    EulParsingContext ctx(this, this->codeGen, target);
     EulScanner scanner(input);
     yy::EulParser parser(scanner, &ctx);
 
@@ -82,5 +88,38 @@ void Compiler::addError(int errorType, const std::string& message) {
 void Compiler::clearErrors() {
   for (auto const& e : this->errors) delete e;
   this->errors.clear();
+}
+//endregion
+
+
+
+
+//region EMMITING OUTPUT
+void Compiler::produceOutput(const std::string& outputFileName) {
+    auto sources = this->program.sources;
+
+
+    //1. Setup entry point and main function
+    EulSourceFile* entryPoint = this->program.getEntryPoint();
+    this->program.makeMain(this->program.globalModule, &this->codeGen->builder);
+
+
+    //1. Pre parse
+    for (auto const& source : sources) source.second->doASTPreParsing(this->codeGen);
+
+    //2. Parse and omit the code
+    for (auto const& source : sources) source.second->parseAST(this->codeGen);
+
+    //3. Add return statement, just in case none was created already.
+    auto zero = llvm::ConstantInt::get(llvm::IntegerType::get(*this->program.llvmContext, 32), 0, true);
+    this->codeGen->builder.CreateRet(zero);
+
+    //4. Prform the llvm spells.
+    this->program.emmitIRAssembly(this->program.globalModule, outputFileName+"_IR");
+    this->program.emmitObjCode(this->program.globalModule, outputFileName);
+
+
+    //dummyModule->getOrInsertGlobal("myGlob", llvm::Type::getInt64Ty(context));
+    //dummyModule->getOrInsertGlobal("myGlob2", llvm::Type::getInt32Ty(context));
 }
 //endregion

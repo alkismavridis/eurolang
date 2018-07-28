@@ -47,18 +47,19 @@ EulCharToken::EulCharToken(unsigned long int value, unsigned char size) {
 }
 
 EulCharToken::EulCharToken(const char* text, unsigned int len, Compiler* compiler) {
-    this->size = len - 2; //we default the char size to its UTF length. We substract 2, because there are the '' quotes.
-
     switch(len) {
         case 3: //1 byte unicode
+            this->size = 8;
             this->value = (unsigned char) ( *(text+1) );
             break;
 
         case 4: //2 byte unicode
+            this->size = 16;
             this->value = ((unsigned char)text[1])<<8 | (unsigned char)text[2];
             break;
 
         case 6: //4 byte unicode
+            this->size = 32;
             this->value = (unsigned char)text[1];
             this->value = (this->value << 8) | (unsigned char)text[2];
             this->value = (this->value << 8) | (unsigned char)text[3];

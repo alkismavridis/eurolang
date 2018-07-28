@@ -26,4 +26,10 @@ class VarDeclaration : public EulAst {
     //region OVERRIDES
     public: EulAstType getAstType();
     //endregion
+
+
+
+    //region CODE GENERATOR
+    public: llvm::Type* generateType(EulCodeGenContext* ctx);
+    //endregion
 };

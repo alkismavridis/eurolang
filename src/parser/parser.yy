@@ -9,10 +9,15 @@
 {
     //region UGGLY FORWARD DECLARATIONS
     class EulScanner;
-    class EulCodeGenerator;
+    class EulCodeGenContext;
     namespace llvm {
         class Value;
         class Module;
+        class LLVMContext;
+        class Type;
+        class ConstantFolder;
+        class IRBuilderDefaultInserter;
+        template<typename T, typename Inserter> class IRBuilder;
     }
     //endregion
 
@@ -22,6 +27,8 @@
     # include <forward_list>
     # include <vector>
     #include <memory>
+
+    #include "../core/Operators/EulOperator.h"
 
     #include "../core/EulToken/EulTokenType.h"
     #include "../core/EulToken/EulToken.h"
@@ -33,12 +40,13 @@
     #include "../core/EulAst/EulAstType.h"
     #include "../core/EulAst/EulAst.h"
     #include "../core/EulAst/EulType/EulType.h"
+    #include "../core/EulAst/EulType/LateDefinedType.h"
     #include "../core/EulAst/EulSymbol/EulSymbol.h"
     #include "../core/EulAst/EulStatement/EulStatementType.h"
     #include "../core/EulAst/EulStatement/EulStatement.h"
     #include "../core/EulAst/EulStatement/EulImportStatement.h"
     #include "../core/EulAst/EulStatement/EulExportStatement.h"
-
+    #include "../core/EulAst/EulStatement/ReturnStatement.h"
 
     #include "../core/EulAst/EulExpression/EulExpressionType.h"
     #include "../core/EulAst/EulExpression/EulExpression.h"
@@ -60,8 +68,7 @@
     #include "../core/Compiler/EulError/EulError.h"
     #include "../core/Compiler/Compiler.h"
     #include "../parser/EulParsingContext.h"
-
-    #include "../parser/EulParserUtils.impl.h"
+    #include "../parser/EulParsingUtils.h"
 
 
 
@@ -91,6 +98,7 @@
     #include "../lexer/EulScanner.h"
 
 
+
     /* include for all compiler functions */
 
     #undef yylex
@@ -110,6 +118,7 @@
     VAR
     CONST
     VAL
+    RETURN
     NAMESPACE
 
     PLUS
@@ -281,6 +290,15 @@ statement:
     expression SEMICOLON {
         $$ = new EulExpStatement($1);
     } |
+
+    RETURN expression SEMICOLON {
+        $$ = new ReturnStatement($2);
+    } |
+
+    RETURN SEMICOLON {
+        $$ = new ReturnStatement(nullptr);
+    } |
+
     NL {
         $$ = nullptr;
     }
@@ -297,52 +315,52 @@ expression
     | CHAR { $$ = $1; }
     | ID   { $$ = $1; }
 
-    | expression PLUS expression { $$ = new EulInfixExp($1, token::PLUS, $3); }
-    | expression MINUS expression { $$ = new EulInfixExp($1, token::MINUS, $3); }
-    | expression NOT_EQUALS expression { $$ = new EulInfixExp($1, token::NOT_EQUALS, $3); }
-    | expression NOT_SAME expression { $$ = new EulInfixExp($1, token::NOT_SAME, $3); }
-    | expression PERCENT expression { $$ = new EulInfixExp($1, token::PERCENT, $3); }
-    | expression ASSIGN_MOD expression { $$ = new EulInfixExp($1, token::ASSIGN_MOD, $3); }
-    | expression XOR expression { $$ = new EulInfixExp($1, token::XOR, $3); }
-    | expression ASSIGN_XOR expression { $$ = new EulInfixExp($1, token::ASSIGN_XOR, $3); }
-    | expression BIN_AND expression { $$ = new EulInfixExp($1, token::BIN_AND, $3); }
-    | expression AND expression { $$ = new EulInfixExp($1, token::AND, $3); }
-    | expression ASSIGN_AND expression { $$ = new EulInfixExp($1, token::ASSIGN_STAR, $3); }
-    | expression STAR expression { $$ = new EulInfixExp($1, token::STAR, $3); }
-    | expression ASSIGN_STAR expression { $$ = new EulInfixExp($1, token::ASSIGN_STAR, $3); }
-    | expression ASSIGN_MINUS expression { $$ = new EulInfixExp($1, token::ASSIGN_MINUS, $3); }
-    | expression ASSIGN expression { $$ = new EulInfixExp($1, token::ASSIGN, $3); }
-    | expression EQUALS expression { $$ = new EulInfixExp($1, token::EQUALS, $3); }
-    | expression SAME expression { $$ = new EulInfixExp($1, token::SAME, $3); }
-    | expression ASSIGN_PLUS expression { $$ = new EulInfixExp($1, token::ASSIGN_PLUS, $3); }
-    | expression BIN_OR expression { $$ = new EulInfixExp($1, token::BIN_OR, $3); }
-    | expression OR expression { $$ = new EulInfixExp($1, token::OR, $3); }
-    | expression ASSIGN_OR expression { $$ = new EulInfixExp($1, token::ASSIGN_OR, $3); }
-    | expression SLASH expression { $$ = new EulInfixExp($1, token::SLASH, $3); }
-    | expression ASSIGN_DIV expression { $$ = new EulInfixExp($1, token::ASSIGN_DIV, $3); }
-    | expression DOT expression { $$ = new EulInfixExp($1, token::DOT, $3); }
-    | expression LESS expression { $$ = new EulInfixExp($1, token::LESS, $3); }
-    | expression LESS_EQUALS expression { $$ = new EulInfixExp($1, token::LESS_EQUALS, $3); }
-    | expression LSHIFT expression { $$ = new EulInfixExp($1, token::LSHIFT, $3); }
-    | expression ASSIGN_LSHIFT expression { $$ = new EulInfixExp($1, token::ASSIGN_LSHIFT, $3); }
-    | expression MORE expression { $$ = new EulInfixExp($1, token::MORE, $3); }
-    | expression MORE_EQUALS expression { $$ = new EulInfixExp($1, token::MORE_EQUALS, $3); }
-    | expression RSHIFT expression { $$ = new EulInfixExp($1, token::RSHIFT, $3); }
-    | expression ASSIGN_RSHIFT expression { $$ = new EulInfixExp($1, token::ASSIGN_RSHIFT, $3); }
+    | expression PLUS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.plusOperator, $3); }
+    | expression MINUS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.minusOperator, $3); }
+    | expression NOT_EQUALS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.notEqualsOperator, $3); }
+    | expression NOT_SAME expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.notSameOperator, $3); }
+    | expression PERCENT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.percentOperator, $3); }
+    | expression ASSIGN_MOD expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignModOperator, $3); }
+    | expression XOR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.xorOperator, $3); }
+    | expression ASSIGN_XOR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignXorOperator, $3); }
+    | expression BIN_AND expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.binAndOperator, $3); }
+    | expression AND expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.andOperator, $3); }
+    | expression ASSIGN_AND expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignAndOperator, $3); }
+    | expression STAR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.starOperator, $3); }
+    | expression ASSIGN_STAR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignStarOperator, $3); }
+    | expression ASSIGN_MINUS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignMinusOperator, $3); }
+    | expression ASSIGN expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignOperator, $3); }
+    | expression EQUALS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.equalsOperator, $3); }
+    | expression SAME expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.sameOperator, $3); }
+    | expression ASSIGN_PLUS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignPlusOperator, $3); }
+    | expression BIN_OR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.binOrOperator, $3); }
+    | expression OR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.orOperator, $3); }
+    | expression ASSIGN_OR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignOrOperator, $3); }
+    | expression SLASH expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.slashOperator, $3); }
+    | expression ASSIGN_DIV expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignDivOperator, $3); }
+    | expression DOT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.dotOperator, $3); }
+    | expression LESS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.lessOperator, $3); }
+    | expression LESS_EQUALS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.lessEqualsOperator, $3); }
+    | expression LSHIFT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.leftShiftOperator, $3); }
+    | expression ASSIGN_LSHIFT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignLeftShiftOperator, $3); }
+    | expression MORE expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.moreOperator, $3); }
+    | expression MORE_EQUALS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.moreEqualsOperator, $3); }
+    | expression RSHIFT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.rightShiftOperator, $3); }
+    | expression ASSIGN_RSHIFT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignRightShiftOperator, $3); }
 
     | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE        { $$ = $2; }
     | expression PARENTHESIS_OPEN expressions PARENTHESIS_CLOSE        {  $$ = new EulFunctionCallExp($1, $3); }
     | expression SQUARE_OPEN expression SQUARE_CLOSE        { $$ = new EulArrayAccessExp($1, $3 ); }
 
 
-    | MINUS expression { $$ = new EulPrefixExp(token::MINUS, $2); } %prec NOT
-    | TILDE expression { $$ = new EulPrefixExp(token::TILDE, $2); }
-    | NOT expression { $$ = new EulPrefixExp(token::NOT, $2); }
-    | DECREASE expression { $$ = new EulPrefixExp(token::DECREASE, $2); }
-    | INCREASE expression { $$ = new EulPrefixExp(token::INCREASE, $2); }
+    | MINUS expression { $$ = new EulPrefixExp(&EUL_OPERATORS.minusOperator, $2); } %prec NOT
+    | TILDE expression { $$ = new EulPrefixExp(&EUL_OPERATORS.tildeOperator, $2); }
+    | NOT expression { $$ = new EulPrefixExp(&EUL_OPERATORS.notOperator, $2); }
+    | DECREASE expression { $$ = new EulPrefixExp(&EUL_OPERATORS.decreaseOperator, $2); }
+    | INCREASE expression { $$ = new EulPrefixExp(&EUL_OPERATORS.increaseOperator, $2); }
 
-    | expression DECREASE { $$ = new EulSuffixExp($1, token::DECREASE); }
-    | expression INCREASE { $$ = new EulSuffixExp($1, token::INCREASE); }
+    | expression DECREASE { $$ = new EulSuffixExp($1, &EUL_OPERATORS.decreaseOperator); }
+    | expression INCREASE { $$ = new EulSuffixExp($1, &EUL_OPERATORS.increaseOperator); }
     ;
 
 
@@ -366,7 +384,7 @@ expressions:
 //======================== VAR DECLARATIONS AND FUNCTION PARAMETERS ============================
 eul_type:
     ID {
-        $$ = new EulType($1->name);
+        $$ = EulParsingUtils::createEulType(ctx, $1->name);
         delete $1;
     }
     ;

@@ -139,15 +139,15 @@ class Assert {
         return strTok;
     }
 
-    public: static EulType* eulType(EulToken* token, const std::string& name, const std::string& label) {
+    public: static EulType* eulType(EulToken* token, const llvm::Type* llvmType, const std::string& label) {
         Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
         EulAst* ast = (EulAst*)token;
 
         Assert::equals(EulAstType::EUL_TYPE, ast->getAstType(), label + "__astType");
-        EulType* type = (EulType*)ast;
+        EulType* ret = (EulType*)ast;
 
-        Assert::equals(name, type->name, label + "__typeName");
-        return type;
+        Assert::equals((void*)llvmType, (void*)ret->llvmType, label + "__llvmType");
+        return ret;
     }
     //endregion
 
@@ -231,14 +231,11 @@ class Assert {
         Assert::equals(EulAstType::STATEMENT, ast->getAstType(), label + "__astType");
         return (EulStatement*)ast;
     }
+
+    public: static ReturnStatement* returnStatement(EulToken* token, const std::string& label) {
+        EulStatement* stmt = statement(token, label);
+        Assert::equals(EulStatementType::RETURN_STATEMENT, stmt->getStatementType(), label + "__getStatement");
+        return (ReturnStatement*)stmt;
+    }
     //endregion
 };
-
-
-
-
-
-
-
-
-

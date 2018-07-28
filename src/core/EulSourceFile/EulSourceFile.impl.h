@@ -2,11 +2,10 @@
 
 
 //region LIFE CYCLE
-EulSourceFile::EulSourceFile(const std::string& id, EulScope* globalScope) : scope(globalScope) {
+EulSourceFile::EulSourceFile(const std::string& id, EulScope* globalScope, llvm::LLVMContext* ctx) : scope(globalScope) {
     this->isParsed = 0;
     this->id = id;
     this->statements = nullptr;
-    this->llvmModule = nullptr;
 }
 
 EulSourceFile::~EulSourceFile() {
@@ -15,11 +14,20 @@ EulSourceFile::~EulSourceFile() {
         for (auto stmt : *this->statements) delete stmt;
         delete this->statements;
     }
-
-    //2. destroy llvmModule, if any
-    if (this->llvmModule == nullptr) delete this->llvmModule;
 }
 //endregion
+
+
+
+
+void EulSourceFile::parseAST(EulCodeGenContext* ctx) {
+    //1. Parse every statement.
+    for (auto stmt : *this->statements) stmt->generateStatement(ctx);
+}
+
+void EulSourceFile::doASTPreParsing(EulCodeGenContext* ctx) {
+}
+
 
 
 std::ostream& operator<<(std::ostream& out, EulSourceFile* file) {

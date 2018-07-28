@@ -11,13 +11,13 @@ class EulTokenTest {
         EulCharToken tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "A1");
         Assert::equals('a', tok.value, t + "A2");
-        Assert::equals(1, tok.size, t + "A3");
+        Assert::equals(8, tok.size, t + "A3");
 
         str = "'~'";
         tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "A4");
         Assert::equals('~', tok.value, t + "A5");
-        Assert::equals(1, tok.size, t + "A6");
+        Assert::equals(8, tok.size, t + "A6");
 
 
         //2. check two chars long
@@ -25,50 +25,50 @@ class EulTokenTest {
         tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "B1");
         Assert::equals(0xcf8b, tok.value, t + "B2");
-        Assert::equals(2, tok.size, t + "B3");
+        Assert::equals(16, tok.size, t + "B3");
 
         str = "'ώ'";
         tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "C1");
         Assert::equals(0xcf8e, tok.value, t + "C2");
-        Assert::equals(2, tok.size, t + "C3");
+        Assert::equals(16, tok.size, t + "C3");
 
         str = "'π'";
         tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "D1");
         Assert::equals(0xcf80, tok.value, t + "D2");
-        Assert::equals(2, tok.size, t + "D3");
+        Assert::equals(16, tok.size, t + "D3");
 
         str = "'ü'";
         tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "F1");
         Assert::equals(0xc3bc, tok.value, t + "F2");
-        Assert::equals(2, tok.size, t + "F3");
+        Assert::equals(16, tok.size, t + "F3");
 
         //3. check 4 bytes long unicodes
         str = "'𠜎'";
         tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "G1");
         Assert::equalsUnsigned(0xf0a09c8e, tok.value, t + "G2");
-        Assert::equals(4, tok.size, t + "G3");
+        Assert::equals(32, tok.size, t + "G3");
 
         str = "'𡇙'";
         tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "H1");
         Assert::equalsUnsigned(0xf0a18799, tok.value, t + "H2");
-        Assert::equals(4, tok.size, t + "H3");
+        Assert::equals(32, tok.size, t + "H3");
 
         str = "'😌'";
         tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "I1");
         Assert::equalsUnsigned(0xf09f988c, tok.value, t + "I2");
-        Assert::equals(4, tok.size, t + "I3");
+        Assert::equals(32, tok.size, t + "I3");
 
         str = "'🙋'";
         tok = EulCharToken(str.c_str(), str.length(), &comp);
         Assert::equals(0, comp.errors.size(), t + "J1");
         Assert::equalsUnsigned(0xf09f998b, tok.value, t + "J2");
-        Assert::equals(4, tok.size, t + "J3");
+        Assert::equals(32, tok.size, t + "J3");
 
 
         //check type getter

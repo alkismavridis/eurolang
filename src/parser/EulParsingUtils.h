@@ -1,7 +1,7 @@
 #pragma once
 
 
-class EulParserUtils {
+class EulParsingUtils {
     //region SYMBOL DECLARATIONS
     /*public: static void addSymbolsToSourceFile(int changeType, std::vector<VarDeclaration*>* newDeclarations, EulParsingContext* ctx) {
         if (newDeclarations == nullptr) return;
@@ -13,5 +13,9 @@ class EulParserUtils {
             if (!success) ctx->compiler->addError(EulErrorType::SEMANTIC, "Duplicate symbol declaration: "+decl->id->name);
         }
     }*/
+
+
+
+    public: static EulType* createEulType(EulParsingContext* ctx, const std::string& typeName);
     //endregion
 };

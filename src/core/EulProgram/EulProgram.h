@@ -14,6 +14,9 @@ class EulProgram {
     //public: EulSourceFile* entryPoint;	//a token of type EulTokenType_SOURCE_FILE than indicates where the program starts.
     public: std::map<std::string, EulSourceFile*> sources; /** all source files encountered until now. Parsed and not yet parsed (imported, waiting for parsing). */
     public: EulScope globalScope;
+
+    public: llvm::LLVMContext* llvmContext;
+    public: llvm::Module* globalModule;
     //endregion
 
 
@@ -53,5 +56,15 @@ class EulProgram {
       Files that are founded to be "imported", but not yet parsed, are stored int a different list.
     */
     public: EulSourceFile* nextPendingSource();
+
+    public: EulSourceFile* getEntryPoint();
+    //endregion
+
+
+
+    //region CODE GENERATION
+    public: void makeMain(llvm::Module* module, llvm::IRBuilder<llvm::ConstantFolder, llvm::IRBuilderDefaultInserter>* builder);
+    public: void emmitObjCode(llvm::Module* module, const std::string& outputFileName);
+    public: void emmitIRAssembly(llvm::Module* module, const std::string& outputFileName);
     //endregion
 };

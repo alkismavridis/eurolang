@@ -14,15 +14,13 @@ class EulSourceFile {
     public: std::vector<EulStatement*>* statements; /** Can be null for empty files. */
 
     public: EulScope scope;
-
-    public: llvm::Module* llvmModule;
     //endregion
 
 
 
 
     //region LIFE CYCLE
-    public: EulSourceFile(const std::string& id, EulScope* globalScope);
+    public: EulSourceFile(const std::string& id, EulScope* globalScope, llvm::LLVMContext* ctx);
     public: ~EulSourceFile();
     //endregion
 
@@ -32,6 +30,12 @@ class EulSourceFile {
     public: EulSymbol* getSymbol(const std::string& name);
     //endregion
 
+
+
+    //region CODE GENERATOR
+    public: void parseAST(EulCodeGenContext* ctx);
+    public: void doASTPreParsing(EulCodeGenContext* ctx);
+    //endregion
 };
 
 std::ostream& operator<<(std::ostream& out, EulSourceFile* file);

@@ -33,7 +33,7 @@
 
 
 //region UGGLY, DISGUSTING FORWARD DECLARATIONS
-class EulCodeGenerator;
+class EulCodeGenContext;
 //endregion
 
 
@@ -53,12 +53,14 @@ class EulCodeGenerator;
 #include "../src/core/EulAst/EulAstType.h"
 #include "../src/core/EulAst/EulAst.h"
 #include "../src/core/EulAst/EulType/EulType.h"
+#include "../src/core/EulAst/EulType/LateDefinedType.h"
 #include "../src/core/EulAst/EulSymbol/EulSymbol.h"
 
 #include "../src/core/EulAst/EulStatement/EulStatementType.h"
 #include "../src/core/EulAst/EulStatement/EulStatement.h"
 #include "../src/core/EulAst/EulStatement/EulImportStatement.h"
 #include "../src/core/EulAst/EulStatement/EulExportStatement.h"
+#include "../src/core/EulAst/EulStatement/ReturnStatement.h"
 #include "../src/core/EulAst/EulDeclaration/VarDeclaration.h"
 
 #include "../src/core/EulScope/EulScope.h"
@@ -68,7 +70,7 @@ class EulCodeGenerator;
 #include "../src/core/Compiler/Compiler.h"
 #include "../src/lexer/EulScanner.h"
 
-#include "../src/llvm/EulCodeGenerator.h"
+#include "../src/llvm/EulCodeGenContext.h"
 //endregion
 
 
@@ -79,8 +81,9 @@ class EulCodeGenerator;
 
 //region IMPLEMENTATIONS
 #include "../src/core/Core.module.h"
-#include "../src/llvm/EulCodeGenerator.module.h"
+#include "../src/llvm/EulCodeGenContext.module.h"
 #include "../src/cli/EulcCli.module.h"
+#include "../src/parser/EulParsingUtils.impl.h"
 //endregion
 
 
@@ -102,20 +105,22 @@ int main( const int argc, const char **argv ) {
     try {
         EulCliParams params(argc, argv);
         Compiler comp(handleError);
-        EulCodeGenerator codeGen(&comp);
 
         auto fileEntries = params.inputFiles.begin();
         comp.compile(fileEntries->first, fileEntries->second);
-        codeGen.produceOutput(params.outputFile);
+        comp.produceOutput(params.outputFile);
 
 
         //report errors
         reportErrors(&comp);
+
+        std::cout << "Done." << std::endl;
     }
     catch(EulError e) {
         std::cout << "Exception happened! " << e.message << std::endl;
         return 1;
     }
 
+    std::cout << "Done permanently." << std::endl;
     return 0;
 }

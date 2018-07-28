@@ -5,23 +5,18 @@
     The reason that we need a wrapper is because a Type may be not-yet-defined when it is requested.
     There will be no forward declarations in eurolang.
 */
-class EulType : public EulAst {
+class LateDefinedType : public EulType {
     //region FIELDS
-    public: llvm::Type* llvmType;
+    public: std::string name;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulType(llvm::Type* type);
-    public: virtual ~EulType();
+    public: LateDefinedType(const std::string& name);
+    public: virtual ~LateDefinedType();
     //endregion
 
-
-
-    //region GETTERS
-    public: virtual bool isLateDeclared();
-    //endregion
 
 
     //region SERIALIZING
@@ -31,9 +26,6 @@ class EulType : public EulAst {
 
 
     //region OVERRIDES
-    public: EulAstType getAstType();
+    public: bool isLateDeclared();
     //endregion
-
-
-    public: static bool isEulType(EulToken* tok);
 };

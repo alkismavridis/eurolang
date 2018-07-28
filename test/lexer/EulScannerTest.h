@@ -92,12 +92,12 @@ class EulScannerTest {
     //region COMMENTS PARSING
    private: static void multiLineCommentTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
         yy::EulParser::location_type loc;
 
         std::stringstream stream = std::stringstream("123/*hello\n*1/2*3*/world");
         EulScanner scanner(&stream);
-        checkIntToken(scanner, &ctx, &loc, 123, 4, 0, t + "A1");
+        checkIntToken(scanner, &ctx, &loc, 123, 32, 0, t + "A1");
         checkLocation(&loc, 1, 1, 1, 4, t + "A1_loc");
         checkIdToken(scanner, &ctx, &loc, "world", t + "A2");
         checkLocation(&loc, 2, 9, 2, 14, t + "A2_loc");
@@ -107,13 +107,13 @@ class EulScannerTest {
         stream = std::stringstream("123/*\n*1/2***\n3*/abc\n12");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 123, 4, 0, t + "B1");
+        checkIntToken(scanner, &ctx, &loc, 123, 32, 0, t + "B1");
         checkLocation(&loc, 1, 1, 1, 4, t + "B1_loc");
         checkIdToken(scanner, &ctx, &loc, "abc", t + "B2");
         checkLocation(&loc, 3, 4, 3, 7, t + "B2_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::NL, t + "B3");
         checkLocation(&loc, 3, 7, 4, 1, t + "B3_loc");
-        checkIntToken(scanner, &ctx, &loc, 12, 4, 0, t + "B4");
+        checkIntToken(scanner, &ctx, &loc, 12, 32, 0, t + "B4");
         checkLocation(&loc, 4, 1, 4, 3, t + "B4_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::END, t + "B5");
 
@@ -132,7 +132,7 @@ class EulScannerTest {
         stream = std::stringstream("123/*\nabcdefgh\n12");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 123, 4, 0, t + "D2");
+        checkIntToken(scanner, &ctx, &loc, 123, 32, 0, t + "D2");
         checkLocation(&loc, 1, 1, 1, 4, t + "D2_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "D3");
 
@@ -145,7 +145,7 @@ class EulScannerTest {
 
    private: static void singleLineCommentTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
         yy::EulParser::location_type loc;
 
 
@@ -153,7 +153,7 @@ class EulScannerTest {
         std::stringstream stream = std::stringstream("123//comment1\nend++");
         EulScanner scanner(&stream);
 
-        checkIntToken(scanner, &ctx, &loc, 123, 4, 0, t + "A1");
+        checkIntToken(scanner, &ctx, &loc, 123, 32, 0, t + "A1");
         checkLocation(&loc, 1, 1, 1, 4, t + "A1_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::NL, t + "A2");
         checkLocation(&loc, 1, 4, 2, 1, t + "A2_loc");
@@ -163,7 +163,7 @@ class EulScannerTest {
         stream = std::stringstream("123//comment1");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 123, 4, 0, t +"B1");
+        checkIntToken(scanner, &ctx, &loc, 123, 32, 0, t +"B1");
         checkLocation(&loc, 1, 1, 1, 4, t + "B1_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::NL, t + "B2");
         checkLocation(&loc, 1, 4, 2, 1, t + "B2_loc");
@@ -176,13 +176,13 @@ class EulScannerTest {
     //region NUMBER PARSING
     private: static void parseIntegerTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
         yy::EulParser::location_type loc;
 
         //end at EOF
         std::stringstream stream = std::stringstream("1");
         EulScanner scanner(&stream);
-        checkIntToken(scanner, &ctx, &loc, 1, 4, 0, t + "A1");
+        checkIntToken(scanner, &ctx, &loc, 1, 32, 0, t + "A1");
         checkLocation(&loc, 1, 1, 1, 2, t + "A1_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::END, t + "A2");
 
@@ -190,30 +190,30 @@ class EulScannerTest {
         stream = std::stringstream("123 ");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 123, 4, 0, t + "B1");
+        checkIntToken(scanner, &ctx, &loc, 123, 32, 0, t + "B1");
         checkLocation(&loc, 1, 1, 1, 4, t + "B1_loc");
 
         //end at operator
         stream = std::stringstream("123=");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 123, 4, 0, t + "C1");
+        checkIntToken(scanner, &ctx, &loc, 123, 32, 0, t + "C1");
         checkLocation(&loc, 1, 1, 1, 4, t + "C1_loc");
 
         //end at letter other that casting
         stream = std::stringstream("123p");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 123, 4, 0, t + "D1");
+        checkIntToken(scanner, &ctx, &loc, 123, 32, 0, t + "D1");
         checkLocation(&loc, 1, 1, 1, 4, t + "D1_loc");
 
 
         //cast size
-        stream = std::stringstream("123s8");
+        stream = std::stringstream("123s64");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 123, 8, 0, t + "E1");
-        checkLocation(&loc, 1, 1, 1, 6, t + "E1_loc");
+        checkIntToken(scanner, &ctx, &loc, 123, 64, 0, t + "E1");
+        checkLocation(&loc, 1, 1, 1, 7, t + "E1_loc");
 
 
         //unsigned literal, stop at operator, and then at space
@@ -231,34 +231,34 @@ class EulScannerTest {
         stream = std::stringstream("5u+52s 5sa 5u");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 5, 4, 1, t + "G1");
+        checkIntToken(scanner, &ctx, &loc, 5, 32, 1, t + "G1");
         checkLocation(&loc, 1, 1, 1, 3, t + "G1_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PLUS, t + "G2");
         checkLocation(&loc, 1, 3, 1, 4, t + "G2_loc");
-        checkIntToken(scanner, &ctx, &loc, 52, 4, 0, t + "G3");
+        checkIntToken(scanner, &ctx, &loc, 52, 32, 0, t + "G3");
         checkLocation(&loc, 1, 4, 1, 7, t + "G3_loc");
-        checkIntToken(scanner, &ctx, &loc, 5, 4, 0, t + "G4");
+        checkIntToken(scanner, &ctx, &loc, 5, 32, 0, t + "G4");
         checkLocation(&loc, 1, 8, 1, 10, t + "G4_loc");
         checkIdToken(scanner, &ctx, &loc, "a", t + "G5");
         checkLocation(&loc, 1, 10, 1, 11, t + "G5_loc");
-        checkIntToken(scanner, &ctx, &loc, 5, 4, 1, t + "G6");
+        checkIntToken(scanner, &ctx, &loc, 5, 32, 1, t + "G6");
         checkLocation(&loc, 1, 12, 1, 14, t + "G6_loc");
 
         //test zero starting
         stream = std::stringstream("0 0u 0s 0u123 0s123 0+0u12+0s");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 0, 4, 0, t + "H1"); //0
+        checkIntToken(scanner, &ctx, &loc, 0, 32, 0, t + "H1"); //0
         checkLocation(&loc, 1, 1, 1, 2, t + "H1_loc");
-        checkIntToken(scanner, &ctx, &loc, 0, 4, 1, t + "H2"); //0u
+        checkIntToken(scanner, &ctx, &loc, 0, 32, 1, t + "H2"); //0u
         checkLocation(&loc, 1, 3, 1, 5, t + "H2_loc");
-        checkIntToken(scanner, &ctx, &loc, 0, 4, 0, t + "H3"); //0s
+        checkIntToken(scanner, &ctx, &loc, 0, 32, 0, t + "H3"); //0s
         checkLocation(&loc, 1, 6, 1, 8, t + "H3_loc");
         checkIntToken(scanner, &ctx, &loc, 0, 123, 1, t + "H4"); //0u123
         checkLocation(&loc, 1, 9, 1, 14, t + "H4_loc");
         checkIntToken(scanner, &ctx, &loc, 0, 123, 0, t + "H5"); //0s123
         checkLocation(&loc, 1, 15, 1, 20, t + "H5_loc");
-        checkIntToken(scanner, &ctx, &loc, 0, 4, 0, t + "H6"); //0
+        checkIntToken(scanner, &ctx, &loc, 0, 32, 0, t + "H6"); //0
         checkLocation(&loc, 1, 21, 1, 22, t + "H6_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PLUS, t + "H7"); //+
         checkLocation(&loc, 1, 22, 1, 23, t + "H7_loc");
@@ -266,50 +266,50 @@ class EulScannerTest {
         checkLocation(&loc, 1, 23, 1, 27, t + "H8_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PLUS, t + "H9"); //+
         checkLocation(&loc, 1, 27, 1, 28, t + "H9_loc");
-        checkIntToken(scanner, &ctx, &loc, 0, 4, 0, t + "H10"); //0s
+        checkIntToken(scanner, &ctx, &loc, 0, 32, 0, t + "H10"); //0s
         checkLocation(&loc, 1, 28, 1, 30, t + "H10_loc");
     }
 
 
     private: static void parseFloatTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
         yy::EulParser::location_type loc;
 
 
         //int and float part present
         std::stringstream stream = std::stringstream("0.0+1.0 123.456hello 1.2");
         EulScanner scanner(&stream);
-        checkFloatToken(scanner, &ctx, &loc, 0.0, 8, 0.00000001, t + "A1");
+        checkFloatToken(scanner, &ctx, &loc, 0.0, 64, 0.00000001, t + "A1");
         checkLocation(&loc, 1, 1, 1, 4, t + "A1_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PLUS, t + "A2");
         checkLocation(&loc, 1, 4, 1, 5, t + "A2_loc");
-        checkFloatToken(scanner, &ctx, &loc, 1.0, 8, 0.00000001, t + "A3");
+        checkFloatToken(scanner, &ctx, &loc, 1.0, 64, 0.00000001, t + "A3");
         checkLocation(&loc, 1, 5, 1, 8, t + "A3_loc");
-        checkFloatToken(scanner, &ctx, &loc, 123.456, 8, 0.00000001, t + "A4");
+        checkFloatToken(scanner, &ctx, &loc, 123.456, 64, 0.00000001, t + "A4");
         checkLocation(&loc, 1, 9, 1, 16, t + "A4_loc");
         checkIdToken(scanner, &ctx, &loc, "hello", t + "A5");
         checkLocation(&loc, 1, 16, 1, 21, t + "A5_loc");
-        checkFloatToken(scanner, &ctx, &loc, 1.2, 8, 0.00000001, t + "A6");
+        checkFloatToken(scanner, &ctx, &loc, 1.2, 64, 0.00000001, t + "A6");
         checkLocation(&loc, 1, 22, 1, 25, t + "A6_loc");
 
         //int part missing, or float part missing
         stream = std::stringstream("0. 123.+.123 1.hello 2.");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkFloatToken(scanner, &ctx, &loc, 0.0, 8, 0.00000001, t + "B1");
+        checkFloatToken(scanner, &ctx, &loc, 0.0, 64, 0.00000001, t + "B1");
         checkLocation(&loc, 1, 1, 1, 3, t + "B1_loc");
-        checkFloatToken(scanner, &ctx, &loc, 123.0, 8, 0.00000001, t + "B2");
+        checkFloatToken(scanner, &ctx, &loc, 123.0, 64, 0.00000001, t + "B2");
         checkLocation(&loc, 1, 4, 1, 8, t + "B2_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PLUS, t + "B3");
         checkLocation(&loc, 1, 8, 1, 9, t + "B3_loc");
-        checkFloatToken(scanner, &ctx, &loc, 0.123, 8, 0.00000001, t + "B4");
+        checkFloatToken(scanner, &ctx, &loc, 0.123, 64, 0.00000001, t + "B4");
         checkLocation(&loc, 1, 9, 1, 13, t + "B4_loc");
-        checkFloatToken(scanner, &ctx, &loc, 1.0, 8, 0.00000001, t + "B5");
+        checkFloatToken(scanner, &ctx, &loc, 1.0, 64, 0.00000001, t + "B5");
         checkLocation(&loc, 1, 14, 1, 16, t + "B5_loc");
         checkIdToken(scanner, &ctx, &loc, "hello", t + "B6");
         checkLocation(&loc, 1, 16, 1, 21, t + "B6_loc");
-        checkFloatToken(scanner, &ctx, &loc, 2.0, 8, 0.00000001, t + "B7");
+        checkFloatToken(scanner, &ctx, &loc, 2.0, 64, 0.00000001, t + "B7");
         checkLocation(&loc, 1, 22, 1, 24, t + "B7_loc");
 
 
@@ -336,19 +336,19 @@ class EulScannerTest {
         stream = std::stringstream("0f 1f+1.f .4f = 3.3f");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkFloatToken(scanner, &ctx, &loc, 0, 8, 0.00000001, t + "D1");
+        checkFloatToken(scanner, &ctx, &loc, 0, 64, 0.00000001, t + "D1");
         checkLocation(&loc, 1, 1, 1, 3, t + "D1_loc");
-        checkFloatToken(scanner, &ctx, &loc, 1, 8, 0.00000001, t + "D2");
+        checkFloatToken(scanner, &ctx, &loc, 1, 64, 0.00000001, t + "D2");
         checkLocation(&loc, 1, 4, 1, 6, t + "D2_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PLUS, t + "D3");
         checkLocation(&loc, 1, 6, 1, 7, t + "D3_loc");
-        checkFloatToken(scanner, &ctx, &loc, 1.0, 8, 0.00000001, t + "D4");
+        checkFloatToken(scanner, &ctx, &loc, 1.0, 64, 0.00000001, t + "D4");
         checkLocation(&loc, 1, 7, 1, 10, t + "D4_loc");
-        checkFloatToken(scanner, &ctx, &loc, 0.4, 8, 0.00000001, t + "D5");
+        checkFloatToken(scanner, &ctx, &loc, 0.4, 64, 0.00000001, t + "D5");
         checkLocation(&loc, 1, 11, 1, 14, t + "D5_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ASSIGN, t + "D6");
         checkLocation(&loc, 1, 15, 1, 16, t + "D6_loc");
-        checkFloatToken(scanner, &ctx, &loc, 3.3, 8, 0.00000001, t + "D7");
+        checkFloatToken(scanner, &ctx, &loc, 3.3, 64, 0.00000001, t + "D7");
         checkLocation(&loc, 1, 17, 1, 21, t + "D7_loc");
     }
     //endregion
@@ -359,7 +359,7 @@ class EulScannerTest {
     //region TEXT
     private: static void parseIdTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
         yy::EulParser::location_type loc;
 
     	//int and float part present
@@ -378,64 +378,64 @@ class EulScannerTest {
 
     private: static void parseCharTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
         yy::EulParser::location_type loc;
 
         //1 byte long unicodes
         std::stringstream stream = std::stringstream("'b' 'n'+'''");
         EulScanner scanner(&stream);
-        checkCharToken(scanner, &ctx, &loc, 'b', 1, t + "A1");
+        checkCharToken(scanner, &ctx, &loc, 'b', 8, t + "A1");
         checkLocation(&loc, 1, 1, 1, 4, t + "A1_loc");
-        checkCharToken(scanner, &ctx, &loc, 'n', 1, t + "A2");
+        checkCharToken(scanner, &ctx, &loc, 'n', 8, t + "A2");
         checkLocation(&loc, 1, 5, 1, 8, t + "A2_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PLUS, t + "A3");
         checkLocation(&loc, 1, 8, 1, 9, t + "A3_loc");
-        checkCharToken(scanner, &ctx, &loc, '\'', 1, t + "A4");
+        checkCharToken(scanner, &ctx, &loc, '\'', 8, t + "A4");
         checkLocation(&loc, 1, 9, 1, 12, t + "A4_loc");
 
         //2 byte long unicodes
         stream = std::stringstream("'ώ' 'ϋ' 'π' 'ü'");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkCharToken(scanner, &ctx, &loc, 0xcf8e, 2, t + "B1");
+        checkCharToken(scanner, &ctx, &loc, 0xcf8e, 16, t + "B1");
         checkLocation(&loc, 1, 1, 1, 5, t + "B1_loc");
-        checkCharToken(scanner, &ctx, &loc, 0xcf8b, 2, t + "B2");
+        checkCharToken(scanner, &ctx, &loc, 0xcf8b, 16, t + "B2");
         checkLocation(&loc, 1, 6, 1, 10, t + "B2_loc");
-        checkCharToken(scanner, &ctx, &loc, 0xcf80, 2, t + "B3");
+        checkCharToken(scanner, &ctx, &loc, 0xcf80, 16, t + "B3");
         checkLocation(&loc, 1, 11, 1, 15, t + "B3_loc");
-        checkCharToken(scanner, &ctx, &loc, 0xc3bc, 2, t + "B4");
+        checkCharToken(scanner, &ctx, &loc, 0xc3bc, 16, t + "B4");
         checkLocation(&loc, 1, 16, 1, 20, t + "B4_loc");
 
         //4 byte long unicodes
         stream = std::stringstream("'𠜎' '𡇙' '😌' '🙋'");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkCharToken(scanner, &ctx, &loc, 0xf0a09c8e, 4, t + "C1");
+        checkCharToken(scanner, &ctx, &loc, 0xf0a09c8e, 32, t + "C1");
         checkLocation(&loc, 1, 1, 1, 7, t + "C1_loc");
-        checkCharToken(scanner, &ctx, &loc, 0xf0a18799, 4, t + "C2");
+        checkCharToken(scanner, &ctx, &loc, 0xf0a18799, 32, t + "C2");
         checkLocation(&loc, 1, 8, 1, 14, t + "C2_loc");
-        checkCharToken(scanner, &ctx, &loc, 0xf09f988c, 4, t + "C3");
+        checkCharToken(scanner, &ctx, &loc, 0xf09f988c, 32, t + "C3");
         checkLocation(&loc, 1, 15, 1, 21, t + "C3_loc");
-        checkCharToken(scanner, &ctx, &loc, 0xf09f998b, 4, t + "C4");
+        checkCharToken(scanner, &ctx, &loc, 0xf09f998b, 32, t + "C4");
         checkLocation(&loc, 1, 22, 1, 28, t + "C4_loc");
 
         //parse escaped chars
         stream = std::stringstream("'\\n' '\\t' '\\r' '\\f' '\\\\' '\\b' '\\0'");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkCharToken(scanner, &ctx, &loc, '\n', 1, t + "D1");
+        checkCharToken(scanner, &ctx, &loc, '\n', 8, t + "D1");
         checkLocation(&loc, 1, 1, 1, 5, t + "D1_loc");
-        checkCharToken(scanner, &ctx, &loc, '\t', 1, t + "D2");
+        checkCharToken(scanner, &ctx, &loc, '\t', 8, t + "D2");
         checkLocation(&loc, 1, 6, 1, 10, t + "D2_loc");
-        checkCharToken(scanner, &ctx, &loc, '\r', 1, t + "D3");
+        checkCharToken(scanner, &ctx, &loc, '\r', 8, t + "D3");
         checkLocation(&loc, 1, 11, 1, 15, t + "D3_loc");
-        checkCharToken(scanner, &ctx, &loc, '\f', 1, t + "D4");
+        checkCharToken(scanner, &ctx, &loc, '\f', 8, t + "D4");
         checkLocation(&loc, 1, 16, 1, 20, t + "D4_loc");
-        checkCharToken(scanner, &ctx, &loc, '\\', 1, t + "D5");
+        checkCharToken(scanner, &ctx, &loc, '\\', 8, t + "D5");
         checkLocation(&loc, 1, 21, 1, 25, t + "D5_loc");
-        checkCharToken(scanner, &ctx, &loc, '\b', 1, t + "D6");
+        checkCharToken(scanner, &ctx, &loc, '\b', 8, t + "D6");
         checkLocation(&loc, 1, 26, 1, 30, t + "D6_loc");
-        checkCharToken(scanner, &ctx, &loc, '\0', 1, t + "D7");
+        checkCharToken(scanner, &ctx, &loc, '\0', 8, t + "D7");
         checkLocation(&loc, 1, 31, 1, 35, t + "D7_loc");
 
 
@@ -483,7 +483,7 @@ class EulScannerTest {
 
     private: static void parseStringTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
         yy::EulParser::location_type loc;
 
 
@@ -492,7 +492,7 @@ class EulScannerTest {
         EulScanner scanner(&stream);
         checkStringToken(scanner, &ctx, &loc, "hello world", t + "A1");
         checkLocation(&loc, 1, 1, 1, 14, t + "A1_loc");
-        checkIntToken(scanner, &ctx, &loc, 123, 4, 0, t + "A2");
+        checkIntToken(scanner, &ctx, &loc, 123, 32, 0, t + "A2");
         checkLocation(&loc, 1, 14, 1, 17, t + "A2_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::NL, t + "A3");
         checkLocation(&loc, 1, 17, 2, 1, t + "A3_loc");
@@ -554,24 +554,24 @@ class EulScannerTest {
     //region OPERATORS
     private: static void parseOperatorsTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
         yy::EulParser::location_type loc;
 
 
         //test + - families, and () pair
         std::stringstream stream = std::stringstream("1+1-(2++) +=\n--5-=+");
         EulScanner scanner(&stream);
-        checkIntToken(scanner, &ctx, &loc, 1, 4, 0, t + "A1");
+        checkIntToken(scanner, &ctx, &loc, 1, 32, 0, t + "A1");
         checkLocation(&loc, 1, 1, 1, 2, t + "A1_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PLUS, t + "A2");
         checkLocation(&loc, 1, 2, 1, 3, t + "A2_loc");
-        checkIntToken(scanner, &ctx, &loc, 1, 4, 0, t + "A3");
+        checkIntToken(scanner, &ctx, &loc, 1, 32, 0, t + "A3");
         checkLocation(&loc, 1, 3, 1, 4, t + "A3_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::MINUS, t + "A4");
         checkLocation(&loc, 1, 4, 1, 5, t + "A4_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PARENTHESIS_OPEN, t + "A5");
         checkLocation(&loc, 1, 5, 1, 6, t + "A5_loc");
-        checkIntToken(scanner, &ctx, &loc, 2, 4, 0, t + "A6");
+        checkIntToken(scanner, &ctx, &loc, 2, 32, 0, t + "A6");
         checkLocation(&loc, 1, 6, 1, 7, t + "A6_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::INCREASE, t + "A7");
         checkLocation(&loc, 1, 7, 1, 9, t + "A7_loc");
@@ -583,7 +583,7 @@ class EulScannerTest {
         checkLocation(&loc, 1, 13, 2, 1, t + "A10_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::DECREASE, t + "A11");
         checkLocation(&loc, 2, 1, 2, 3, t + "A11_loc");
-        checkIntToken(scanner, &ctx, &loc, 5, 4, 0, t + "A12");
+        checkIntToken(scanner, &ctx, &loc, 5, 32, 0, t + "A12");
         checkLocation(&loc, 2, 3, 2, 4, t + "A12_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ASSIGN_MINUS, t + "A13");
         checkLocation(&loc, 2, 4, 2, 6, t + "A13_loc");
@@ -594,17 +594,17 @@ class EulScannerTest {
         stream = std::stringstream("1%1*[2*=] /=\n5%=/4");
         scanner.switch_streams(&stream);
         loc.initialize();
-        checkIntToken(scanner, &ctx, &loc, 1, 4, 0, t + "B1");
+        checkIntToken(scanner, &ctx, &loc, 1, 32, 0, t + "B1");
         checkLocation(&loc, 1, 1, 1, 2, t + "B1_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::PERCENT, t + "B2");
         checkLocation(&loc, 1, 2, 1, 3, t + "B2_loc");
-        checkIntToken(scanner, &ctx, &loc, 1, 4, 0, t + "B3");
+        checkIntToken(scanner, &ctx, &loc, 1, 32, 0, t + "B3");
         checkLocation(&loc, 1, 3, 1, 4, t + "B3_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::STAR, t + "B4");
         checkLocation(&loc, 1, 4, 1, 5, t + "B4_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::SQUARE_OPEN, t + "B5");
         checkLocation(&loc, 1, 5, 1, 6, t + "B5_loc");
-        checkIntToken(scanner, &ctx, &loc, 2, 4, 0, t + "B6");
+        checkIntToken(scanner, &ctx, &loc, 2, 32, 0, t + "B6");
         checkLocation(&loc, 1, 6, 1, 7, t + "B6_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ASSIGN_STAR, t + "B7");
         checkLocation(&loc, 1, 7, 1, 9, t + "B7_loc");
@@ -614,13 +614,13 @@ class EulScannerTest {
         checkLocation(&loc, 1, 11, 1, 13, t + "B9_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::NL, t + "B10");
         checkLocation(&loc, 1, 13, 2, 1, t + "B10_loc");
-        checkIntToken(scanner, &ctx, &loc, 5, 4, 0, t + "B11");
+        checkIntToken(scanner, &ctx, &loc, 5, 32, 0, t + "B11");
         checkLocation(&loc, 2, 1, 2, 2, t + "B11_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ASSIGN_MOD, t + "B12");
         checkLocation(&loc, 2, 2, 2, 4, t + "B12_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::SLASH, t + "B13");
         checkLocation(&loc, 2, 4, 2, 5, t + "B13_loc");
-        checkIntToken(scanner, &ctx, &loc, 4, 4, 0, t + "B14");
+        checkIntToken(scanner, &ctx, &loc, 4, 32, 0, t + "B14");
         checkLocation(&loc, 2, 5, 2, 6, t + "B14_loc");
     }
     //endregion

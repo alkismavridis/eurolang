@@ -6,7 +6,7 @@
 */
 class EulExpStatement : public EulStatement {
     //region FIELDS
-    public: EulToken* exp; //one of yy::EulParser::token
+    public: EulToken* exp;
     //endregion
 
 
@@ -27,6 +27,6 @@ class EulExpStatement : public EulStatement {
 
     //region OVERRIDES
     public: EulStatementType getStatementType();
-    public: void generateCode(EulCodeGenerator* gen);
+    public: void generateStatement(EulCodeGenContext* ctx);
     //endregion
 };

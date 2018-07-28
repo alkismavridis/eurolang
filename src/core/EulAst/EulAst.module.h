@@ -121,6 +121,37 @@ void VarDeclarationStatement::toJson(std::ostream& out, int tabs) {
 //endregion
 
 
+//region RETURN STATEMENT
+ReturnStatement::ReturnStatement(EulToken* exp) {
+    this->exp = exp;
+}
+
+ReturnStatement::~ReturnStatement() {
+    if (this->exp != nullptr) delete this->exp;
+}
+
+EulStatementType ReturnStatement::getStatementType() { return RETURN_STATEMENT; }
+
+void ReturnStatement::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"ReturnStatement\"," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"exp\": ";
+    if (this->exp == nullptr) out << "null" << std::endl;
+    else {
+        this->exp->toJson(out, tabs);
+        std::cout << std::endl;
+    }
+
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+//endregion
+
+
 
 
 //region EXPRESSION BASE
@@ -131,9 +162,9 @@ EulExpressionType EulExpression::getExpressionType() { return UNKNOWN_EXP; }
 
 
 //region PREFIX EXPRESSION
-EulPrefixExp::EulPrefixExp(int operatorType, EulToken* exp) {
+EulPrefixExp::EulPrefixExp(EulOperator* oper, EulToken* exp) {
     this->exp = exp;
-    this->operatorType = operatorType;
+    this->oper = oper;
 }
 
 EulPrefixExp::~EulPrefixExp() {
@@ -146,7 +177,7 @@ void EulPrefixExp::toJson(std::ostream& out, int tabs) {
    out << "\"type\":\"EulPrefixExp\"," << std::endl;
 
    for (int i=tabs; i>=0; --i) out << "\t";
-   out << "\"operatorType\":" << this->operatorType << "," << std::endl;
+   out << "\"oper\":" << this->oper->getOperatorText() << "," << std::endl;
 
    for (int i=tabs; i>=0; --i) out << "\t";
    out << "\"exp\":";
@@ -164,9 +195,9 @@ EulExpressionType EulPrefixExp::getExpressionType() { return PREFIX_EXP; }
 
 
 //region INFIX EXPRESSION
-EulInfixExp::EulInfixExp(EulToken* left, int operatorType, EulToken* right) {
+EulInfixExp::EulInfixExp(EulToken* left, EulOperator* oper, EulToken* right) {
     this->left = left;
-    this->operatorType = operatorType;
+    this->oper = oper;
     this->right = right;
 }
 
@@ -186,7 +217,7 @@ void EulInfixExp::toJson(std::ostream& out, int tabs) {
     out << "," << std::endl;
 
     for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"operatorType\":" << this->operatorType << "," << std::endl;
+    out << "\"oper\":" << this->oper->getOperatorText() << "," << std::endl;
 
     for (int i=tabs; i>=0; --i) out << "\t";
     out << "\"right\":";
@@ -203,9 +234,9 @@ EulExpressionType EulInfixExp::getExpressionType() { return INFIX_EXP; }
 
 
 //region SUFFIX EXPRESSION
-EulSuffixExp::EulSuffixExp(EulToken* exp, int operatorType) {
+EulSuffixExp::EulSuffixExp(EulToken* exp, EulOperator* oper) {
     this->exp = exp;
-    this->operatorType = operatorType;
+    this->oper = oper;
 }
 
 EulSuffixExp::~EulSuffixExp() {
@@ -223,7 +254,7 @@ void EulSuffixExp::toJson(std::ostream& out, int tabs) {
     out << "," << std::endl;
 
     for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"operatorType\":" << this->operatorType << "," << std::endl;
+    out << "\"oper\":" << this->oper->getOperatorText() << "," << std::endl;
 
     for (int i=tabs-1; i>=0; --i) out << "\t";
     out << "}";
@@ -349,9 +380,11 @@ EulExpressionType EulArrayAccessExp::getExpressionType() { return ARRAY_ACCESS; 
 
 
 //region EUL TYPE
-EulType::EulType(const std::string& name) {
-    this->name = name;
+EulType::EulType(llvm::Type* llvmType) {
+    this->llvmType = llvmType;
 }
+
+bool EulType::isLateDeclared() { return false; }
 
 EulType::~EulType() {}
 
@@ -360,6 +393,46 @@ void EulType::toJson(std::ostream& out, int tabs) {
     for (int i=tabs; i>=0; --i) out << "\t";
     out << "\"type\":\"EulType\"," << std::endl;
 
+    for (int i=tabs; i>=0; --i) out << "\t";
+    if(this->llvmType!=nullptr) out << "\"llvmType\":\"" << this->llvmType->getStructName().data() << "\"" << std::endl;
+    else out << "\"llvmType\": null" << std::endl;
+
+    //close json object
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+
+EulAstType EulType::getAstType() { return EUL_TYPE; }
+
+bool EulType::isEulType(EulToken* tok) {
+    if (tok->getType() != AST) return false;
+    if ( ((EulAst*)tok)->getAstType() != EUL_TYPE) return false;
+    return true;
+}
+//endregion
+
+
+
+//region LATE DECLARED TYPE
+LateDefinedType::LateDefinedType(const std::string& name) : EulType(nullptr) {
+    this->name = name;
+}
+
+bool LateDefinedType::isLateDeclared() { return true; }
+
+LateDefinedType::~LateDefinedType() {}
+
+void LateDefinedType::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"LateDefinedType\"," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"name\":\"" << this->name << "\"," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    if(this->llvmType!=nullptr) out << "\"llvmType\":\"" << this->llvmType->getStructName().data() << "\"," << std::endl;
+    else out << "\"llvmType\": null," << std::endl;
 
     for (int i=tabs; i>=0; --i) out << "\t";
     out << "\"name\":\"" << this->name << "\"" << std::endl;
@@ -368,10 +441,7 @@ void EulType::toJson(std::ostream& out, int tabs) {
     for (int i=tabs-1; i>=0; --i) out << "\t";
     out << "}";
 }
-
-EulAstType EulType::getAstType() { return EUL_TYPE; }
 //endregion
-
 
 
 

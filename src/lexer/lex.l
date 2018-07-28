@@ -71,6 +71,7 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 "val"		return yy::EulParser::token::VAL;
 "const"		return yy::EulParser::token::CONST;
 "namespace"		return yy::EulParser::token::NAMESPACE;
+"return"		return yy::EulParser::token::RETURN;
 
 
 

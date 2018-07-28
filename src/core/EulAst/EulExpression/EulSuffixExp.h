@@ -3,13 +3,13 @@
 class EulSuffixExp : public EulExpression {
     //region LIFE CYCLE
     public: EulToken* exp;
-    public: int operatorType;
+    public: EulOperator* oper;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulSuffixExp(EulToken* exp, int operatorType);
+    public: EulSuffixExp(EulToken* exp, EulOperator* oper);
     public: virtual ~EulSuffixExp();
     //endregion
 
@@ -23,6 +23,6 @@ class EulSuffixExp : public EulExpression {
 
     //region OVERRIDES
     public: EulExpressionType getExpressionType();
-    public: llvm::Value* generateValue(EulCodeGenerator* gen);
+    public: llvm::Value* generateValue(EulCodeGenContext* ctx);
     //endregion
 };

@@ -25,5 +25,6 @@ class EulFloatToken : public EulToken {
 
 
     public: virtual EulTokenType getType();
-    public: llvm::Value* generateValue(EulCodeGenerator* gen);
+    public: llvm::Value* generateValue(EulCodeGenContext* ctx);
+    public: llvm::Type* generateType(EulCodeGenContext* ctx);
 };

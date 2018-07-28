@@ -23,6 +23,6 @@ class EulFunctionCallExp : public EulExpression {
 
     //region OVERRIDES
     public: EulExpressionType getExpressionType();
-    public: llvm::Value* generateValue(EulCodeGenerator* gen);
+    public: llvm::Value* generateValue(EulCodeGenContext* ctx);
     //endregion
 };

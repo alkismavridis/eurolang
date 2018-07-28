@@ -1,17 +1,16 @@
 #pragma once
 
 
-class VarDeclarationStatement : public EulStatement {
+class ReturnStatement : public EulStatement {
     //region FIELDS
-    public: int varType; //one of yy::EulParser::token
-    public: std::vector<VarDeclaration*>* declarations;
+    public: EulToken* exp; //can be null in case of void
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: VarDeclarationStatement(int varType, std::vector<VarDeclaration*>* declarations);
-    public: virtual ~VarDeclarationStatement();
+    public: ReturnStatement(EulToken* exp);
+    public: virtual ~ReturnStatement();
     //endregion
 
 

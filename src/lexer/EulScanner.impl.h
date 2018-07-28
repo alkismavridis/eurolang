@@ -185,6 +185,6 @@ EulCharToken* EulScanner::parseEscapedChar(Compiler* compiler, yy::EulParser::lo
     }
     loc->columns();
 
-    return new EulCharToken(escaped, 1);
+    return new EulCharToken(escaped, 8);
 }
 //endregion
