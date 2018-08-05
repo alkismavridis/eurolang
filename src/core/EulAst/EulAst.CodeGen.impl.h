@@ -8,7 +8,7 @@
 */
 llvm::Type* VarDeclaration::generateType(EulCodeGenContext* ctx) {
     //1. If no type is declared, get one from the value.
-    return llvm::IntegerType::get(*ctx->context, 32);
+    return llvm::IntegerType::get(ctx->context, 32);
 
 
     //TODO what a mess!
@@ -32,17 +32,24 @@ void EulStatement::generateStatement(EulCodeGenContext* ctx) {
 void VarDeclarationStatement::generateStatement(EulCodeGenContext* ctx) {
     for (auto decl : *this->declarations) {
         auto const varName = decl->id->name;
-        //1. TODO check existence in scope, generate error if already existing. continue in loop. Do not call CreateAlloca
 
-        //2. Declare the variable
+        //1. Check if variable already exists ON the current scope. Throw an error if so
+        auto const symbol = ctx->currentScope->get(varName);
+        if (symbol == nullptr) ctx->compiler->addError(EulError(EulErrorType::SEMANTIC, varName + " not found."));
+
+        //2. Declare the variable, and add it to the scope.
         llvm::AllocaInst* allocInst = ctx->builder.CreateAlloca(
-            llvm::IntegerType::get(*ctx->context, 32),  //TODO get the proper type: the type of that variable
+            llvm::IntegerType::get(ctx->context, 32),  //TODO get the proper type: the type of that variable
             nullptr,
             varName
         );
 
+
         //3. If the value has an assignment, evaluate it.
         if (decl->value != nullptr) ctx->builder.CreateStore(decl->value->generateValue(ctx), allocInst);
+
+        //4. Add the llvm value to the symbol
+        symbol->allocInstruction = allocInst;
     }
 }
 
@@ -53,6 +60,8 @@ void EulExpStatement::generateStatement(EulCodeGenContext* ctx) {
 
 void ReturnStatement::generateStatement(EulCodeGenContext* ctx) {
     //TODO check if return statement matches function return type.
+
+
     ctx->builder.CreateRet(
         this->exp == nullptr? nullptr : this->exp->generateValue(ctx)
     );

@@ -14,9 +14,6 @@ class EulProgram {
     //public: EulSourceFile* entryPoint;	//a token of type EulTokenType_SOURCE_FILE than indicates where the program starts.
     public: std::map<std::string, EulSourceFile*> sources; /** all source files encountered until now. Parsed and not yet parsed (imported, waiting for parsing). */
     public: EulScope globalScope;
-
-    public: llvm::LLVMContext* llvmContext;
-    public: llvm::Module* globalModule;
     //endregion
 
 
@@ -63,8 +60,11 @@ class EulProgram {
 
 
     //region CODE GENERATION
-    public: void makeMain(llvm::Module* module, llvm::IRBuilder<llvm::ConstantFolder, llvm::IRBuilderDefaultInserter>* builder);
-    public: void emmitObjCode(llvm::Module* module, const std::string& outputFileName);
-    public: void emmitIRAssembly(llvm::Module* module, const std::string& outputFileName);
+    public: void makeMain(EulCodeGenContext* ctx);
+    public: void makeEntryPoint(EulCodeGenContext* ctx);
+    public: void declareClibSymbols(EulCodeGenContext* ctx);
+
+    public: void emmitObjCode(EulCodeGenContext* ctx, const std::string& outputFileName);
+    public: void emmitIRAssembly(EulCodeGenContext* ctx, const std::string& outputFileName);
     //endregion
 };

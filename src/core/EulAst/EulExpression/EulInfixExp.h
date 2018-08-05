@@ -2,16 +2,15 @@
 
 class EulInfixExp : public EulExpression {
     //region LIFE CYCLE
-    public: EulToken* left;
+    public: std::shared_ptr<EulToken> left;
     public: EulOperator* oper;
-    public: EulToken* right;
+    public: std::shared_ptr<EulToken> right;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulInfixExp(EulToken* left, EulOperator* oper, EulToken* right);
-    public: ~EulInfixExp();
+    public: EulInfixExp(std::shared_ptr<EulToken> left, EulOperator* oper, std::shared_ptr<EulToken> right);
     //endregion
 
 

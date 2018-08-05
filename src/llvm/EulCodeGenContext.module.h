@@ -1,12 +1,8 @@
 #pragma once
 
 
-EulCodeGenContext::EulCodeGenContext(llvm::LLVMContext* context, llvm::Module* module) : builder(*context) {
-    this->context = context;
+EulCodeGenContext::EulCodeGenContext(Compiler* compiler, llvm::LLVMContext& context, llvm::Module* module, EulScope* scope) : context(context), builder(context){
     this->module = module;
-}
-
-
-EulType* EulCodeGenContext::createEulType(const std::string& typeName, bool assertExistence) {
-    llvm::IntegerType::get(*this->context, 32); //TODO dummy int type.
+    this->currentScope = scope;
+    this->compiler = compiler;
 }

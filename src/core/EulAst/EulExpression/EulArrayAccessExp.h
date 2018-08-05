@@ -2,15 +2,14 @@
 
 class EulArrayAccessExp : public EulExpression {
     //region LIFE CYCLE
-    public: EulToken* obj;
-    public: EulToken* index;
+    public: std::shared_ptr<EulToken> obj;
+    public: std::shared_ptr<EulToken> index;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulArrayAccessExp(EulToken* obj, EulToken* index);
-    public: ~EulArrayAccessExp();
+    public: EulArrayAccessExp(std::shared_ptr<EulToken> obj, std::shared_ptr<EulToken> index);
     //endregion
 
 

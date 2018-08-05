@@ -49,17 +49,17 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 [ \t]+     loc->step();
 
 [1-9][0-9]*([su][0-9]*)? {
-    yylval->build<EulIntToken*>() = new EulIntToken(yytext);
+    yylval->build<std::shared_ptr<EulIntToken>>() = std::make_shared<EulIntToken>(yytext);
     return yy::EulParser::token::INT;
 }
 
 "0"([su][0-9]*)? {
-    yylval->build<EulIntToken*>() = new EulIntToken(yytext);
+    yylval->build<std::shared_ptr<EulIntToken>>() = std::make_shared<EulIntToken>(yytext);
     return yy::EulParser::token::INT;
 }
 
 ([0-9]+([.][0-9]*)?|[.][0-9]+)(f[0-9]*)? {
-    yylval->build<EulFloatToken*>() = new EulFloatToken(yytext);
+    yylval->build<std::shared_ptr<EulFloatToken>>() = std::make_shared<EulFloatToken>(yytext);
     return yy::EulParser::token::FLOAT;
 }
 
@@ -76,7 +76,7 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 
 
 [a-zA-Z]{WORD_TAIL}* {
-    yylval->build<EulIdToken*>() = new EulIdToken(yytext, yyleng);
+    yylval->build<std::shared_ptr<EulIdToken>>() = std::make_shared<EulIdToken>(yytext, yyleng, ctx->currentScope);
     return yy::EulParser::token::ID;
 }
 
@@ -139,26 +139,26 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 
 
 "\"" {
-    EulStringToken* ret = this->parseStringValue(ctx->compiler, loc);
+    std::shared_ptr<EulStringToken> ret = this->parseStringValue(ctx->compiler, loc);
     if (ctx->compiler->errors.size() != 0) return yy::EulParser::token::ERROR;
 
-    yylval->build<EulStringToken*>() = ret;
+    yylval->build<std::shared_ptr<EulStringToken>>() = ret;
     return yy::EulParser::token::STRING;
 }
 
 "'\\" {
-    EulCharToken* ret = this->parseEscapedChar(ctx->compiler, loc);
+    std::shared_ptr<EulCharToken> ret = this->parseEscapedChar(ctx->compiler, loc);
     if (ctx->compiler->errors.size() != 0) return yy::EulParser::token::ERROR;
 
-    yylval->build<EulCharToken*>() = ret;
+    yylval->build<std::shared_ptr<EulCharToken>>() = ret;
     return yy::EulParser::token::CHAR;
 }
 
 "'"{ANY_UNICODE}"'"	{
-    EulCharToken* ret = new EulCharToken(yytext, yyleng, ctx->compiler);
+    std::shared_ptr<EulCharToken> ret = std::make_shared<EulCharToken>(yytext, yyleng, ctx->compiler);
     if (ctx->compiler->errors.size() != 0) return yy::EulParser::token::ERROR;
 
-    yylval->build<EulCharToken*>() = ret;
+    yylval->build<std::shared_ptr<EulCharToken>>() = ret;
     return yy::EulParser::token::CHAR;
 }
 

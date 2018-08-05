@@ -10,14 +10,11 @@
     //region UGGLY FORWARD DECLARATIONS
     class EulScanner;
     class EulCodeGenContext;
+    class EulScope;
     namespace llvm {
         class Value;
-        class Module;
-        class LLVMContext;
         class Type;
-        class ConstantFolder;
-        class IRBuilderDefaultInserter;
-        template<typename T, typename Inserter> class IRBuilder;
+        class AllocaInst;
     }
     //endregion
 
@@ -40,8 +37,6 @@
     #include "../core/EulAst/EulAstType.h"
     #include "../core/EulAst/EulAst.h"
     #include "../core/EulAst/EulType/EulType.h"
-    #include "../core/EulAst/EulType/LateDefinedType.h"
-    #include "../core/EulAst/EulSymbol/EulSymbol.h"
     #include "../core/EulAst/EulStatement/EulStatementType.h"
     #include "../core/EulAst/EulStatement/EulStatement.h"
     #include "../core/EulAst/EulStatement/EulImportStatement.h"
@@ -62,6 +57,7 @@
     #include "../core/EulAst/EulDeclaration/VarDeclaration.h"
     #include "../core/EulAst/EulStatement/VarDeclarationStatement.h"
 
+    #include "../core/EulScope/EulSymbol.h"
     #include "../core/EulScope/EulScope.h"
     #include "../core/EulSourceFile/EulSourceFile.h"
     #include "../core/EulProgram/EulProgram.h"
@@ -178,11 +174,11 @@
 
 
 %token
-    <EulIntToken*> INT
-    <EulFloatToken*> FLOAT
-    <EulStringToken*> STRING
-    <EulCharToken*> CHAR
-    <EulIdToken*> ID
+    <std::shared_ptr<EulIntToken>> INT
+    <std::shared_ptr<EulFloatToken>> FLOAT
+    <std::shared_ptr<EulStringToken>> STRING
+    <std::shared_ptr<EulCharToken>> CHAR
+    <std::shared_ptr<EulIdToken>> ID
 ;
 
 %destructor {  } <*>
@@ -202,15 +198,15 @@
 //region NON TERMINALS
 %type  <EulSourceFile*> source_file
 
-%type  <std::vector<EulStatement*>*> statements
-%type  <EulStatement*> statement
+%type  <std::vector<std::shared_ptr<EulStatement>>*> statements
+%type  <std::shared_ptr<EulStatement>> statement
 
-%type  <std::vector<VarDeclaration*>*> parameter_declarations
-%type  <VarDeclaration*> parameter_declaration
-%type  <EulType*> eul_type
+%type  <std::vector<std::shared_ptr<VarDeclaration>>*> parameter_declarations
+%type  <std::shared_ptr<VarDeclaration>> parameter_declaration
+%type  <std::shared_ptr<EulType>> eul_type
 
-%type  <EulToken*> expression
-%type  <std::vector<EulToken*>*> expressions
+%type  <std::shared_ptr<EulToken>> expression
+%type  <std::vector<std::shared_ptr<EulToken>>*> expressions
 
 %type  <int> var_keyword
 //endregion
@@ -264,12 +260,12 @@ source_file
 //============================== STATEMENTS  ==============================
 statements:
     statements statement {
-        if ($1 == nullptr) $1 = new std::vector<EulStatement*>();
+        if ($1 == nullptr) $1 = new std::vector<std::shared_ptr<EulStatement>>();
         if ($2!=nullptr) $1->push_back($2);
         $$ = $1;
     } |
     statement {
-        $$ = new std::vector<EulStatement*>();
+        $$ = new std::vector<std::shared_ptr<EulStatement>>();
         if ($1!=nullptr) $$->push_back($1);
     }
 
@@ -283,20 +279,20 @@ var_keyword
 
 statement:
     var_keyword parameter_declarations SEMICOLON {
-        $$ = new VarDeclarationStatement($1, $2);
-        //EulParserUtils::addSymbolsToSourceFile($1, $2, ctx);
+        $$ = std::make_shared<VarDeclarationStatement>($1, $2);
+        ctx->currentScope->declare((VarDeclarationStatement*) $$.get());
     } |
 
     expression SEMICOLON {
-        $$ = new EulExpStatement($1);
+        $$ = std::make_shared<EulExpStatement>($1);
     } |
 
     RETURN expression SEMICOLON {
-        $$ = new ReturnStatement($2);
+        $$ = std::make_shared<ReturnStatement>($2);
     } |
 
     RETURN SEMICOLON {
-        $$ = new ReturnStatement(nullptr);
+        $$ = std::make_shared<ReturnStatement>(nullptr);
     } |
 
     NL {
@@ -315,64 +311,64 @@ expression
     | CHAR { $$ = $1; }
     | ID   { $$ = $1; }
 
-    | expression PLUS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.plusOperator, $3); }
-    | expression MINUS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.minusOperator, $3); }
-    | expression NOT_EQUALS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.notEqualsOperator, $3); }
-    | expression NOT_SAME expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.notSameOperator, $3); }
-    | expression PERCENT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.percentOperator, $3); }
-    | expression ASSIGN_MOD expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignModOperator, $3); }
-    | expression XOR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.xorOperator, $3); }
-    | expression ASSIGN_XOR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignXorOperator, $3); }
-    | expression BIN_AND expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.binAndOperator, $3); }
-    | expression AND expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.andOperator, $3); }
-    | expression ASSIGN_AND expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignAndOperator, $3); }
-    | expression STAR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.starOperator, $3); }
-    | expression ASSIGN_STAR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignStarOperator, $3); }
-    | expression ASSIGN_MINUS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignMinusOperator, $3); }
-    | expression ASSIGN expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignOperator, $3); }
-    | expression EQUALS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.equalsOperator, $3); }
-    | expression SAME expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.sameOperator, $3); }
-    | expression ASSIGN_PLUS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignPlusOperator, $3); }
-    | expression BIN_OR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.binOrOperator, $3); }
-    | expression OR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.orOperator, $3); }
-    | expression ASSIGN_OR expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignOrOperator, $3); }
-    | expression SLASH expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.slashOperator, $3); }
-    | expression ASSIGN_DIV expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignDivOperator, $3); }
-    | expression DOT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.dotOperator, $3); }
-    | expression LESS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.lessOperator, $3); }
-    | expression LESS_EQUALS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.lessEqualsOperator, $3); }
-    | expression LSHIFT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.leftShiftOperator, $3); }
-    | expression ASSIGN_LSHIFT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignLeftShiftOperator, $3); }
-    | expression MORE expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.moreOperator, $3); }
-    | expression MORE_EQUALS expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.moreEqualsOperator, $3); }
-    | expression RSHIFT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.rightShiftOperator, $3); }
-    | expression ASSIGN_RSHIFT expression { $$ = new EulInfixExp($1, &EUL_OPERATORS.assignRightShiftOperator, $3); }
+    | expression PLUS expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.plusOperator, $3); }
+    | expression MINUS expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.minusOperator, $3); }
+    | expression NOT_EQUALS expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.notEqualsOperator, $3); }
+    | expression NOT_SAME expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.notSameOperator, $3); }
+    | expression PERCENT expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.percentOperator, $3); }
+    | expression ASSIGN_MOD expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignModOperator, $3); }
+    | expression XOR expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.xorOperator, $3); }
+    | expression ASSIGN_XOR expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignXorOperator, $3); }
+    | expression BIN_AND expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.binAndOperator, $3); }
+    | expression AND expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.andOperator, $3); }
+    | expression ASSIGN_AND expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignAndOperator, $3); }
+    | expression STAR expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.starOperator, $3); }
+    | expression ASSIGN_STAR expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignStarOperator, $3); }
+    | expression ASSIGN_MINUS expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignMinusOperator, $3); }
+    | expression ASSIGN expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignOperator, $3); }
+    | expression EQUALS expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.equalsOperator, $3); }
+    | expression SAME expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.sameOperator, $3); }
+    | expression ASSIGN_PLUS expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignPlusOperator, $3); }
+    | expression BIN_OR expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.binOrOperator, $3); }
+    | expression OR expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.orOperator, $3); }
+    | expression ASSIGN_OR expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignOrOperator, $3); }
+    | expression SLASH expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.slashOperator, $3); }
+    | expression ASSIGN_DIV expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignDivOperator, $3); }
+    | expression DOT expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.dotOperator, $3); }
+    | expression LESS expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.lessOperator, $3); }
+    | expression LESS_EQUALS expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.lessEqualsOperator, $3); }
+    | expression LSHIFT expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.leftShiftOperator, $3); }
+    | expression ASSIGN_LSHIFT expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignLeftShiftOperator, $3); }
+    | expression MORE expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.moreOperator, $3); }
+    | expression MORE_EQUALS expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.moreEqualsOperator, $3); }
+    | expression RSHIFT expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.rightShiftOperator, $3); }
+    | expression ASSIGN_RSHIFT expression { $$ = std::make_shared<EulInfixExp>($1, &EUL_OPERATORS.assignRightShiftOperator, $3); }
 
     | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE        { $$ = $2; }
-    | expression PARENTHESIS_OPEN expressions PARENTHESIS_CLOSE        {  $$ = new EulFunctionCallExp($1, $3); }
-    | expression SQUARE_OPEN expression SQUARE_CLOSE        { $$ = new EulArrayAccessExp($1, $3 ); }
+    | expression PARENTHESIS_OPEN expressions PARENTHESIS_CLOSE        {  $$ = std::make_shared<EulFunctionCallExp>($1, $3); }
+    | expression SQUARE_OPEN expression SQUARE_CLOSE        { $$ = std::make_shared<EulArrayAccessExp>($1, $3 ); }
 
 
-    | MINUS expression { $$ = new EulPrefixExp(&EUL_OPERATORS.minusOperator, $2); } %prec NOT
-    | TILDE expression { $$ = new EulPrefixExp(&EUL_OPERATORS.tildeOperator, $2); }
-    | NOT expression { $$ = new EulPrefixExp(&EUL_OPERATORS.notOperator, $2); }
-    | DECREASE expression { $$ = new EulPrefixExp(&EUL_OPERATORS.decreaseOperator, $2); }
-    | INCREASE expression { $$ = new EulPrefixExp(&EUL_OPERATORS.increaseOperator, $2); }
+    | MINUS expression { $$ = std::make_shared<EulPrefixExp>(&EUL_OPERATORS.minusOperator, $2); } %prec NOT
+    | TILDE expression { $$ = std::make_shared<EulPrefixExp>(&EUL_OPERATORS.tildeOperator, $2); }
+    | NOT expression { $$ = std::make_shared<EulPrefixExp>(&EUL_OPERATORS.notOperator, $2); }
+    | DECREASE expression { $$ = std::make_shared<EulPrefixExp>(&EUL_OPERATORS.decreaseOperator, $2); }
+    | INCREASE expression { $$ = std::make_shared<EulPrefixExp>(&EUL_OPERATORS.increaseOperator, $2); }
 
-    | expression DECREASE { $$ = new EulSuffixExp($1, &EUL_OPERATORS.decreaseOperator); }
-    | expression INCREASE { $$ = new EulSuffixExp($1, &EUL_OPERATORS.increaseOperator); }
+    | expression DECREASE { $$ = std::make_shared<EulSuffixExp>($1, &EUL_OPERATORS.decreaseOperator); }
+    | expression INCREASE { $$ = std::make_shared<EulSuffixExp>($1, &EUL_OPERATORS.increaseOperator); }
     ;
 
 
 
 expressions:
     expressions COMMA expression {
-        if ($1 == nullptr) $1 = new std::vector<EulToken*>();
+        if ($1 == nullptr) $1 = new std::vector<std::shared_ptr<EulToken>>();
         $1->push_back($3);
         $$ = $1;
     } |
     expression {
-        $$ = new std::vector<EulToken*>();
+        $$ = new std::vector<std::shared_ptr<EulToken>>();
         $$->push_back($1);
     } |
     %empty { $$ = nullptr; }
@@ -384,23 +380,39 @@ expressions:
 //======================== VAR DECLARATIONS AND FUNCTION PARAMETERS ============================
 eul_type:
     ID {
-        $$ = EulParsingUtils::createEulType(ctx, $1->name);
-        delete $1;
+
+        //1. Find if the symbol already exitst in this scope, or any super scope.
+        std::shared_ptr<EulSymbol> alreadyExisting = ctx->currentScope->get($1->name);
+
+        //2a. If it does not already exist, create one and return it.
+        // But do NOT declare it as a symbol in the scope. This action does not belong here.
+        if (alreadyExisting==nullptr) $$ = std::make_shared<EulType>($1);
+
+        //2b. If the symbol is found, check that it is really a EulType, and return it.
+        else if (EulType::isEulType(alreadyExisting->value.get())) {
+            $$ = std::dynamic_pointer_cast<EulType>(alreadyExisting->value);
+        }
+
+        //2c. found but not a type? add an error!
+        else {
+            ctx->compiler->addError(EulError(EulErrorType::SEMANTIC, "Type expected, but other token type was found."));
+            $$ = nullptr;
+        }
     }
     ;
 
 parameter_declaration:
     ID ASSIGN expression {
-        $$ = new VarDeclaration($1, nullptr, $3);
+        $$ = std::make_shared<VarDeclaration>($1, nullptr, $3);
     } |
     ID {
-        $$ = new VarDeclaration($1, nullptr, nullptr);
+        $$ = std::make_shared<VarDeclaration>($1, nullptr, nullptr);
     } |
     ID COLON eul_type {
-        $$ = new VarDeclaration($1, $3, nullptr);
+        $$ = std::make_shared<VarDeclaration>($1, $3, nullptr);
     } |
     ID COLON eul_type ASSIGN expression {
-        $$ = new VarDeclaration($1, $3, $5);
+        $$ = std::make_shared<VarDeclaration>($1, $3, $5);
     }
     ;
 
@@ -408,12 +420,12 @@ parameter_declaration:
 
 parameter_declarations:
     parameter_declarations COMMA parameter_declaration {
-        if ($1 == nullptr) $1 = new std::vector<VarDeclaration*>();
+        if ($1 == nullptr) $1 = new std::vector<std::shared_ptr<VarDeclaration>>();
         $1->push_back($3);
         $$ = $1;
     } |
     parameter_declaration {
-        $$ = new std::vector<VarDeclaration*>();
+        $$ = new std::vector<std::shared_ptr<VarDeclaration>>();
         $$->push_back($1);
     }
     ;

@@ -16,24 +16,22 @@
 class EulScope {
     //region FIELDS
     public: EulScope* superScope;
-    public: std::map<std::string, EulSymbol*> declarations;
+    public: std::map<std::string, std::shared_ptr<EulSymbol>> declarations;
     //endregion
 
 
 
     //region LIFE CYCLE
     public: EulScope(EulScope* superScope);
-    public: ~EulScope();
-
     public: void reset();
     //endregion
 
 
 
     //region DECLARATION MANAGEMENT
-    public: EulSymbol* get(const std::string& key);
+    public: std::shared_ptr<EulSymbol> get(const std::string& key);
 
-    public: EulSymbol* getOwnSymbol(const std::string& key);
+    public: std::shared_ptr<EulSymbol> getOwnSymbol(const std::string& key);
 
     public: int getDeclarationCount();
 
@@ -41,6 +39,9 @@ class EulScope {
         Declares the symbol, if it is not already declared on this scope (parent scopes are not included on the search).
         Returns true if the declaration was successful. false if the symbol was already defined in this scope.
     */
-    public: bool declare(const std::string& key, EulSymbol* symbol);
+    public: bool declare(const std::string& key, std::shared_ptr<EulSymbol> symbol);
+
+    /** Used by the parser to add variables into the scope. */
+    public: void declare(VarDeclarationStatement* stmt);   //TODO unit test
     //endregion
 };

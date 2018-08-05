@@ -1,2 +1,5 @@
-var x = 1s8+(2+6)+7, y = 12345;
-return 66;
+var x = 55;
+return 88;
+
+
+

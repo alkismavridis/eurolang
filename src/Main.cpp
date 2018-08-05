@@ -28,12 +28,16 @@
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
+#include "llvm/Transforms/InstCombine/InstCombine.h"
+#include "llvm/Transforms/Scalar.h"
+#include "llvm/Transforms/Scalar/GVN.h"
 //endregion
 
 
 
 //region UGGLY, DISGUSTING FORWARD DECLARATIONS
 class EulCodeGenContext;
+class EulScope;
 //endregion
 
 
@@ -53,8 +57,6 @@ class EulCodeGenContext;
 #include "../src/core/EulAst/EulAstType.h"
 #include "../src/core/EulAst/EulAst.h"
 #include "../src/core/EulAst/EulType/EulType.h"
-#include "../src/core/EulAst/EulType/LateDefinedType.h"
-#include "../src/core/EulAst/EulSymbol/EulSymbol.h"
 
 #include "../src/core/EulAst/EulStatement/EulStatementType.h"
 #include "../src/core/EulAst/EulStatement/EulStatement.h"
@@ -62,7 +64,9 @@ class EulCodeGenContext;
 #include "../src/core/EulAst/EulStatement/EulExportStatement.h"
 #include "../src/core/EulAst/EulStatement/ReturnStatement.h"
 #include "../src/core/EulAst/EulDeclaration/VarDeclaration.h"
+#include "../src/core/EulAst/EulStatement/VarDeclarationStatement.h"
 
+#include "../src/core/EulScope/EulSymbol.h"
 #include "../src/core/EulScope/EulScope.h"
 #include "../src/core/EulSourceFile/EulSourceFile.h"
 #include "../src/core/EulProgram/EulProgram.h"
@@ -94,14 +98,13 @@ void handleError(Compiler* comp) {
 }
 
 void reportErrors(Compiler* comp) {
-    for(auto error : comp->errors) std::cout << error << std::endl;
+    for(auto error : comp->errors) std::cout << "ERROR: "<< error->message << std::endl;
 }
 //endregion
 
 
 
 int main( const int argc, const char **argv ) {
-
     try {
         EulCliParams params(argc, argv);
         Compiler comp(handleError);
@@ -110,17 +113,15 @@ int main( const int argc, const char **argv ) {
         comp.compile(fileEntries->first, fileEntries->second);
         comp.produceOutput(params.outputFile);
 
-
         //report errors
         reportErrors(&comp);
 
-        std::cout << "Done." << std::endl;
     }
     catch(EulError e) {
-        std::cout << "Exception happened! " << e.message << std::endl;
+        std::cout << "Error: " << e.message << std::endl;
         return 1;
     }
 
-    std::cout << "Done permanently." << std::endl;
+    std::cout << "Done." << std::endl;
     return 0;
 }

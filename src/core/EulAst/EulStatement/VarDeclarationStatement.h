@@ -4,13 +4,13 @@
 class VarDeclarationStatement : public EulStatement {
     //region FIELDS
     public: int varType; //one of yy::EulParser::token
-    public: std::vector<VarDeclaration*>* declarations;
+    public: std::vector<std::shared_ptr<VarDeclaration>>* declarations;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: VarDeclarationStatement(int varType, std::vector<VarDeclaration*>* declarations);
+    public: VarDeclarationStatement(int varType, std::vector<std::shared_ptr<VarDeclaration>>* declarations);
     public: virtual ~VarDeclarationStatement();
     //endregion
 

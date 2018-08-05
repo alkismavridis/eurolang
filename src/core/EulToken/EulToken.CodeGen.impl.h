@@ -22,7 +22,7 @@ llvm::Value* EulCharToken::generateValue(EulCodeGenContext* ctx) {
 }
 
 llvm::Type* EulCharToken::generateType(EulCodeGenContext* ctx) {
-    return llvm::IntegerType::get(*ctx->context, this->size); //TODO signed or unsigned?
+    return llvm::IntegerType::get(ctx->context, this->size); //TODO signed or unsigned?
 }
 
 
@@ -32,34 +32,43 @@ llvm::Value* EulFloatToken::generateValue(EulCodeGenContext* ctx) {
     std::cout << "EulFloatToken" << std::endl;
 
     //TODO Size?
-    return llvm::ConstantFP::get(*ctx->context, llvm::APFloat(this->value));
+    return llvm::ConstantFP::get(ctx->context, llvm::APFloat(this->value));
 }
 
 llvm::Type* EulFloatToken::generateType(EulCodeGenContext* ctx) {
-    return llvm::IntegerType::get(*ctx->context, this->size); //TODO signed or unsigned?
+    return llvm::IntegerType::get(ctx->context, this->size); //TODO signed or unsigned?
 }
 
 
 
 //ID
 llvm::Value* EulIdToken::generateValue(EulCodeGenContext* ctx) {
+    //TODO ids can be many different things. Probably only the AST will know what we really are...
     std::cout << "EulIdToken" << std::endl;
 
     //return ctx->builder->CreateLoad();
 
-    //TODO ids can be many different things. Probably only the AST will know what we really are...
-    return nullptr;
+    //1. find the symbol in scope
+    std::shared_ptr<EulSymbol> sym = this->scope->get(this->name);
+    if (sym==nullptr) throw EulError(EulErrorType::SEMANTIC, "Symbol with name "+ this->name +" not found.");
+
+    auto loadInstr = ctx->builder.CreateLoad(
+        llvm::IntegerType::get(ctx->context, 32), //TODO give the correct type.
+        sym->allocInstruction
+    );
+
+    return loadInstr;
 }
 
 
 //INT
 llvm::Value* EulIntToken::generateValue(EulCodeGenContext* ctx) {
-    return llvm::ConstantInt::get(*ctx->context, llvm::APInt(this->size, this->value, !this->isUnsigned));
+    return llvm::ConstantInt::get(ctx->context, llvm::APInt(this->size, this->value, !this->isUnsigned));
 }
 
 
 llvm::Type* EulIntToken::generateType(EulCodeGenContext* ctx) {
-    return llvm::IntegerType::get(*ctx->context, this->size); //TODO signed or unsigned?
+    return llvm::IntegerType::get(ctx->context, this->size); //TODO signed or unsigned?
 }
 
 

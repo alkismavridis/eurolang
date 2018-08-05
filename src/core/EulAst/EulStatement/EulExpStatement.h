@@ -6,14 +6,13 @@
 */
 class EulExpStatement : public EulStatement {
     //region FIELDS
-    public: EulToken* exp;
+    public: std::shared_ptr<EulToken> exp;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulExpStatement(EulToken* exp);
-    public: virtual ~EulExpStatement();
+    public: EulExpStatement(std::shared_ptr<EulToken> exp);
     //endregion
 
 

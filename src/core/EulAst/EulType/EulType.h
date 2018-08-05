@@ -7,27 +7,19 @@
 */
 class EulType : public EulAst {
     //region FIELDS
-    public: llvm::Type* llvmType;
+    public: std::shared_ptr<EulIdToken> llvmTypeName;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulType(llvm::Type* type);
-    public: virtual ~EulType();
-    //endregion
-
-
-
-    //region GETTERS
-    public: virtual bool isLateDeclared();
+    public: EulType(std::shared_ptr<EulIdToken> llvmTypeName);
     //endregion
 
 
     //region SERIALIZING
     public: virtual void toJson(std::ostream& out, int tabs);
     //endregion
-
 
 
     //region OVERRIDES

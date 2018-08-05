@@ -1,43 +1,31 @@
 
 //region LIFE CYCLE
 EulProgram::EulProgram() : globalScope(nullptr) {
-    this->llvmContext = new llvm::LLVMContext();
-    this->globalModule = new llvm::Module("globalModule", *this->llvmContext);
     this->initGlobals();
 }
 
 
 EulProgram::~EulProgram() {
     for (auto const& e : this->sources) delete e.second;
-
-    delete this->globalModule;
-    delete this->llvmContext;
 }
 
 
 void EulProgram::initGlobals() {
     //Define basic Integer types
-    this->globalScope.declare("Int8", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, 8)), 1));
-    this->globalScope.declare("Int16", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, 16)), 1));
-    this->globalScope.declare("Int32", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, 32)), 1));
-    this->globalScope.declare("Int64", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, 64)), 1));
-    this->globalScope.declare("Int", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, EUL_LANG_DEFAULT_INT_SIZE)), 1));
+    this->globalScope.declare("Int8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i8", &this->globalScope))));
+    this->globalScope.declare("Int16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i16", &this->globalScope))));
+    this->globalScope.declare("Int32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i32", &this->globalScope))));
+    this->globalScope.declare("Int64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i64",  &this->globalScope))));
+    this->globalScope.declare("Int", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i32", &this->globalScope))));
 
-    //TODO unsigned?
-    this->globalScope.declare("UInt8", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, 8)), 1));
-    this->globalScope.declare("UInt16", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, 16)), 1));
-    this->globalScope.declare("UInt32", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, 32)), 1));
-    this->globalScope.declare("UInt64", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, 64)), 1));
-    this->globalScope.declare("UInt", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType(llvm::IntegerType::get(*this->llvmContext, EUL_LANG_DEFAULT_INT_SIZE)), 1));
+    this->globalScope.declare("UInt8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i8", &this->globalScope))));
+    this->globalScope.declare("UInt16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i16", &this->globalScope))));
+    this->globalScope.declare("UInt32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i32", &this->globalScope))));
+    this->globalScope.declare("UInt64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i64", &this->globalScope))));
+    this->globalScope.declare("UInt", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulType>(std::make_shared<EulIdToken>("i32", &this->globalScope))));
 
 
     /*
-    this->globalScope.declare("UInt8", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("UInt8"), 1));
-    this->globalScope.declare("UInt16", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("UInt16"), 1));
-    this->globalScope.declare("UInt32", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("UInt32"), 1));
-    this->globalScope.declare("UInt64", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("UInt64"), 1));
-    this->globalScope.declare("UInt", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("UInt"), 1));   //default size
-
     //Define basic Floating point types
     this->globalScope.declare("Float32", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("Float32"), 1));
     this->globalScope.declare("Float64", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("Float64"), 1));
@@ -57,15 +45,6 @@ void EulProgram::reset() {
     for (auto const& e : this->sources) delete e.second;
     this->sources.clear();
     this->globalScope.reset();
-
-    //reset the llvm entities
-    //
-
-
-    delete this->globalModule;
-    delete this->llvmContext;
-    this->llvmContext = new llvm::LLVMContext();
-    this->globalModule = new llvm::Module("globalModule", *this->llvmContext);
 }
 //endregion
 
@@ -88,7 +67,7 @@ EulSourceFile* EulProgram::getSource(const std::string& id, unsigned char create
     if (!createIfNotExists) return 0;
 
     //we create a token, add it on our list, and return it.
-    EulSourceFile* ret = new EulSourceFile(id, &this->globalScope, this->llvmContext);
+    EulSourceFile* ret = new EulSourceFile(id, &this->globalScope);
     this->sources[id] = ret;
     return ret;
 }
@@ -118,26 +97,57 @@ EulSourceFile* EulProgram::getEntryPoint() {
 
 
 //region GENERATOR SETUP
-void EulProgram::makeMain(llvm::Module* module, llvm::IRBuilder<>* builder) {
-    llvm::Function* mainFunc = (llvm::Function*)module->getOrInsertFunction("main", llvm::IntegerType::get(module->getContext(), 32), NULL);
-    llvm::BasicBlock *block = llvm::BasicBlock::Create(module->getContext(), "entry", mainFunc);
-    builder->SetInsertPoint(block);
+void EulProgram::declareClibSymbols(EulCodeGenContext* ctx) {
+    auto type = llvm::FunctionType::get(
+        llvm::Type::getVoidTy(ctx->context),
+        llvm::ArrayRef<llvm::Type*>(llvm::IntegerType::get(ctx->context, 32)),
+        false
+    );
+    ctx->module->getOrInsertGlobal("exit", type);
+}
+
+
+/**
+    This represents the real entry point of the program. This function never returns.
+    It just calls main, and then performs a system call in order to terminate.
+*/
+void EulProgram::makeEntryPoint(EulCodeGenContext* ctx) {
+    llvm::Function* entryPointFnc = (llvm::Function*)ctx->module->getOrInsertFunction("_startEul", llvm::IntegerType::get(ctx->context, 32), NULL);
+    llvm::BasicBlock *block = llvm::BasicBlock::Create(ctx->context, "entry", entryPointFnc);
+    ctx->builder.SetInsertPoint(block);
+
+
+    //2. Call main
+    auto mainFunc = (llvm::Function*)ctx->module->getOrInsertFunction("main", llvm::IntegerType::get(ctx->context, 32), NULL);
+    auto mainReturnValue = ctx->builder.CreateCall(mainFunc);
+
+
+
+    //3. call exit
+    auto exitFunc = (llvm::Function*)ctx->module->getNamedValue("exit");
+    ctx->builder.CreateCall(exitFunc, mainReturnValue);
+
+
+    //5. Add return statement, just in case none was created already.
+    auto zero = llvm::ConstantInt::get(llvm::IntegerType::get(ctx->context, 32), 0, true);
+    ctx->builder.CreateRet(zero);
+
+}
+
+void EulProgram::makeMain(EulCodeGenContext* ctx) {
+    llvm::Function* mainFunc = (llvm::Function*)ctx->module->getOrInsertFunction("main", llvm::IntegerType::get(ctx->context, 32), NULL);
+    llvm::BasicBlock *block = llvm::BasicBlock::Create(ctx->context, "entry", mainFunc);
+    ctx->builder.SetInsertPoint(block);
 }
 //endregion
 
 
 
 //region AST PARSING
-void EulProgram::emmitObjCode(llvm::Module* module, const std::string& outputFileName) {
+void EulProgram::emmitObjCode(EulCodeGenContext* ctx, const std::string& outputFileName) {
     //TODO we must deal with multiple modules being emmited.
 
     auto targetTriple = llvm::sys::getDefaultTargetTriple();
-
-    llvm::InitializeAllTargetInfos();
-    llvm::InitializeAllTargets();
-    llvm::InitializeAllTargetMCs();
-    llvm::InitializeAllAsmParsers();
-    llvm::InitializeAllAsmPrinters();
 
     std::string error;
     auto target = llvm::TargetRegistry::lookupTarget(targetTriple, error);
@@ -158,8 +168,8 @@ void EulProgram::emmitObjCode(llvm::Module* module, const std::string& outputFil
     auto rm = llvm::Optional<llvm::Reloc::Model>();
     auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, opt, rm);
 
-    module->setDataLayout(targetMachine->createDataLayout());
-    module->setTargetTriple(targetTriple);
+    ctx->module->setDataLayout(targetMachine->createDataLayout());
+    ctx->module->setTargetTriple(targetTriple);
 
     std::error_code ec;
     llvm::raw_fd_ostream dest(outputFileName, ec, llvm::sys::fs::F_None);
@@ -177,16 +187,27 @@ void EulProgram::emmitObjCode(llvm::Module* module, const std::string& outputFil
       return;
     }
 
-    pass.run(*module);
+    // Promote allocas to registers.
+    pass.add(llvm::createPromoteMemoryToRegisterPass());
+    // Do simple "peephole" optimizations and bit-twiddling optzns.
+    pass.add(llvm::createInstructionCombiningPass());
+    // Reassociate expressions.
+    pass.add(llvm::createReassociatePass());
+    // Eliminate Common SubExpressions.
+    pass.add(llvm::createGVNPass());
+    // Simplify the control flow graph (deleting unreachable blocks, etc).
+    pass.add(llvm::createCFGSimplificationPass());
+
+    pass.run(*ctx->module);
     dest.flush();
 }
 
 
-void EulProgram::emmitIRAssembly(llvm::Module* module, const std::string& outputFileName) {
+void EulProgram::emmitIRAssembly(EulCodeGenContext* ctx, const std::string& outputFileName) {
     std::error_code code;
     llvm::raw_fd_ostream out(outputFileName, code, llvm::sys::fs::OpenFlags::F_None);
 
-    module->dump();
-    module->print(out, nullptr);
+    ctx->module->dump();
+    ctx->module->print(out, nullptr);
 }
 //endregion

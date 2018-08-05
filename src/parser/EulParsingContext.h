@@ -12,8 +12,6 @@ class EulParsingContext {
     //region FIELDS
     public: Compiler *compiler;
     public: EulSourceFile* sourceFile;
-    public: EulCodeGenContext* codeGen;
-
     public: EulScope* currentScope;
 
     //more to come...
@@ -22,10 +20,9 @@ class EulParsingContext {
 
 
     //region LIFE CYCLE
-    public: EulParsingContext(Compiler *compiler, EulCodeGenContext* codeGen, EulSourceFile* sourceFile) {
+    public: EulParsingContext(Compiler *compiler, EulSourceFile* sourceFile) {
         this->compiler = compiler;
         this->sourceFile = sourceFile;
-        this->codeGen = codeGen;
 
         this->currentScope = &sourceFile->scope;
     }

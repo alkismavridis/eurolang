@@ -319,6 +319,10 @@ int LeftShiftOperator::getOperatorType() {
 const std::string LeftShiftOperator::getOperatorText() {
     return "<<";
 }
+
+llvm::Value* LeftShiftOperator::performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx) {
+    return ctx->builder.CreateBinOp(llvm::Instruction::Shl, left, right);
+}
 //endregion
 
 
@@ -378,6 +382,10 @@ int StarOperator::getOperatorType() {
 
 const std::string StarOperator::getOperatorText() {
     return "*";
+}
+
+llvm::Value* StarOperator::performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx) {
+    return ctx->builder.CreateBinOp(llvm::Instruction::Mul, left, right);
 }
 //endregion
 

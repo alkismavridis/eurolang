@@ -2,15 +2,14 @@
 
 class EulPrefixExp : public EulExpression {
     //region LIFE CYCLE
-    public: EulToken* exp;
+    public: std::shared_ptr<EulToken> exp;
     public: EulOperator* oper;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulPrefixExp(EulOperator* oper, EulToken* exp);
-    public: virtual ~EulPrefixExp();
+    public: EulPrefixExp(EulOperator* oper, std::shared_ptr<EulToken> exp);
     //endregion
 
 

@@ -23,8 +23,6 @@ class Compiler {
 
     /** *Here we will store the error object, if any happens. */
     public: std::vector<EulError*> errors;
-
-    public: EulCodeGenContext* codeGen;
     //endregion
 
 

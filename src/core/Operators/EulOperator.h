@@ -163,7 +163,7 @@ class BinAndOperator : public EulOperator {
 class LeftShiftOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
 };
 
 class RightShiftOperator : public EulOperator {
@@ -196,7 +196,7 @@ class PercentOperator : public EulOperator {
 class StarOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
     //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);
 };
 

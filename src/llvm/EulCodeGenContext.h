@@ -17,19 +17,17 @@
 */
 class EulCodeGenContext {
     //region FIELDS
-    public: llvm::LLVMContext* context;
+    public: llvm::LLVMContext& context;
     public: llvm::IRBuilder<> builder;
     public: llvm::Module* module;
+
+    public: EulScope* currentScope;
+    public: Compiler* compiler;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulCodeGenContext(llvm::LLVMContext* context, llvm::Module* module);
-    //endregion
-
-
-    //region TYPE UTILS
-    public: EulType* createEulType(const std::string& typeName, bool assertExistence);
+    public: EulCodeGenContext(Compiler* compiler, llvm::LLVMContext& context, llvm::Module* module, EulScope* scope);
     //endregion
 };

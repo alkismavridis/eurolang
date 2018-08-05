@@ -127,8 +127,14 @@ void EulFloatToken::toJson(std::ostream& out, int tabs) {
 
 
 //region ID VALUE
-EulIdToken::EulIdToken(const char* text, unsigned int length) {
+EulIdToken::EulIdToken(const char* text, unsigned int length, EulScope* scope) {
     this->name.assign(text, length);
+    this->scope = scope;
+}
+
+EulIdToken::EulIdToken(const std::string& name, EulScope* scope) {
+    this->name = name;
+    this->scope = scope;
 }
 
 EulTokenType EulIdToken::getType() { return ID; }

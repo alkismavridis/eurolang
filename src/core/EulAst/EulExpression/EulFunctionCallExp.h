@@ -2,14 +2,14 @@
 
 class EulFunctionCallExp : public EulExpression {
     //region LIFE CYCLE
-    public: EulToken* func;
-    public: std::vector<EulToken*>* params;  //NOTE: If function call has no parameters, like sayHello(), params will be null
+    public: std::shared_ptr<EulToken> func;
+    public: std::vector<std::shared_ptr<EulToken>>* params;  //NOTE: If function call has no parameters, like sayHello(), params will be null
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulFunctionCallExp(EulToken* func, std::vector<EulToken*>* params);
+    public: EulFunctionCallExp(std::shared_ptr<EulToken> func, std::vector<std::shared_ptr<EulToken>>* params);
     public: ~EulFunctionCallExp();
     //endregion
 

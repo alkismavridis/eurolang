@@ -13,16 +13,10 @@ EulTokenType EulAst::getType() { return AST; }
 
 
 //region VAR DECLARATION
-VarDeclaration::VarDeclaration(EulIdToken* id, EulType* varType, EulToken* value) {
+VarDeclaration::VarDeclaration(std::shared_ptr<EulIdToken> id, std::shared_ptr<EulType> varType, std::shared_ptr<EulToken> value) {
     this->id = id;
     this->varType = varType;
     this->value = value;
-}
-
-VarDeclaration::~VarDeclaration() {
-    delete this->id;
-    if (this->varType != nullptr) delete this->varType;
-    if (this->value != nullptr) delete this->value;
 }
 
 EulAstType VarDeclaration::getAstType() { return PARAM_DECLARATION; }
@@ -87,14 +81,13 @@ void EulExportStatement::toJson(std::ostream& out, int tabs) {
 
 
 //region VARIABLE DECLARATION STATEMENT
-VarDeclarationStatement::VarDeclarationStatement(int varType, std::vector<VarDeclaration*>* declarations) {
+VarDeclarationStatement::VarDeclarationStatement(int varType, std::vector<std::shared_ptr<VarDeclaration>>* declarations) {
     this->varType = varType;
     this->declarations = declarations;
 }
 
 VarDeclarationStatement::~VarDeclarationStatement() {
     if (this->declarations != nullptr) {
-        for (auto d : *this->declarations) delete d;
         delete this->declarations;
     }
 }
@@ -122,12 +115,8 @@ void VarDeclarationStatement::toJson(std::ostream& out, int tabs) {
 
 
 //region RETURN STATEMENT
-ReturnStatement::ReturnStatement(EulToken* exp) {
+ReturnStatement::ReturnStatement(std::shared_ptr<EulToken> exp) {
     this->exp = exp;
-}
-
-ReturnStatement::~ReturnStatement() {
-    if (this->exp != nullptr) delete this->exp;
 }
 
 EulStatementType ReturnStatement::getStatementType() { return RETURN_STATEMENT; }
@@ -162,13 +151,9 @@ EulExpressionType EulExpression::getExpressionType() { return UNKNOWN_EXP; }
 
 
 //region PREFIX EXPRESSION
-EulPrefixExp::EulPrefixExp(EulOperator* oper, EulToken* exp) {
+EulPrefixExp::EulPrefixExp(EulOperator* oper, std::shared_ptr<EulToken> exp) {
     this->exp = exp;
     this->oper = oper;
-}
-
-EulPrefixExp::~EulPrefixExp() {
-    delete this->exp;
 }
 
 void EulPrefixExp::toJson(std::ostream& out, int tabs) {
@@ -195,15 +180,10 @@ EulExpressionType EulPrefixExp::getExpressionType() { return PREFIX_EXP; }
 
 
 //region INFIX EXPRESSION
-EulInfixExp::EulInfixExp(EulToken* left, EulOperator* oper, EulToken* right) {
+EulInfixExp::EulInfixExp(std::shared_ptr<EulToken> left, EulOperator* oper, std::shared_ptr<EulToken> right) {
     this->left = left;
     this->oper = oper;
     this->right = right;
-}
-
-EulInfixExp::~EulInfixExp() {
-    delete this->left;
-    delete this->right;
 }
 
 void EulInfixExp::toJson(std::ostream& out, int tabs) {
@@ -234,13 +214,9 @@ EulExpressionType EulInfixExp::getExpressionType() { return INFIX_EXP; }
 
 
 //region SUFFIX EXPRESSION
-EulSuffixExp::EulSuffixExp(EulToken* exp, EulOperator* oper) {
+EulSuffixExp::EulSuffixExp(std::shared_ptr<EulToken> exp, EulOperator* oper) {
     this->exp = exp;
     this->oper = oper;
-}
-
-EulSuffixExp::~EulSuffixExp() {
-    delete this->exp;
 }
 
 void EulSuffixExp::toJson(std::ostream& out, int tabs) {
@@ -266,8 +242,7 @@ EulExpressionType EulSuffixExp::getExpressionType() { return SUFFIX_EXP; }
 
 
 //region TOKEN EXPRESSION
-EulTokenExp::EulTokenExp(EulToken* token) { this->token = token; }
-EulTokenExp::~EulTokenExp() { delete this->token; }
+EulTokenExp::EulTokenExp(std::shared_ptr<EulToken> token) { this->token = token; }
 
 void EulTokenExp::toJson(std::ostream& out, int tabs) {
     out << "{" << std::endl;
@@ -290,18 +265,15 @@ EulExpressionType EulTokenExp::getExpressionType() { return TOKEN; }
 
 
 //region FUNCTION CALL EXPRESSION
-EulFunctionCallExp::EulFunctionCallExp(EulToken* func, std::vector<EulToken*>* params) {
+EulFunctionCallExp::EulFunctionCallExp(std::shared_ptr<EulToken> func, std::vector<std::shared_ptr<EulToken>>* params) {
     this->func = func;
     this->params = params;
 }
 
 EulFunctionCallExp::~EulFunctionCallExp() {
     if (this->params != nullptr) {
-        for (auto p : *this->params) delete p;
         delete this->params;
     }
-
-    delete this->func;
 }
 
 void EulFunctionCallExp::toJson(std::ostream& out, int tabs) {
@@ -343,14 +315,9 @@ EulExpressionType EulFunctionCallExp::getExpressionType() { return FUNCTION_CALL
 
 
 //region FUNCTION CALL EXPRESSION
-EulArrayAccessExp::EulArrayAccessExp(EulToken* obj, EulToken* index) {
+EulArrayAccessExp::EulArrayAccessExp(std::shared_ptr<EulToken> obj, std::shared_ptr<EulToken> index) {
     this->obj = obj;
     this->index = index;
-}
-
-EulArrayAccessExp::~EulArrayAccessExp() {
-    delete this->obj;
-    delete this->index;
 }
 
 void EulArrayAccessExp::toJson(std::ostream& out, int tabs) {
@@ -380,13 +347,9 @@ EulExpressionType EulArrayAccessExp::getExpressionType() { return ARRAY_ACCESS; 
 
 
 //region EUL TYPE
-EulType::EulType(llvm::Type* llvmType) {
-    this->llvmType = llvmType;
+EulType::EulType(std::shared_ptr<EulIdToken> llvmTypeName) {
+    this->llvmTypeName = llvmTypeName;
 }
-
-bool EulType::isLateDeclared() { return false; }
-
-EulType::~EulType() {}
 
 void EulType::toJson(std::ostream& out, int tabs) {
     out << "{" << std::endl;
@@ -394,8 +357,7 @@ void EulType::toJson(std::ostream& out, int tabs) {
     out << "\"type\":\"EulType\"," << std::endl;
 
     for (int i=tabs; i>=0; --i) out << "\t";
-    if(this->llvmType!=nullptr) out << "\"llvmType\":\"" << this->llvmType->getStructName().data() << "\"" << std::endl;
-    else out << "\"llvmType\": null" << std::endl;
+    out << "\"llvmTypeName\":\"" << this->llvmTypeName << "\"" << std::endl;
 
     //close json object
     for (int i=tabs-1; i>=0; --i) out << "\t";
@@ -413,97 +375,9 @@ bool EulType::isEulType(EulToken* tok) {
 
 
 
-//region LATE DECLARED TYPE
-LateDefinedType::LateDefinedType(const std::string& name) : EulType(nullptr) {
-    this->name = name;
-}
-
-bool LateDefinedType::isLateDeclared() { return true; }
-
-LateDefinedType::~LateDefinedType() {}
-
-void LateDefinedType::toJson(std::ostream& out, int tabs) {
-    out << "{" << std::endl;
-    for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"type\":\"LateDefinedType\"," << std::endl;
-
-    for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"name\":\"" << this->name << "\"," << std::endl;
-
-    for (int i=tabs; i>=0; --i) out << "\t";
-    if(this->llvmType!=nullptr) out << "\"llvmType\":\"" << this->llvmType->getStructName().data() << "\"," << std::endl;
-    else out << "\"llvmType\": null," << std::endl;
-
-    for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"name\":\"" << this->name << "\"" << std::endl;
-
-    //close json object
-    for (int i=tabs-1; i>=0; --i) out << "\t";
-    out << "}";
-}
-//endregion
-
-
-
-//region EUL SYMBOL
-EulSymbol::EulSymbol(int changeType, EulType* varType, EulToken* value, char destroyContent) {
-    this->changeType = changeType;
-    this->varType = varType;
-    this->value = value;
-    this->destroyContent = destroyContent;
-}
-
-EulSymbol::~EulSymbol() {
-    if (!destroyContent) return;
-    if (this->varType!=nullptr) delete this->varType;
-    if (this->value!=nullptr) delete this->value;
-}
-
-void EulSymbol::toJson(std::ostream& out, int tabs) {
-    out << "{" << std::endl;
-    for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"type\":\"EulSymbol\"," << std::endl;
-
-    for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"changeType\": " << this->changeType << "," << std::endl;
-
-    //print var type
-    for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"varType\": ";
-    if (this->varType != nullptr) {
-        for (int i=tabs; i>=0; --i) out << "\t";
-        this->varType->toJson(out, tabs+1);
-        out << "," << std::endl;
-    }
-    else out << "null," << std::endl;
-
-    //print value
-    for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"value\": ";
-    if (this->value != nullptr) {
-        for (int i=tabs; i>=0; --i) out << "\t";
-        this->value->toJson(out, tabs+1);
-        out << std::endl;
-    }
-    else out << "null" << std::endl;
-
-    //close json object
-    for (int i=tabs-1; i>=0; --i) out << "\t";
-    out << "}";
-}
-
-EulAstType EulSymbol::getAstType() { return EUL_SYMBOL; }
-//endregion
-
-
-
 //region EUL EXPRESSION STATEMENT
-EulExpStatement::EulExpStatement(EulToken* exp) {
+EulExpStatement::EulExpStatement(std::shared_ptr<EulToken> exp) {
     this->exp = exp;
-}
-
-EulExpStatement::~EulExpStatement() {
-    if (this->exp != nullptr) delete this->exp;
 }
 
 void EulExpStatement::toJson(std::ostream& out, int tabs) {

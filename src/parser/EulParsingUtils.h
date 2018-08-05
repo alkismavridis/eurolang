@@ -16,6 +16,6 @@ class EulParsingUtils {
 
 
 
-    public: static EulType* createEulType(EulParsingContext* ctx, const std::string& typeName);
+    //public: static std::shared_ptr<EulType> createEulType(EulParsingContext* ctx, const std::string& typeName);
     //endregion
 };
