@@ -56,12 +56,7 @@ class EulScope;
 
 #include "../src/core/EulAst/EulAstType.h"
 #include "../src/core/EulAst/EulAst.h"
-#include "../src/core/EulAst/EulType/EulTypeEnum.h"
 #include "../src/core/EulAst/EulType/EulType.h"
-#include "../src/core/EulAst/EulType/EulIntegerType.h"
-#include "../src/core/EulAst/EulType/EulCharType.h"
-#include "../src/core/EulAst/EulType/EulStringType.h"
-#include "../src/core/EulAst/EulType/EulNamedType.h"
 
 #include "../src/core/EulAst/EulStatement/EulStatementType.h"
 #include "../src/core/EulAst/EulStatement/EulStatement.h"
@@ -77,9 +72,7 @@ class EulScope;
 #include "../src/core/EulProgram/EulProgram.h"
 #include "../src/core/Compiler/EulError/EulError.h"
 #include "../src/core/Compiler/Compiler.h"
-#include "../src/lexer/EulScanner.h"
 
-#include "../src/llvm/EulCodeGenFlags.h"
 #include "../src/llvm/EulCodeGenContext.h"
 //endregion
 
@@ -90,44 +83,33 @@ class EulScope;
 
 
 //region IMPLEMENTATIONS
-#include "../src/core/Core.module.h"
-#include "../src/llvm/EulCodeGenContext.module.h"
-#include "../src/cli/EulcCli.module.h"
-#include "../src/parser/EulParsingUtils.impl.h"
-//endregion
-
-
-
-//region ERROR HANDLING
-void handleError(Compiler* comp) {
-    //std::cout << comp->error.message << std::endl;
-}
-
-void reportErrors(Compiler* comp) {
-    for(auto error : comp->errors) std::cout << "ERROR: "<< error->message << std::endl;
-}
 //endregion
 
 
 
 int main(const int argc, const char **argv) {
-    try {
-        EulCliParams params(argc, argv);
-        Compiler comp(handleError);
+    llvm::LLVMContext llvmCtx;
+    llvm::Module globalModule("entryPointModule", llvmCtx);
 
-        auto fileEntries = params.inputFiles.begin();
-        comp.compile(fileEntries->first, fileEntries->second);
-        comp.produceOutput(params.outputFile);
 
-        //report errors
-        reportErrors(&comp);
 
-    }
-    catch(EulError e) {
-        std::cout << "Error: " << e.message << std::endl;
-        return 1;
-    }
+    std::cout << "SIZES\n";
+    std::cout << "LLVMContext: " << sizeof(llvmCtx) << "\n";
+    std::cout << "Module: " << sizeof(globalModule) << "\n";
+    std::cout << "=====================\n\n\n";
 
-    std::cout << "Done." << std::endl;
+    llvm::APInt it1 = llvm::APInt(32, 12345, false);
+    auto it2 = it1.sext(64);
+
+    std::cout << it1.getBitWidth() << "   " << it2.getBitWidth() << "\n" ;
+    std::cout << it1.getZExtValue() << "   " << it2.getZExtValue() << "\n" ;
+
+
+    it1 = 5;
+    it2 = 8;
+    std::cout << it1.getBitWidth() << "   " << it2.getBitWidth() << "\n"     ;
+    std::cout << it1.getZExtValue() << "   " << it2.getZExtValue() << "\n" ;
+
+
     return 0;
 }

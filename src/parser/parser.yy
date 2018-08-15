@@ -11,6 +11,7 @@
     class EulScanner;
     class EulCodeGenContext;
     class EulScope;
+
     namespace llvm {
         class Value;
         class Type;
@@ -36,7 +37,9 @@
     #include "../core/EulToken/EulIdToken.h"
     #include "../core/EulAst/EulAstType.h"
     #include "../core/EulAst/EulAst.h"
+    #include "../core/EulAst/EulType/EulTypeEnum.h"
     #include "../core/EulAst/EulType/EulType.h"
+    #include "../core/EulAst/EulType/EulNamedType.h"
     #include "../core/EulAst/EulStatement/EulStatementType.h"
     #include "../core/EulAst/EulStatement/EulStatement.h"
     #include "../core/EulAst/EulStatement/EulImportStatement.h"
@@ -386,7 +389,7 @@ eul_type:
 
         //2a. If it does not already exist, create one and return it.
         // But do NOT declare it as a symbol in the scope. This action does not belong here.
-        if (alreadyExisting==nullptr) $$ = std::make_shared<EulType>($1);
+        if (alreadyExisting==nullptr) $$ = std::make_shared<EulNamedType>($1->name);
 
         //2b. If the symbol is found, check that it is really a EulType, and return it.
         else if (EulType::isEulType(alreadyExisting->value.get())) {

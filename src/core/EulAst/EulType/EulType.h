@@ -1,31 +1,28 @@
 #pragma once
 
 /**
-    This is a wrapper object for an llvm::Type*
-    The reason that we need a wrapper is because a Type may be not-yet-defined when it is requested.
-    There will be no forward declarations in eurolang.
+    A wrapper class to return llvm types.
+    This class is abstract, please refer to sub classes for implementations.
+    NOTE an EulType can exist before any llvm context is initialized.
 */
 class EulType : public EulAst {
     //region FIELDS
-    public: std::shared_ptr<EulIdToken> llvmTypeName;
     //endregion
 
 
 
-    //region LIFE CYCLE
-    public: EulType(std::shared_ptr<EulIdToken> llvmTypeName);
-    //endregion
-
-
-    //region SERIALIZING
-    public: virtual void toJson(std::ostream& out, int tabs);
-    //endregion
-
-
-    //region OVERRIDES
+    //region CLASS HIERARCHY UTILSs
     public: EulAstType getAstType();
+    public: static bool isEulType(EulToken* tok);
     //endregion
 
 
-    public: static bool isEulType(EulToken* tok);
+    public: virtual EulTypeEnum getTypeEnum();
+
+
+
+    //region LLVM
+    public: virtual llvm::Type* getLlvmType(EulCodeGenContext* ctx);
+    //endregion
+
 };

@@ -21,6 +21,6 @@ class EulTokenExp : public EulExpression {
 
     //region OVERRIDES
     public: EulExpressionType getExpressionType();
-    public: llvm::Value* generateValue(EulCodeGenContext* ctx);
+    public: llvm::Value* generateValue(EulCodeGenContext* ctx, unsigned int flags);
     //endregion
 };

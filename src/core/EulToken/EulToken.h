@@ -11,7 +11,7 @@ class EulToken {
 
 
     //region CODE GENERATION
-    public: virtual llvm::Value* generateValue(EulCodeGenContext* ctx);
+    public: virtual llvm::Value* generateValue(EulCodeGenContext* ctx, unsigned int flags);
     public: virtual llvm::Type* generateType(EulCodeGenContext* ctx);
     //endregion
 

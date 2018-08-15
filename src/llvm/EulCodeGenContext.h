@@ -14,20 +14,46 @@
 
     At the moment it is stateless.
     The state lies in the underlying llvm library types: LLVMContext, Module and IRBuilder
+
+    NOTE one EulCodeGenContext will be instantiated per module.
 */
 class EulCodeGenContext {
     //region FIELDS
+    //PROGRAM SCOPED FIELDS
     public: llvm::LLVMContext& context;
     public: llvm::IRBuilder<> builder;
     public: llvm::Module* module;
+    public: std::vector<std::shared_ptr<llvm::GlobalVariable>> moduleGlobals; //we collect them to be deleted at the end of the scope of this object
 
     public: EulScope* currentScope;
     public: Compiler* compiler;
+    private: int globIndex;
     //endregion
 
 
 
     //region LIFE CYCLE
     public: EulCodeGenContext(Compiler* compiler, llvm::LLVMContext& context, llvm::Module* module, EulScope* scope);
+    //endregion
+
+
+
+    //region TYPE UTILS
+    /**
+        Returns a value that matches the given type.
+        If the sourceValue is already instance of targetType, this function will just return sourceValue.
+        If the conversion is impossible, an exception is thrown.
+        Otherwise, a copy of the sourceValue, converted to the targetType will be returned.
+
+        NOTE: this function may insert llvm instructions
+    */
+    public: llvm::Value* castValue(llvm::Value* sourceValue, llvm::Type* targetType);
+    public: llvm::Value* castToInteger(llvm::Value* sourceValue, llvm::IntegerType* targetType);
+    //endregion
+
+
+
+    //region VALUE UTILS
+    public: llvm::GlobalVariable* makeGlobalLiteral(llvm::Type* type);
     //endregion
 };

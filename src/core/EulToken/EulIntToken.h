@@ -25,6 +25,6 @@ class EulIntToken : public EulToken {
 
 
     public: virtual EulTokenType getType();
-    public: llvm::Value* generateValue(EulCodeGenContext* ctx);
+    public: llvm::Value* generateValue(EulCodeGenContext* ctx, unsigned int flags);
     public: llvm::Type* generateType(EulCodeGenContext* ctx);
 };

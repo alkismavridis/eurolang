@@ -110,7 +110,6 @@ void Compiler::produceOutput(const std::string& outputFileName) {
     this->program.makeEntryPoint(&ctx);
     this->program.makeMain(&ctx);
 
-
     //3. Pre parse
     for (auto const& source : sources) source.second->doASTPreParsing(&ctx);
 
