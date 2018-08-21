@@ -7,13 +7,6 @@ EulSourceFile::EulSourceFile(const std::string& id, EulScope* globalScope) : sco
     this->id = id;
     this->statements = nullptr;
 }
-
-EulSourceFile::~EulSourceFile() {
-    //1. deinit statements
-    if (this->statements != nullptr) {
-        delete this->statements;
-    }
-}
 //endregion
 
 
@@ -34,8 +27,9 @@ std::ostream& operator<<(std::ostream& out, EulSourceFile* file) {
     out << "{" << std::endl;
     out << "\t\"type\":\"EulSourceFile\"," << std::endl;
 
-    out << "\t\"statements\": ";
-    EulToken::toJson(out, (std::vector<EulToken*>*) file->statements, 1);
+    out << "\t\"statements\": TODO";
+    //auto castedVector = std::static_pointer_cast<std::vector<std::shared_ptr<EulToken>>>(file->statements);
+    //EulToken::toJson(out, *castedVector.get(), 1);
     out << std::endl << "}";
 
     return out;

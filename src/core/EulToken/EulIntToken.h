@@ -7,7 +7,7 @@ class EulIntToken : public EulToken {
     //region FIELDS
     public: unsigned long int value;
     public: unsigned char size; //in bits
-    public: char isUnsigned;
+    public: bool isUnsigned;
     //endregion
 
 
@@ -15,6 +15,7 @@ class EulIntToken : public EulToken {
 
     //region LIFE CYCLE
     public: EulIntToken(char* text);
+    public: EulIntToken(unsigned long int value, unsigned char size, bool isUnsigned);
     //endregion
 
 
@@ -25,6 +26,6 @@ class EulIntToken : public EulToken {
 
 
     public: virtual EulTokenType getType();
+    public: virtual std::shared_ptr<EulType> getEulType(EulCodeGenContext* ctx, unsigned int someParam);
     public: llvm::Value* generateValue(EulCodeGenContext* ctx, unsigned int flags);
-    public: llvm::Type* generateType(EulCodeGenContext* ctx);
 };

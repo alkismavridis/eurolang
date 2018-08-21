@@ -38,6 +38,7 @@
 //region UGGLY, DISGUSTING FORWARD DECLARATIONS
 class EulCodeGenContext;
 class EulScope;
+class EulType;
 //endregion
 
 
@@ -59,8 +60,11 @@ class EulScope;
 #include "../src/core/EulAst/EulType/EulTypeEnum.h"
 #include "../src/core/EulAst/EulType/EulType.h"
 #include "../src/core/EulAst/EulType/EulIntegerType.h"
+#include "../src/core/EulAst/EulType/EulFloatType.h"
 #include "../src/core/EulAst/EulType/EulCharType.h"
 #include "../src/core/EulAst/EulType/EulStringType.h"
+#include "../src/core/EulAst/EulType/EulFunctionType.h"
+#include "../src/core/EulAst/EulType/EulPointerType.h"
 #include "../src/core/EulAst/EulType/EulNamedType.h"
 
 #include "../src/core/EulAst/EulStatement/EulStatementType.h"
@@ -74,6 +78,7 @@ class EulScope;
 #include "../src/core/EulScope/EulSymbol.h"
 #include "../src/core/EulScope/EulScope.h"
 #include "../src/core/EulSourceFile/EulSourceFile.h"
+#include "../src/core/EulProgram/EulNativeTypes.h"
 #include "../src/core/EulProgram/EulProgram.h"
 #include "../src/core/Compiler/EulError/EulError.h"
 #include "../src/core/Compiler/Compiler.h"
@@ -104,7 +109,7 @@ void handleError(Compiler* comp) {
 }
 
 void reportErrors(Compiler* comp) {
-    for(auto error : comp->errors) std::cout << "ERROR: "<< error->message << std::endl;
+    for(auto error : comp->errors) std::cout << "ERROR: "<< error.message << std::endl;
 }
 //endregion
 
@@ -116,7 +121,7 @@ int main(const int argc, const char **argv) {
         Compiler comp(handleError);
 
         auto fileEntries = params.inputFiles.begin();
-        comp.compile(fileEntries->first, fileEntries->second);
+        comp.compile(fileEntries->first, fileEntries->second.get());
         comp.produceOutput(params.outputFile);
 
         //report errors

@@ -12,13 +12,14 @@ class EulToken {
 
     //region CODE GENERATION
     public: virtual llvm::Value* generateValue(EulCodeGenContext* ctx, unsigned int flags);
-    public: virtual llvm::Type* generateType(EulCodeGenContext* ctx);
+    public: virtual std::shared_ptr<EulType> getEulType(EulCodeGenContext* ctx, unsigned int someParam);
     //endregion
 
 
     //region SERIALIZING
     public: virtual void toJson(std::ostream& out, int tabs);
     public: static void toJson(std::ostream& out, std::vector<EulToken*>* tokens, int tabs);
+    public: static void toJson(std::ostream& out, std::vector<std::shared_ptr<EulToken>> tokens, int tabs);
     //endregion
 };
 

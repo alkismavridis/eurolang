@@ -26,8 +26,10 @@ class EulCodeGenContext {
     public: std::vector<std::shared_ptr<llvm::GlobalVariable>> moduleGlobals; //we collect them to be deleted at the end of the scope of this object
 
     public: EulScope* currentScope;
+    public: EulScope* globalScope; //this equals by definition to compiler->program.globalScope, but for efficiency, we store a pointer to it here for quicker access.
+
     public: Compiler* compiler;
-    private: int globIndex;
+    public: int globIndex;
     //endregion
 
 
@@ -47,8 +49,8 @@ class EulCodeGenContext {
 
         NOTE: this function may insert llvm instructions
     */
-    public: llvm::Value* castValue(llvm::Value* sourceValue, llvm::Type* targetType);
-    public: llvm::Value* castToInteger(llvm::Value* sourceValue, llvm::IntegerType* targetType);
+    public: llvm::Value* castValue(llvm::Value* sourceValue, llvm::Type* targetType, EulType* targetEulType);
+    public: llvm::Value* castToInteger(llvm::Value* sourceValue, llvm::IntegerType* targetType, EulIntegerType* targetEulType);
     //endregion
 
 

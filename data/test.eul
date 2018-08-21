@@ -1,6 +1,4 @@
-var x = 123;
-var str = "hello mojo 123";
-var y = 66;
-print("hello\n");
-print("123");
-print(str);
+var x = 2;
+var y = x*5;
+print("hello world from eul");
+return y - 2;

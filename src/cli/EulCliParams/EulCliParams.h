@@ -2,7 +2,7 @@
 
 class EulCliParams {
     //region FIELDS
-    public: std::map<std::string, std::istream*> inputFiles;
+    public: std::map<std::string, std::shared_ptr<std::istream>> inputFiles;
     public: std::string outputFile;
     //endregion
 
@@ -16,6 +16,5 @@ class EulCliParams {
 
     //region LIFE CYCLE
     public: EulCliParams(const int argc, const char **argv);
-    public: ~EulCliParams();
     //endregion
 };

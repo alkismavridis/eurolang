@@ -56,7 +56,7 @@ void EulScanner::skipMultiLineComment(Compiler* compiler, yy::EulParser::locatio
   int c;
 
   while (1) {
-    //andvance the cursor
+    //advance the cursor
     c = this->yyinput();
     //check special cases
     switch(c) {

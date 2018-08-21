@@ -35,6 +35,22 @@ void EulToken::toJson(std::ostream& out, std::vector<EulToken*>* tokens, int tab
     for (int i=tabs-1; i>=0; --i) out << "\t";
     out << "]";
 }
+
+void EulToken::toJson(std::ostream& out, std::vector<std::shared_ptr<EulToken>> tokens, int tabs) {
+    out << "[" << std::endl;
+
+    for (auto const& t : tokens) {
+        for (int i=tabs; i>=0; --i) out << "\t";
+
+        if (t!=nullptr) t->toJson(out, tabs+1);
+        else out << "null";
+
+        out << "," << std::endl;
+    }
+
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "]";
+}
 //endregion
 
 
@@ -156,13 +172,19 @@ void EulIdToken::toJson(std::ostream& out, int tabs) {
 
 
 //region INT TOKEN
+EulIntToken::EulIntToken(unsigned long int value, unsigned char size, bool isUnsigned) {
+    this->value = value;
+    this->size = size;
+    this->isUnsigned = isUnsigned;
+}
+
 EulIntToken::EulIntToken(char* text) {
     this->value = strtoul(text, &text, 10);		//setup value
     if (*text) { //setup signed or unsigned flag
         this->isUnsigned = (*text) == 'u';
         text++;
     }
-    else this->isUnsigned = 0; //default is signed
+    else this->isUnsigned = false; //default is signed
 
     if (*text) this->size = strtoul(text, &text, 10);	//setup size, if any
     else this->size = EUL_LANG_DEFAULT_INT_SIZE;

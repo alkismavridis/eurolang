@@ -11,10 +11,6 @@ Compiler::Compiler(void (*onError)(Compiler* ths)) {
     this->currentSource = nullptr;
 }
 
-Compiler::~Compiler() {
-    this->clearErrors();
-}
-
 
 void Compiler::reset() {
     //reset variables
@@ -60,8 +56,8 @@ void Compiler::compile(EulSourceFile *target, std::istream *input) {
     Has the same effect as its counterpart compile(EulSourceFile *target, std::istream *input).
 */
 void Compiler::compile(const std::string& sourceName, std::istream *input) {
-    EulSourceFile* sourceFile = this->program.getSource(sourceName, true);
-    this->compile(sourceFile, input);
+    auto sourceFile = this->program.getSource(sourceName, true);
+    this->compile(sourceFile.get(), input);
 }
 //endregion
 
@@ -70,18 +66,17 @@ void Compiler::compile(const std::string& sourceName, std::istream *input) {
 
 //region ERROR RELATED ACTIONS
 void Compiler::addError(const EulError& error) {
-    this->errors.push_back(new EulError(error.type, error.message));
+    this->errors.push_back(EulError(error.type, error.message));
     if (this->onError != 0) this->onError(this);
 }
 
 
 void Compiler::addError(int errorType, const std::string& message) {
-    this->errors.push_back(new EulError(errorType, message));
+    this->errors.push_back(EulError(errorType, message));
     if (this->onError != 0) this->onError(this);
 }
 
 void Compiler::clearErrors() {
-  for (auto const& e : this->errors) delete e;
   this->errors.clear();
 }
 //endregion
@@ -105,7 +100,7 @@ void Compiler::produceOutput(const std::string& outputFileName) {
 
     //2. Setup entry point and main function
     auto sources = this->program.sources;
-    EulSourceFile* entryPoint = this->program.getEntryPoint();
+    auto entryPoint = this->program.getEntryPoint();
     this->program.declareClibSymbols(&ctx);
     this->program.makeEntryPoint(&ctx);
     this->program.makeMain(&ctx);
@@ -116,9 +111,13 @@ void Compiler::produceOutput(const std::string& outputFileName) {
     //4. Parse and omit the code
     for (auto const& source : sources) source.second->parseAST(&ctx);
 
-    //5. Add return statement, just in case none was created already.
-    auto zero = llvm::ConstantInt::get(llvm::IntegerType::get(llvmCtx, 32), 0, true);
-    ctx.builder.CreateRet(zero);
+
+    //5. Add return 0 statement, if none has already been added.
+    if (ctx.builder.GetInsertBlock()->getTerminator() == nullptr) {
+        auto zero = llvm::ConstantInt::get(llvm::IntegerType::get(llvmCtx, 32), 0, true);
+        ctx.builder.CreateRet(zero);
+    }
+
 
     //6. Perform the llvm spells.
     this->program.emmitIRAssembly(&ctx, outputFileName+"_IR");

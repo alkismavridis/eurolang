@@ -39,6 +39,19 @@ std::shared_ptr<EulSymbol> EulScope::getOwnSymbol(const std::string& key) {
 }
 
 
+EulType* EulScope::getOwnSymbolAsType(const std::string& key) {
+    //1. Try to find it on this scope.
+    auto symbol = this->getOwnSymbol(key);
+
+    //2. Check the existence of the symbol, and that it contains a type
+    if (symbol==nullptr || !EulType::isEulType(symbol->value.get()))
+        throw EulError(EulErrorType::SEMANTIC, "Type not found: " + key);
+
+    //3. Cast it and return it
+    return (EulType*)symbol->value.get();
+}
+
+
 int EulScope::getDeclarationCount() {
     return this->declarations.size();
 }

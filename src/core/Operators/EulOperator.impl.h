@@ -1,17 +1,76 @@
 #pragma once
 
 
+
+//region STATIC UTILS
+std::shared_ptr<EulType> EulOperator::doCommonIntMerging(std::shared_ptr<EulType> left, std::shared_ptr<EulType> right, EulCodeGenContext* ctx) {
+    //1. Check that operands are indeed integer types
+    if (left->getTypeEnum()!=EulTypeEnum::INT_TYPE || right->getTypeEnum()!=EulTypeEnum::INT_TYPE)
+        throw EulError(EulErrorType::SEMANTIC, "Int type expected.");
+
+    //2. Cast them into integers
+    const auto leftAsInt = static_cast<EulIntegerType*>(left.get());
+    const auto rightAsInt = static_cast<EulIntegerType*>(right.get());
+
+    //3. Decide the resulting size, and whether the result is unsigned or not.
+    // The biggest one wins for size, and unsigned wins over signed.
+    unsigned char resultSize = (leftAsInt->size > rightAsInt->size) ?
+        leftAsInt->size :
+        rightAsInt->size;
+    bool isResultUnsigned = leftAsInt->isUnsigned || rightAsInt->isUnsigned;
+
+    //4. Find the result type, according to the above constrains, and return in
+    switch(resultSize) {
+        case 8:
+            return isResultUnsigned?
+                ctx->compiler->program.nativeTypes.uint8Type :
+                ctx->compiler->program.nativeTypes.int8Type;
+
+        case 16:
+            return isResultUnsigned?
+                ctx->compiler->program.nativeTypes.uint16Type :
+                ctx->compiler->program.nativeTypes.int16Type;
+
+        case 32:
+            return isResultUnsigned?
+                ctx->compiler->program.nativeTypes.uint32Type :
+                ctx->compiler->program.nativeTypes.int32Type;
+
+        case 64:
+            return isResultUnsigned?
+                ctx->compiler->program.nativeTypes.uint64Type :
+                ctx->compiler->program.nativeTypes.int64Type;
+
+        default: throw EulError(EulErrorType::SEMANTIC, "Wrong int size: " + std::to_string(resultSize));
+    }
+}
+//endregion
+
+
+
+
 //region BASE CLASS
-llvm::Value* EulOperator::performPrefix(llvm::Value* arg, EulCodeGenContext* ctx) {
+llvm::Value* EulOperator::performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
     throw EulError(EulErrorType::SEMANTIC, "EulOperator::performPrefix was called, but should not.");
 }
-
-llvm::Value* EulOperator::performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx) {
-    throw EulError(EulErrorType::SEMANTIC, "EulOperator::performInfix was called, but should not.");
+std::shared_ptr<EulType> EulOperator::getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx) {
+    throw EulError(EulErrorType::SEMANTIC, "EulOperator::getPrefixResultType was called, but should not.");
 }
 
-llvm::Value* EulOperator::performSuffix(llvm::Value* arg, EulCodeGenContext* ctx) {
+
+llvm::Value* EulOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
+    throw EulError(EulErrorType::SEMANTIC, "EulOperator::performInfix was called, but should not.");
+}
+std::shared_ptr<EulType> EulOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
+    throw EulError(EulErrorType::SEMANTIC, "EulOperator::getInfixResultType was called, but should not.");
+}
+
+
+llvm::Value* EulOperator::performSuffix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
     throw EulError(EulErrorType::SEMANTIC, "EulOperator::performSuffix was called, but should not.");
+}
+std::shared_ptr<EulType> EulOperator::getSuffixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx) {
+    throw EulError(EulErrorType::SEMANTIC, "EulOperator::getSuffixResultType was called, but should not.");
 }
 
 int EulOperator::getOperatorType() {
@@ -221,6 +280,7 @@ const std::string EqualsOperator::getOperatorText() {
 }
 //endregion
 
+
 //region SameOperator
 int SameOperator::getOperatorType() {
     return yy::EulParser::token::SAME;
@@ -264,6 +324,7 @@ const std::string MoreOperator::getOperatorText() {
     return ">";
 }
 //endregion
+
 
 //region MoreEqualsOperator
 int MoreEqualsOperator::getOperatorType() {
@@ -320,8 +381,18 @@ const std::string LeftShiftOperator::getOperatorText() {
     return "<<";
 }
 
-llvm::Value* LeftShiftOperator::performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx) {
+llvm::Value* LeftShiftOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulIntegerType> targetType, EulCodeGenContext* ctx) {
+    //we know that this is an int, because getInfixResultType() returns always an int type
+    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
+
+    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetType.get());
+    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetType.get());
+
     return ctx->builder.CreateBinOp(llvm::Instruction::Shl, left, right);
+}
+
+std::shared_ptr<EulType> LeftShiftOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
+    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
 }
 //endregion
 
@@ -334,6 +405,19 @@ int RightShiftOperator::getOperatorType() {
 const std::string RightShiftOperator::getOperatorText() {
     return ">>";
 }
+
+llvm::Value* RightShiftOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulIntegerType> targetType, EulCodeGenContext* ctx) {
+    //we know that this is an int, because getInfixResultType() returns always an int type
+    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
+
+    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetType.get());
+    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetType.get());
+
+    return ctx->builder.CreateBinOp(llvm::Instruction::Shl, left, right);
+}
+std::shared_ptr<EulType> RightShiftOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
+    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
+}
 //endregion
 
 //region PlusOperator
@@ -345,8 +429,18 @@ const std::string PlusOperator::getOperatorText() {
     return "+";
 }
 
-llvm::Value* PlusOperator::performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx) {
-    return ctx->builder.CreateBinOp(llvm::Instruction::Add, left, right, "addtmp");
+llvm::Value* PlusOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
+    //TODO we are not sure that this is an IntegerType... This must be examined.
+    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
+    auto targetEulType = static_cast<EulIntegerType*>(targetType.get());
+
+    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetEulType);
+    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetEulType);
+
+    return ctx->builder.CreateBinOp(llvm::Instruction::Add, left, right);
+}
+std::shared_ptr<EulType> PlusOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
+    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
 }
 //endregion
 
@@ -359,8 +453,18 @@ const std::string MinusOperator::getOperatorText() {
     return "-";
 }
 
-llvm::Value* MinusOperator::performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx) {
-    return ctx->builder.CreateBinOp(llvm::Instruction::Sub, left, right, "subtmp");
+llvm::Value* MinusOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
+    //TODO we are not sure that this is an IntegerType... This must be examined.
+    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
+    auto targetEulType = static_cast<EulIntegerType*>(targetType.get());
+
+    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetEulType);
+    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetEulType);
+
+    return ctx->builder.CreateBinOp(llvm::Instruction::Sub, left, right);
+}
+std::shared_ptr<EulType> MinusOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
+    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
 }
 //endregion
 
@@ -384,8 +488,18 @@ const std::string StarOperator::getOperatorText() {
     return "*";
 }
 
-llvm::Value* StarOperator::performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx) {
+llvm::Value* StarOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
+    //TODO we are not sure that this is an IntegerType... This must be examined.
+    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
+    auto targetEulType = static_cast<EulIntegerType*>(targetType.get());
+
+    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetEulType);
+    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetEulType);
+
     return ctx->builder.CreateBinOp(llvm::Instruction::Mul, left, right);
+}
+std::shared_ptr<EulType> StarOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
+    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
 }
 //endregion
 

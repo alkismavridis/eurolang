@@ -22,6 +22,6 @@ class EulStringToken : public EulToken {
 
 
     public: virtual EulTokenType getType();
-    public: llvm::Type* generateType(EulCodeGenContext* ctx);
+    public: virtual std::shared_ptr<EulType> getEulType(EulCodeGenContext* ctx, unsigned int someParam);
     public: llvm::Value* generateValue(EulCodeGenContext* ctx, unsigned int flags);
 };

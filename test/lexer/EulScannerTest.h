@@ -92,7 +92,7 @@ class EulScannerTest {
     //region COMMENTS PARSING
    private: static void multiLineCommentTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
+        EulParsingContext ctx(&compiler, 0);
         yy::EulParser::location_type loc;
 
         std::stringstream stream = std::stringstream("123/*hello\n*1/2*3*/world");
@@ -136,16 +136,15 @@ class EulScannerTest {
         checkLocation(&loc, 1, 1, 1, 4, t + "D2_loc");
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "D3");
 
-
         Assert::equals(1, compiler.errors.size(), t + "D4");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "D4");
-        Assert::equals("End of file while parsing comment", compiler.errors[0]->message, t + "D5");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "D4");
+        Assert::equals("End of file while parsing comment", compiler.errors[0].message, t + "D5");
    }
 
 
    private: static void singleLineCommentTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
+        EulParsingContext ctx(&compiler, 0);
         yy::EulParser::location_type loc;
 
 
@@ -176,7 +175,7 @@ class EulScannerTest {
     //region NUMBER PARSING
     private: static void parseIntegerTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
+        EulParsingContext ctx(&compiler, 0);
         yy::EulParser::location_type loc;
 
         //end at EOF
@@ -273,7 +272,7 @@ class EulScannerTest {
 
     private: static void parseFloatTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
+        EulParsingContext ctx(&compiler, 0);
         yy::EulParser::location_type loc;
 
 
@@ -359,7 +358,7 @@ class EulScannerTest {
     //region TEXT
     private: static void parseIdTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
+        EulParsingContext ctx(&compiler, 0);
         yy::EulParser::location_type loc;
 
     	//int and float part present
@@ -378,7 +377,7 @@ class EulScannerTest {
 
     private: static void parseCharTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
+        EulParsingContext ctx(&compiler, 0);
         yy::EulParser::location_type loc;
 
         //1 byte long unicodes
@@ -449,8 +448,8 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "E2");
         checkLocation(&loc, 1, 1, 1, 4, t + "E2_loc");
         Assert::equals(1, compiler.errors.size(), t + "E3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "E4");
-        Assert::equals("Illegal escaped character.", compiler.errors[0]->message, t + "E5");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "E4");
+        Assert::equals("Illegal escaped character.", compiler.errors[0].message, t + "E5");
 
 
         //EOF during escaped character
@@ -462,8 +461,8 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "F2");
         checkLocation(&loc, 1, 1, 1, 4, t + "F2_loc");
         Assert::equals(1, compiler.errors.size(), t + "F3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "F4");
-        Assert::equals("Illegal escaped character.", compiler.errors[0]->message, t + "F5");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "F4");
+        Assert::equals("Illegal escaped character.", compiler.errors[0].message, t + "F5");
 
 
         //To many characters after escaped sequence error
@@ -475,15 +474,15 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "G2");
         checkLocation(&loc, 1, 1, 1, 4, t + "G2_loc");
         Assert::equals(1, compiler.errors.size(), t + "G3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "G4");
-        Assert::equals("Closing ' expected in char literal.", compiler.errors[0]->message, t + "G5");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "G4");
+        Assert::equals("Closing ' expected in char literal.", compiler.errors[0].message, t + "G5");
     }
 
 
 
     private: static void parseStringTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
+        EulParsingContext ctx(&compiler, 0);
         yy::EulParser::location_type loc;
 
 
@@ -520,8 +519,8 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "C2");
         checkLocation(&loc, 1, 1, 1, 53, t + "C2_loc");
         Assert::equals(1, compiler.errors.size(), t + "C3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "C3");
-        Assert::equals("End of file while parsing String.", compiler.errors[0]->message, t + "C4");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "C3");
+        Assert::equals("End of file while parsing String.", compiler.errors[0].message, t + "C4");
 
         //non existent escape character
         compiler.clearErrors();
@@ -531,8 +530,8 @@ class EulScannerTest {
         loc.initialize();
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "D2");
         checkLocation(&loc, 1, 1, 1, 43, t + "D2_loc"); //43 is the location that the error happened
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "D3");
-        Assert::equals("Illegal escaped character inside String.", compiler.errors[0]->message, t + "D4");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "D3");
+        Assert::equals("Illegal escaped character inside String.", compiler.errors[0].message, t + "D4");
 
         //EOF during escaped character
         compiler.clearErrors();
@@ -543,8 +542,8 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "E2");
         checkLocation(&loc, 1, 1, 1, 33, t + "E2_loc");
         Assert::equals(1, compiler.errors.size(), t + "E3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0]->type, t + "E3");
-        Assert::equals("Illegal escaped character inside String.", compiler.errors[0]->message, t + "E4");
+        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "E3");
+        Assert::equals("Illegal escaped character inside String.", compiler.errors[0].message, t + "E4");
     }
     //endregion
 
@@ -554,7 +553,7 @@ class EulScannerTest {
     //region OPERATORS
     private: static void parseOperatorsTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, compiler.codeGen, 0);
+        EulParsingContext ctx(&compiler, 0);
         yy::EulParser::location_type loc;
 
 

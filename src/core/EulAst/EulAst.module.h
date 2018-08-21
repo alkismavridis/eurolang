@@ -82,15 +82,9 @@ void EulExportStatement::toJson(std::ostream& out, int tabs) {
 
 
 //region VARIABLE DECLARATION STATEMENT
-VarDeclarationStatement::VarDeclarationStatement(int varType, std::vector<std::shared_ptr<VarDeclaration>>* declarations) {
+VarDeclarationStatement::VarDeclarationStatement(int varType, std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>> declarations) {
     this->varType = varType;
     this->declarations = declarations;
-}
-
-VarDeclarationStatement::~VarDeclarationStatement() {
-    if (this->declarations != nullptr) {
-        delete this->declarations;
-    }
 }
 
 EulStatementType VarDeclarationStatement::getStatementType() { return VAR_DECLARATION; }
@@ -105,8 +99,9 @@ void VarDeclarationStatement::toJson(std::ostream& out, int tabs) {
     out << "\"varType\":" <<  this->varType << "," << std::endl;
 
     for (int i=tabs; i>=0; --i) out << "\t";
-    out << "\"declarations\": ";
-    EulToken::toJson(out, (std::vector<EulToken*>*)this->declarations, tabs+1);
+    out << "\"declarations\": TODO";
+    //auto castedVector = std::static_pointer_cast<std::vector<std::shared_ptr<VarDeclaration>>>(this->declarations);
+    //EulToken::toJson(out, *castedVector.get(), tabs+1);
     out << std::endl;
 
     for (int i=tabs-1; i>=0; --i) out << "\t";
@@ -147,6 +142,7 @@ void ReturnStatement::toJson(std::ostream& out, int tabs) {
 //region EXPRESSION BASE
 EulAstType EulExpression::getAstType() { return EXPRESSION; }
 EulExpressionType EulExpression::getExpressionType() { return UNKNOWN_EXP; }
+std::shared_ptr<EulType> EulExpression::getEulType(EulCodeGenContext* ctx, unsigned int someParam) { return this->compileTimeType; }
 //endregion
 
 
@@ -266,15 +262,9 @@ EulExpressionType EulTokenExp::getExpressionType() { return TOKEN; }
 
 
 //region FUNCTION CALL EXPRESSION
-EulFunctionCallExp::EulFunctionCallExp(std::shared_ptr<EulToken> func, std::vector<std::shared_ptr<EulToken>>* params) {
+EulFunctionCallExp::EulFunctionCallExp(std::shared_ptr<EulToken> func, std::shared_ptr<std::vector<std::shared_ptr<EulToken>>> params) {
     this->func = func;
     this->params = params;
-}
-
-EulFunctionCallExp::~EulFunctionCallExp() {
-    if (this->params != nullptr) {
-        delete this->params;
-    }
 }
 
 void EulFunctionCallExp::toJson(std::ostream& out, int tabs) {

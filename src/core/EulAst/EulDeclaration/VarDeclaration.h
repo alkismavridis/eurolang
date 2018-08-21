@@ -29,6 +29,12 @@ class VarDeclaration : public EulAst {
 
 
     //region CODE GENERATOR
-    public: llvm::Type* generateType(EulCodeGenContext* ctx);
+    /**
+        returns the defined type, if it was explicitly set, or the
+        default type of the declaration value, if no explicit type was set.
+        The situation that neither is set (like var x;) is not yet implemented.
+        When it is, probably a default value will be set.
+    */
+    public: std::shared_ptr<EulType> getEulType(EulCodeGenContext* ctx, unsigned int someParam);
     //endregion
 };

@@ -1,3 +1,36 @@
+#pragma once
+
+
+
+//region NATIVE TYPES
+EulNativeTypes::EulNativeTypes() {
+    this->int8Type = std::make_shared<EulIntegerType>(8, false);
+    this->int16Type = std::make_shared<EulIntegerType>(16, false);
+    this->int32Type = std::make_shared<EulIntegerType>(32, false);
+    this->int64Type = std::make_shared<EulIntegerType>(64, false);
+    this->intType = std::make_shared<EulIntegerType>(EUL_LANG_DEFAULT_INT_SIZE, false);
+
+    this->uint8Type = std::make_shared<EulIntegerType>(8, true);
+    this->uint16Type = std::make_shared<EulIntegerType>(16, true);
+    this->uint32Type = std::make_shared<EulIntegerType>(32, true);
+    this->uint64Type = std::make_shared<EulIntegerType>(64, true);
+    this->uintType = std::make_shared<EulIntegerType>(EUL_LANG_DEFAULT_INT_SIZE, true);
+
+
+    this->float32Type = std::make_shared<EulFloatType>(32);
+    this->float64Type = std::make_shared<EulFloatType>(64);
+    this->floatType = std::make_shared<EulFloatType>(EUL_LANG_DEFAULT_FLOAT_SIZE);
+
+    this->char8Type = std::make_shared<EulCharType>(8);
+    this->char16Type = std::make_shared<EulCharType>(16);
+    this->char32Type = std::make_shared<EulCharType>(32);
+    this->charType = std::make_shared<EulCharType>(8);
+
+    this->stringType = std::make_shared<EulStringType>();
+}
+//endregion
+
+
 
 //region LIFE CYCLE
 EulProgram::EulProgram() : globalScope(nullptr) {
@@ -5,49 +38,37 @@ EulProgram::EulProgram() : globalScope(nullptr) {
 }
 
 
-EulProgram::~EulProgram() {
-    for (auto const& e : this->sources) delete e.second;
-}
-
-
 void EulProgram::initGlobals() {
     //Define basic Integer types
-    this->globalScope.declare("Int8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(8, false)));
-    this->globalScope.declare("Int16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(16, false)));
-    this->globalScope.declare("Int32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(32, false)));
-    this->globalScope.declare("Int64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(64, false)));
-    this->globalScope.declare("Int", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(EUL_LANG_DEFAULT_INT_SIZE, false)));
+    this->globalScope.declare("Int8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int8Type));
+    this->globalScope.declare("Int16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int16Type));
+    this->globalScope.declare("Int32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int32Type));
+    this->globalScope.declare("Int64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int64Type));
+    this->globalScope.declare("Int", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.intType));
 
-    this->globalScope.declare("UInt8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(8, true)));
-    this->globalScope.declare("UInt16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(16, true)));
-    this->globalScope.declare("UInt32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(32, true)));
-    this->globalScope.declare("UInt64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(64, true)));
-    this->globalScope.declare("UInt", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulIntegerType>(EUL_LANG_DEFAULT_INT_SIZE, true)));
+    this->globalScope.declare("UInt8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint8Type));
+    this->globalScope.declare("UInt16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint16Type));
+    this->globalScope.declare("UInt32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint32Type));
+    this->globalScope.declare("UInt64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint64Type));
+    this->globalScope.declare("UInt", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uintType));
 
-
-    this->globalScope.declare("Char8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulCharType>(8)));
-    this->globalScope.declare("Char16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulCharType>(16)));
-    this->globalScope.declare("Char32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulCharType>(32)));
-    this->globalScope.declare("Char64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulCharType>(64)));
-    this->globalScope.declare("Char", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulCharType>(8)));
+    this->globalScope.declare("Float32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.float32Type));
+    this->globalScope.declare("Float64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.float64Type));
+    this->globalScope.declare("Float", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.floatType));
 
 
-    this->globalScope.declare("String", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, std::make_shared<EulStringType>()));
+    this->globalScope.declare("Char8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.char8Type));
+    this->globalScope.declare("Char16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.char16Type));
+    this->globalScope.declare("Char32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.char32Type));
+    this->globalScope.declare("Char", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.charType));
 
-
-    /*
-    //Define basic Floating point types
-    this->globalScope.declare("Float32", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("Float32"), 1));
-    this->globalScope.declare("Float64", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("Float64"), 1));
-    this->globalScope.declare("Float", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("Float"), 1)); //default size
-
-    this->globalScope.declare("String", new EulSymbol(yy::EulParser::token::VAL, nullptr, new EulType("String"), 1));*/
+    this->globalScope.declare("String", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.stringType));
 }
 
 void EulProgram::reset() {
-    for (auto const& e : this->sources) delete e.second;
     this->sources.clear();
     this->globalScope.reset();
+    this->initGlobals();
 }
 //endregion
 
@@ -61,7 +82,7 @@ void EulProgram::reset() {
 
 
 //region GETTERS
-EulSourceFile* EulProgram::getSource(const std::string& id, unsigned char createIfNotExists) {
+std::shared_ptr<EulSourceFile> EulProgram::getSource(const std::string& id, unsigned char createIfNotExists) {
     //try finding the file
     auto entry = this->sources.find(id);
     if(entry != this->sources.end()) return entry->second;
@@ -70,7 +91,7 @@ EulSourceFile* EulProgram::getSource(const std::string& id, unsigned char create
     if (!createIfNotExists) return 0;
 
     //we create a token, add it on our list, and return it.
-    EulSourceFile* ret = new EulSourceFile(id, &this->globalScope);
+    auto ret = std::make_shared<EulSourceFile>(id, &this->globalScope);
     this->sources[id] = ret;
     return ret;
 }
@@ -80,7 +101,7 @@ EulSourceFile* EulProgram::getSource(const std::string& id, unsigned char create
   Will be probably called by the Compiler object every time it needs to get the next source file.
   returns null if all files are parsed.
 */
-EulSourceFile* EulProgram::nextPendingSource() {
+std::shared_ptr<EulSourceFile> EulProgram::nextPendingSource() {
     for (auto const& e : this->sources) {
         if ( !e.second->isParsed ) return e.second;
     }
@@ -89,7 +110,7 @@ EulSourceFile* EulProgram::nextPendingSource() {
     return 0;
 }
 
-EulSourceFile* EulProgram::getEntryPoint() {
+std::shared_ptr<EulSourceFile> EulProgram::getEntryPoint() {
     auto firstEntry = this->sources.begin();
     if (firstEntry == this->sources.end()) return nullptr;
     return firstEntry->second;
@@ -102,25 +123,29 @@ EulSourceFile* EulProgram::getEntryPoint() {
 //region GENERATOR SETUP
 void EulProgram::declareClibSymbols(EulCodeGenContext* ctx) {
     //1. Define exit()
-    auto type = llvm::FunctionType::get(
-        llvm::Type::getVoidTy(ctx->context),
-        llvm::ArrayRef<llvm::Type*>(llvm::IntegerType::get(ctx->context, 32)),
-        false
-    );
-    //auto declaration = ctx->module->getOrInsertGlobal("exit", type);
-    auto declaration = llvm::Function::Create(type, llvm::Function::ExternalLinkage, "exit", ctx->module);
-    this->globalScope.declare("exit", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, declaration));
+    auto eulFuncType = std::make_shared<EulFunctionType>(nullptr);  //returns void
+    eulFuncType->argTypes.push_back(ctx->compiler->program.nativeTypes.int32Type);
+    auto declaration = llvm::Function::Create(static_cast<llvm::FunctionType*>(eulFuncType->getLlvmType(ctx)), llvm::Function::ExternalLinkage, "exit", ctx->module);
+    this->globalScope.declare("exit", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
 
 
     //2. define print (puts)
-    type = llvm::FunctionType::get(
-        llvm::IntegerType::get(ctx->context, 32),
-        llvm::ArrayRef<llvm::Type*>(llvm::IntegerType::get(ctx->context, 8)->getPointerTo()),
-        false
-    );
-    declaration = llvm::Function::Create(type, llvm::Function::ExternalLinkage, "puts", ctx->module);
-    this->globalScope.declare("print", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, declaration));
+    eulFuncType = std::make_shared<EulFunctionType>(ctx->compiler->program.nativeTypes.int32Type);  //returns Int32
+    eulFuncType->argTypes.push_back(ctx->compiler->program.nativeTypes.stringType);
+    declaration = llvm::Function::Create(static_cast<llvm::FunctionType*>(eulFuncType->getLlvmType(ctx)), llvm::Function::ExternalLinkage, "puts", ctx->module);
+    this->globalScope.declare("print", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
+}
 
+
+void EulProgram::makeMain(EulCodeGenContext* ctx) {
+    llvm::Function* mainFunc = static_cast<llvm::Function*>(
+        ctx->module->getOrInsertFunction(
+            "main",
+            llvm::IntegerType::get(ctx->context, 32)
+        )
+    );
+    llvm::BasicBlock *block = llvm::BasicBlock::Create(ctx->context, "entry", mainFunc);
+    ctx->builder.SetInsertPoint(block);
 }
 
 
@@ -129,31 +154,26 @@ void EulProgram::declareClibSymbols(EulCodeGenContext* ctx) {
     It just calls main, and then performs a system call in order to terminate.
 */
 void EulProgram::makeEntryPoint(EulCodeGenContext* ctx) {
-    llvm::Function* entryPointFnc = (llvm::Function*)ctx->module->getOrInsertFunction("_startEul", llvm::IntegerType::get(ctx->context, 32));
+    //1. Create the llvm function
+    llvm::Function* entryPointFnc = static_cast<llvm::Function*>(ctx->module->getOrInsertFunction("_startEul", llvm::IntegerType::get(ctx->context, 32)));
     llvm::BasicBlock *block = llvm::BasicBlock::Create(ctx->context, "entry", entryPointFnc);
     ctx->builder.SetInsertPoint(block);
 
 
     //2. Call main
-    auto mainFunc = (llvm::Function*)ctx->module->getOrInsertFunction("main", llvm::IntegerType::get(ctx->context, 32));
+    auto mainFunc = static_cast<llvm::Function*>(ctx->module->getOrInsertFunction("main", llvm::IntegerType::get(ctx->context, 32)));
     auto mainReturnValue = ctx->builder.CreateCall(mainFunc);
 
 
 
-    //3. call exit
-    auto exitFunc = (llvm::Function*)ctx->module->getNamedValue("exit");
+    //3. Call exit
+    auto exitFunc = static_cast<llvm::Function*>(ctx->module->getNamedValue("exit"));
     ctx->builder.CreateCall(exitFunc, mainReturnValue);
 
 
     //5. Add return statement, just in case none was created already.
     auto zero = llvm::ConstantInt::get(llvm::IntegerType::get(ctx->context, 32), 0, true);
     ctx->builder.CreateRet(zero);
-}
-
-void EulProgram::makeMain(EulCodeGenContext* ctx) {
-    llvm::Function* mainFunc = (llvm::Function*)ctx->module->getOrInsertFunction("main", llvm::IntegerType::get(ctx->context, 32));
-    llvm::BasicBlock *block = llvm::BasicBlock::Create(ctx->context, "entry", mainFunc);
-    ctx->builder.SetInsertPoint(block);
 }
 //endregion
 

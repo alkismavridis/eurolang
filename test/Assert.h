@@ -8,6 +8,11 @@
 
 class Assert {
 
+    public: static void fail(const std::string& message) {
+        std::cout << message << std::endl;
+        exit(1);
+    }
+
     //region NUMERIC
     public: static void equals(long int expected, long int actual, const std::string& label) {
         if (expected==actual) return;
@@ -139,7 +144,7 @@ class Assert {
         return strTok;
     }
 
-    public: static EulType* eulType(EulToken* token, const llvm::Type* llvmType, const std::string& label) {
+    /*public: static EulType* eulType(EulToken* token, const llvm::Type* llvmType, const std::string& label) {
         Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
         EulAst* ast = (EulAst*)token;
 
@@ -148,7 +153,7 @@ class Assert {
 
         Assert::equals((void*)llvmType, (void*)ret->llvmType, label + "__llvmType");
         return ret;
-    }
+    }*/
     //endregion
 
 
@@ -236,6 +241,57 @@ class Assert {
         EulStatement* stmt = statement(token, label);
         Assert::equals(EulStatementType::RETURN_STATEMENT, stmt->getStatementType(), label + "__getStatement");
         return (ReturnStatement*)stmt;
+    }
+    //endregion
+
+
+
+    //region LLVM TESTS
+    public: static llvm::ConstantInt* llvmIntConstant(llvm::Value* testVal, unsigned long int size, unsigned long int expected, const std::string& label) {
+        Assert::that(llvm::ConstantInt::classof(testVal), label+"__isInteger");
+
+        auto asInt = (llvm::ConstantInt*) testVal;
+        Assert::equals(size, asInt->getType()->getBitWidth(), label + "__size");
+        Assert::equals(expected, asInt->getValue().getZExtValue(), label + "__value");
+
+        return asInt;
+    }
+
+    public: static llvm::ConstantFP* llvmFloatConstant(llvm::Value* testVal, unsigned long int size, double expected, double tolerance, const std::string& label) {
+        Assert::that(testVal->getType()->isFloatTy() || testVal->getType()->isDoubleTy(), label+"__isFloat");
+
+        auto asFloat = (llvm::ConstantFP*) testVal;
+        Assert::equals(size, asFloat->getType()->getPrimitiveSizeInBits(), label + "__size");
+
+        double testPrimitiveValue = testVal->getType()->isFloatTy()?
+            asFloat->getValueAPF().convertToFloat() :
+            asFloat->getValueAPF().convertToDouble();
+        Assert::equals(expected, testPrimitiveValue, tolerance, label + "__value");
+
+        return asFloat;
+    }
+
+    public: static llvm::Value* llvmStringConstant(llvm::Value* testVal, const std::string& expected, EulCodeGenContext* ctx, const std::string& label) {
+        Assert::that(testVal->getType()->isPointerTy(), label+"__isPointer");
+        Assert::equals(testVal->getType()->getArrayElementType(), llvm::IntegerType::get(ctx->context, 8), label+"__type");
+
+        //2. Check the global symbol entry
+        auto globalVar = ctx->module->getNamedGlobal (".glob" + std::to_string(ctx->globIndex - 1));
+        Assert::notNull(globalVar, label+"__globExistence");
+        Assert::that(globalVar->hasInitializer(), label+"__isInitialized");
+        Assert::that(globalVar->isConstant(), label+"__isConstant ");
+        Assert::equals(llvm::GlobalValue::LinkageTypes::PrivateLinkage, globalVar->getLinkage(), label+"__linkage");
+        Assert::that(llvm::GlobalValue::UnnamedAddr::Global == globalVar->getUnnamedAddr(), label+"__unnamedAddr");
+
+        //3. Check the global symbol content
+        auto stringValue = globalVar->getInitializer();
+
+        Assert::that(llvm::ConstantDataArray::classof(stringValue), label+"__initClass");
+        llvm::ConstantDataArray* asLlvmArray = static_cast<llvm::ConstantDataArray*>(stringValue);
+        Assert::that(asLlvmArray->isString(), label+"__isString");
+        Assert::equals(expected, asLlvmArray->getAsCString(), label+"__asString");
+
+        return testVal;
     }
     //endregion
 };

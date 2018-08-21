@@ -22,7 +22,7 @@ class Compiler {
     public: EulProgram program;
 
     /** *Here we will store the error object, if any happens. */
-    public: std::vector<EulError*> errors;
+    public: std::vector<EulError> errors;
     //endregion
 
 
@@ -30,7 +30,6 @@ class Compiler {
 
     //region LIFE CYCLE
     public: Compiler(void (*onError)(Compiler*));
-    public: ~Compiler();
     public: void reset(); //ths is just for unit testing purposes. It re-initializes the src field.
     //endregion
 

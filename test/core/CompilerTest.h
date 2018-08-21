@@ -25,9 +25,9 @@ class CompilerTest {
         comp.addError(EulErrorType::LEXER, "hello");
         comp.buffer.assign("12345");
 
-        EulSourceFile *file1 = comp.program.getSource("someFileName1.eul", 1);
-        EulSourceFile *file2 = comp.program.getSource("someFileName2.eul", 1);
-        comp.currentSource = file2;
+        auto file1 = comp.program.getSource("someFileName1.eul", 1);
+        auto file2 = comp.program.getSource("someFileName2.eul", 1);
+        comp.currentSource = file2.get();
 
         //3. call reset
         comp.reset();
@@ -46,22 +46,22 @@ class CompilerTest {
         //1. Compile an empty source file
         std::stringstream stream = std::stringstream("");
         comp.compile(
-            comp.program.getSource("name1.eul", 1),
+            comp.program.getSource("name1.eul", 1).get(),
             &stream
         );
 
         Assert::equals(1, comp.program.sources.size(), t + "A1");
-        Assert::notNull(comp.program.getSource("name1.eul", 0), t + "A2");
+        Assert::notNull(comp.program.getSource("name1.eul", 0).get(), t + "A2");
         Assert::that(comp.program.getSource("name1.eul", 0)->isParsed, t + "A3");
 
         //2 Compile a second one
         stream = std::stringstream("");
         comp.compile(
-            comp.program.getSource("name2.eul", 1),
+            comp.program.getSource("name2.eul", 1).get(),
             &stream
         );
         Assert::equals(2, comp.program.sources.size(), t + "B1");
-        Assert::notNull(comp.program.getSource("name2.eul", 0), t + "B2");
+        Assert::notNull(comp.program.getSource("name2.eul", 0).get(), t + "B2");
         Assert::that(comp.program.getSource("name2.eul", 0)->isParsed, t + "B3");
 
 
@@ -69,7 +69,7 @@ class CompilerTest {
         stream = std::stringstream("");
         comp.compile("name3.eul", &stream);
         Assert::equals(3, comp.program.sources.size(), t + "C1");
-        Assert::notNull(comp.program.getSource("name3.eul", 0), t + "C2");
+        Assert::notNull(comp.program.getSource("name3.eul", 0).get(), t + "C2");
         Assert::that(comp.program.getSource("name3.eul", 0)->isParsed, t + "C3");
     }
 
@@ -82,15 +82,15 @@ class CompilerTest {
         //1. make a lexer error, including error handler, using 2-params constructor
         comp.addError(EulErrorType::LEXER, "lex");
         Assert::equals(1, comp.errors.size(), t + "A1");
-        Assert::equals(EulErrorType::LEXER, comp.errors[0]->type, t + "A2");
-        Assert::equals("lex", comp.errors[0]->message, t + "A3");
+        Assert::equals(EulErrorType::LEXER, comp.errors[0].type, t + "A2");
+        Assert::equals("lex", comp.errors[0].message, t + "A3");
         Assert::equals(".", comp.buffer, t + "A4");
 
         //2. make a parser error, including error handler, using 1-param constructor
         comp.addError(EulError(EulErrorType::SYNTAX, "file not found"));
         Assert::equals(2, comp.errors.size(), t + "B1");
-        Assert::equals(EulErrorType::SYNTAX, comp.errors[1]->type, t + "B2");
-        Assert::equals("file not found", comp.errors[1]->message, t + "B3");
+        Assert::equals(EulErrorType::SYNTAX, comp.errors[1].type, t + "B2");
+        Assert::equals("file not found", comp.errors[1].message, t + "B3");
         Assert::equals("..", comp.buffer, t + "B4");
 
         //3 clear the error, including error handler
@@ -105,15 +105,15 @@ class CompilerTest {
         //5. make a lexer error, without error handler, using 2-params constructor
         comp.addError(EulErrorType::LEXER, "lex");
         Assert::equals(1, comp.errors.size(), t + "E1");
-        Assert::equals(EulErrorType::LEXER, comp.errors[0]->type, t + "E2");
-        Assert::equals("lex", comp.errors[0]->message, t + "E3");
+        Assert::equals(EulErrorType::LEXER, comp.errors[0].type, t + "E2");
+        Assert::equals("lex", comp.errors[0].message, t + "E3");
         Assert::equals("", comp.buffer, t + "E4");
 
         //6. make a parser error, without error handler, using 1-param constructor
         comp.addError(EulError(EulErrorType::SYNTAX, "file not found"));
         Assert::equals(2, comp.errors.size(), t + "F1");
-        Assert::equals(EulErrorType::SYNTAX, comp.errors[1]->type, t + "F2");
-        Assert::equals("file not found", comp.errors[1]->message, t + "F3");
+        Assert::equals(EulErrorType::SYNTAX, comp.errors[1].type, t + "F2");
+        Assert::equals("file not found", comp.errors[1].message, t + "F3");
         Assert::equals("", comp.buffer, t + "F4");
 
         //7. clear the error, without error handler

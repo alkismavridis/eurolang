@@ -25,7 +25,7 @@ class EulIntegerType : public EulType {
 
 
     //region OVERRIDES
-    public: virtual llvm::Type* getLlvmType(EulCodeGenContext* ctx);
     public: virtual EulTypeEnum getTypeEnum();
+    public: virtual llvm::Type* getLlvmType(EulCodeGenContext* ctx);
     //endregion
 };

@@ -18,6 +18,7 @@ class EulType : public EulAst {
 
 
     public: virtual EulTypeEnum getTypeEnum();
+    public: std::shared_ptr<EulType> getPointerTo(unsigned char depth = 1);
 
 
 

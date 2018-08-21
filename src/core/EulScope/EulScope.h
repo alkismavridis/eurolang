@@ -32,6 +32,7 @@ class EulScope {
     public: std::shared_ptr<EulSymbol> get(const std::string& key);
 
     public: std::shared_ptr<EulSymbol> getOwnSymbol(const std::string& key);
+    public: EulType* getOwnSymbolAsType(const std::string& key);
 
     public: int getDeclarationCount();
 
@@ -42,6 +43,6 @@ class EulScope {
     public: bool declare(const std::string& key, std::shared_ptr<EulSymbol> symbol);
 
     /** Used by the parser to add variables into the scope. */
-    public: void declare(VarDeclarationStatement* stmt);   //TODO unit test
+    public: void declare(VarDeclarationStatement* stmt);
     //endregion
 };

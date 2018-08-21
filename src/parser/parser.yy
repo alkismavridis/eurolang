@@ -11,6 +11,8 @@
     class EulScanner;
     class EulCodeGenContext;
     class EulScope;
+    class EulType;
+    class EulOperator;
 
     namespace llvm {
         class Value;
@@ -26,7 +28,6 @@
     # include <vector>
     #include <memory>
 
-    #include "../core/Operators/EulOperator.h"
 
     #include "../core/EulToken/EulTokenType.h"
     #include "../core/EulToken/EulToken.h"
@@ -39,6 +40,10 @@
     #include "../core/EulAst/EulAst.h"
     #include "../core/EulAst/EulType/EulTypeEnum.h"
     #include "../core/EulAst/EulType/EulType.h"
+    #include "../core/EulAst/EulType/EulIntegerType.h"
+    #include "../core/EulAst/EulType/EulFloatType.h"
+    #include "../core/EulAst/EulType/EulCharType.h"
+    #include "../core/EulAst/EulType/EulStringType.h"
     #include "../core/EulAst/EulType/EulNamedType.h"
     #include "../core/EulAst/EulStatement/EulStatementType.h"
     #include "../core/EulAst/EulStatement/EulStatement.h"
@@ -63,11 +68,14 @@
     #include "../core/EulScope/EulSymbol.h"
     #include "../core/EulScope/EulScope.h"
     #include "../core/EulSourceFile/EulSourceFile.h"
+    #include "../core/EulProgram/EulNativeTypes.h"
     #include "../core/EulProgram/EulProgram.h"
     #include "../core/Compiler/EulError/EulError.h"
     #include "../core/Compiler/Compiler.h"
     #include "../parser/EulParsingContext.h"
     #include "../parser/EulParsingUtils.h"
+
+    #include "../core/Operators/EulOperator.h"
 
 
 
@@ -201,15 +209,15 @@
 //region NON TERMINALS
 %type  <EulSourceFile*> source_file
 
-%type  <std::vector<std::shared_ptr<EulStatement>>*> statements
+%type  <std::shared_ptr<std::vector<std::shared_ptr<EulStatement>>>> statements
 %type  <std::shared_ptr<EulStatement>> statement
 
-%type  <std::vector<std::shared_ptr<VarDeclaration>>*> parameter_declarations
+%type  <std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>>> parameter_declarations
 %type  <std::shared_ptr<VarDeclaration>> parameter_declaration
 %type  <std::shared_ptr<EulType>> eul_type
 
 %type  <std::shared_ptr<EulToken>> expression
-%type  <std::vector<std::shared_ptr<EulToken>>*> expressions
+%type  <std::shared_ptr<std::vector<std::shared_ptr<EulToken>>>> expressions
 
 %type  <int> var_keyword
 //endregion
@@ -263,12 +271,12 @@ source_file
 //============================== STATEMENTS  ==============================
 statements:
     statements statement {
-        if ($1 == nullptr) $1 = new std::vector<std::shared_ptr<EulStatement>>();
+        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<EulStatement>>>();
         if ($2!=nullptr) $1->push_back($2);
         $$ = $1;
     } |
     statement {
-        $$ = new std::vector<std::shared_ptr<EulStatement>>();
+        $$ = std::make_shared<std::vector<std::shared_ptr<EulStatement>>>();
         if ($1!=nullptr) $$->push_back($1);
     }
 
@@ -366,12 +374,12 @@ expression
 
 expressions:
     expressions COMMA expression {
-        if ($1 == nullptr) $1 = new std::vector<std::shared_ptr<EulToken>>();
+        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<EulToken>>>();
         $1->push_back($3);
         $$ = $1;
     } |
     expression {
-        $$ = new std::vector<std::shared_ptr<EulToken>>();
+        $$ = std::make_shared<std::vector<std::shared_ptr<EulToken>>>();
         $$->push_back($1);
     } |
     %empty { $$ = nullptr; }
@@ -423,12 +431,12 @@ parameter_declaration:
 
 parameter_declarations:
     parameter_declarations COMMA parameter_declaration {
-        if ($1 == nullptr) $1 = new std::vector<std::shared_ptr<VarDeclaration>>();
+        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>();
         $1->push_back($3);
         $$ = $1;
     } |
     parameter_declaration {
-        $$ = new std::vector<std::shared_ptr<VarDeclaration>>();
+        $$ = std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>();
         $$->push_back($1);
     }
     ;

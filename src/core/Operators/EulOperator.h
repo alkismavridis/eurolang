@@ -1,12 +1,22 @@
 #pragma once
 
 class EulOperator {
-    public: virtual llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);
-    public: virtual llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
-    public: virtual llvm::Value* performSuffix(llvm::Value* arg, EulCodeGenContext* ctx);
+    public: virtual std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    public: virtual llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
+
+    public: virtual std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    public: virtual llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
+
+    public: virtual std::shared_ptr<EulType> getSuffixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    public: virtual llvm::Value* performSuffix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 
     public: virtual int getOperatorType();
     public: virtual const std::string getOperatorText();
+
+
+    //region STATIC UTILS
+    public: static std::shared_ptr<EulType> doCommonIntMerging(std::shared_ptr<EulType> left, std::shared_ptr<EulType> right, EulCodeGenContext* ctx);
+    //endregion
 };
 
 
@@ -15,7 +25,9 @@ class EulOperator {
 class AssignOperator : public EulOperator {
     public: int getOperatorType();
     public: const std::string getOperatorText();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class AssignModOperator : public EulOperator {
@@ -73,74 +85,94 @@ class AssignRightShiftOperator : public EulOperator {
 class OrOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class AndOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class XorOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 
 class NotEqualsOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class NotSameOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class EqualsOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class SameOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx)
 };
 
 class LessOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx)
 };
 
 class LessEqualsOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx)
 };
 
 class MoreOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx)
 };
 
 class MoreEqualsOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx)
 };
 
 class NotOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 
@@ -150,86 +182,126 @@ class NotOperator : public EulOperator {
 class BinOrOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx)
 };
 
 class BinAndOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
-    //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);   //VALUE OF POINTER
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);   //VALUE OF POINTER
 };
 
 class LeftShiftOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulIntegerType> targetType, EulCodeGenContext* ctx);
 };
 
 class RightShiftOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulIntegerType> targetType, EulCodeGenContext* ctx);
 };
 
 class PlusOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
-    //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);
+
+    public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class MinusOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
-    //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);
+
+    public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class PercentOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
-    //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx); //ADDRESS OF
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx); //ADDRESS OF
 };
 
 class StarOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
-    //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);
+
+    public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class SlashOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx)
 };
 
 class TildeOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class DecreaseOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);
-    //public: llvm::Value* performSuffix(llvm::Value* arg, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
+
+
+    //public: llvm::Value* performSuffix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class IncreaseOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performPrefix(llvm::Value* arg, EulCodeGenContext* ctx);
-    //public: llvm::Value* performSuffix(llvm::Value* arg, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getSuffixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performSuffix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx);
 };
 
 class DotOperator : public EulOperator {
     public: const std::string getOperatorText();
     public: int getOperatorType();
-    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, EulCodeGenContext* ctx);
+
+    //public: std::shared_ptr<EulType> getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx);
+    //public: llvm::Value* performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx)
 };
 
 

@@ -11,7 +11,7 @@ class EulSourceFile {
     public: std::string nameSpace;
     //public: std::forward_list<EulImportStatement> imports;
     //public: std::forward_list<EulExportStatement> exports;
-    public: std::vector<std::shared_ptr<EulStatement>>* statements; /** Can be null for empty files. */
+    public: std::shared_ptr<std::vector<std::shared_ptr<EulStatement>>> statements; /** Can be null for empty files. */
 
     public: EulScope scope;
     //endregion
@@ -21,7 +21,6 @@ class EulSourceFile {
 
     //region LIFE CYCLE
     public: EulSourceFile(const std::string& id, EulScope* globalScope);
-    public: ~EulSourceFile();
     //endregion
 
 

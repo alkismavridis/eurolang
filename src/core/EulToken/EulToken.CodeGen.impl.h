@@ -4,8 +4,8 @@ llvm::Value* EulToken::generateValue(EulCodeGenContext* ctx, unsigned int flags)
     throw EulError(EulErrorType::SEMANTIC, "EulToken::generateValue was called, but should not!");
 }
 
-llvm::Type* EulToken::generateType(EulCodeGenContext* ctx) {
-    throw EulError(EulErrorType::SEMANTIC, "EulToken::generateType was called, but should not!");
+std::shared_ptr<EulType> EulToken::getEulType(EulCodeGenContext* ctx, unsigned int someParam) {
+    throw EulError(EulErrorType::SEMANTIC, "EulToken::getEulType was called, but should not!");
 }
 
 
@@ -16,16 +16,16 @@ llvm::Value* EulCharToken::generateValue(EulCodeGenContext* ctx, unsigned int fl
         case 8:
         case 16:
         case 32: return llvm::ConstantInt::get(ctx->context, llvm::APInt(this->size, this->value, false));
-        default: throw EulError(EulErrorType::SEMANTIC, "Invalid character size: " + std::to_string(this->size)+". Please use one of 8, 16, 32");
+        default: throw EulError(EulErrorType::SEMANTIC, "Invalid character size: " + std::to_string(this->size)+". Please use one of 8, 16, 32.");
     }
 }
 
-llvm::Type* EulCharToken::generateType(EulCodeGenContext* ctx) {
+std::shared_ptr<EulType> EulCharToken::getEulType(EulCodeGenContext* ctx, unsigned int someParam) {
     switch(this->size) {
-        case 8:
-        case 16:
-        case 32: return llvm::IntegerType::get(ctx->context, this->size);
-        default: throw EulError(EulErrorType::SEMANTIC, "Invalid character size: " + std::to_string(this->size)+". Please use one of 8, 16, 32");
+        case 8: return ctx->compiler->program.nativeTypes.char8Type;
+        case 16: return ctx->compiler->program.nativeTypes.char16Type;
+        case 32: return ctx->compiler->program.nativeTypes.char32Type;
+        default: throw EulError(EulErrorType::SEMANTIC, "Invalid character size: " + std::to_string(this->size)+". Please use one of 8, 16, 32.");
     }
 }
 
@@ -33,14 +33,15 @@ llvm::Type* EulCharToken::generateType(EulCodeGenContext* ctx) {
 
 //FLOAT
 llvm::Value* EulFloatToken::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
-    return llvm::ConstantFP::get(this->generateType(ctx), this->value);
+    auto llvmType = this->getEulType(ctx, 0)->getLlvmType(ctx);
+    return llvm::ConstantFP::get(llvmType, this->value);
 }
 
-llvm::Type* EulFloatToken::generateType(EulCodeGenContext* ctx) {
+std::shared_ptr<EulType> EulFloatToken::getEulType(EulCodeGenContext* ctx, unsigned int someParam) {
     switch(this->size) {
-        case 32: return llvm::Type::getFloatTy(ctx->context);
-        case 64: return llvm::Type::getDoubleTy(ctx->context);
-        default: throw EulError(EulErrorType::SEMANTIC, "Invalid floating point size: " + std::to_string(this->size)+". Please use one of 32, 64");
+        case 32: return ctx->compiler->program.nativeTypes.float32Type;
+        case 64: return ctx->compiler->program.nativeTypes.float64Type;
+        default: throw EulError(EulErrorType::SEMANTIC, "Invalid floating point size: " + std::to_string(this->size)+". Please use one of 32, 64.");
     }
 }
 
@@ -52,10 +53,12 @@ llvm::Value* EulIdToken::generateValue(EulCodeGenContext* ctx, unsigned int flag
     std::shared_ptr<EulSymbol> sym = this->scope->get(this->name);
     if (sym==nullptr) throw EulError(EulErrorType::SEMANTIC, this->name +": Symbol not found.");
 
-    if (sym->llvmValue == nullptr) throw EulError(EulErrorType::NOT_IMPLEMENTED, "NOT_IMPLEMENTED Symbol with name "+ this->name +" does not have a value.");
 
     //2. We should either return the value as is, or load a variable and return the loading result:
     if (flags & EulCodeGenFlags_LOAD_VAR) {
+        if (sym->llvmValue == nullptr)
+            throw EulError(EulErrorType::NOT_IMPLEMENTED, "NOT_IMPLEMENTED Symbol with name "+ this->name +" does not have a value.");
+
         auto loadInstr = ctx->builder.CreateLoad(
             sym->llvmValue->getType()->getPointerElementType(),
             sym->llvmValue
@@ -66,6 +69,13 @@ llvm::Value* EulIdToken::generateValue(EulCodeGenContext* ctx, unsigned int flag
     else return sym->llvmValue;
 }
 
+std::shared_ptr<EulType> EulIdToken::getEulType(EulCodeGenContext* ctx, unsigned int someParam) {
+    std::shared_ptr<EulSymbol> sym = this->scope->get(this->name);
+    if (sym==nullptr) throw EulError(EulErrorType::SEMANTIC, this->name +": Symbol not found.");
+
+    return sym->varType;
+}
+
 
 //INT
 llvm::Value* EulIntToken::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
@@ -74,18 +84,18 @@ llvm::Value* EulIntToken::generateValue(EulCodeGenContext* ctx, unsigned int fla
         case 16:
         case 32:
         case 64: return llvm::ConstantInt::get(ctx->context, llvm::APInt(this->size, this->value, !this->isUnsigned));
-        default: throw EulError(EulErrorType::SEMANTIC, "Invalid integer size: " + std::to_string(this->size)+". Please use one of 8, 16, 32, 64");
+        default: throw EulError(EulErrorType::SEMANTIC, "Invalid integer size: " + std::to_string(this->size)+". Please use one of 8, 16, 32, 64.");
     }
 }
 
 
-llvm::Type* EulIntToken::generateType(EulCodeGenContext* ctx) {
+std::shared_ptr<EulType> EulIntToken::getEulType(EulCodeGenContext* ctx, unsigned int someParam) {
     switch(this->size) {
-        case 8:
-        case 16:
-        case 32:
-        case 64: return llvm::IntegerType::get(ctx->context, this->size);
-        default: throw EulError(EulErrorType::SEMANTIC, "Invalid integer size: " + std::to_string(this->size)+". Please use one of 8, 16, 32, 64");
+        case 8: return this->isUnsigned? ctx->compiler->program.nativeTypes.uint8Type : ctx->compiler->program.nativeTypes.int8Type;
+        case 16: return this->isUnsigned? ctx->compiler->program.nativeTypes.uint16Type : ctx->compiler->program.nativeTypes.int16Type;
+        case 32: return this->isUnsigned? ctx->compiler->program.nativeTypes.uint32Type : ctx->compiler->program.nativeTypes.int32Type;
+        case 64: return this->isUnsigned? ctx->compiler->program.nativeTypes.uint64Type : ctx->compiler->program.nativeTypes.int64Type;
+        default: throw EulError(EulErrorType::SEMANTIC, "Invalid integer size: " + std::to_string(this->size)+". Please use one of 8, 16, 32, 64.");
     }
 }
 
@@ -115,13 +125,13 @@ llvm::Value* EulStringToken::generateValue(EulCodeGenContext* ctx, unsigned int 
     globalDeclaration->setInitializer(llvm::ConstantArray::get(stringType, chars));
     globalDeclaration->setConstant(true);
     globalDeclaration->setLinkage(llvm::GlobalValue::LinkageTypes::PrivateLinkage);
-    globalDeclaration->setUnnamedAddr (llvm::GlobalValue::UnnamedAddr::Global);
+    globalDeclaration->setUnnamedAddr(llvm::GlobalValue::UnnamedAddr::Global);
 
 
     //3. Return a cast to an i8*
     return llvm::ConstantExpr::getBitCast(globalDeclaration, charType->getPointerTo());
 }
 
-llvm::Type* EulStringToken::generateType(EulCodeGenContext* ctx) {
-    return llvm::IntegerType::get(ctx->context, 8)->getPointerTo();
+std::shared_ptr<EulType> EulStringToken::getEulType(EulCodeGenContext* ctx, unsigned int someParam) {
+    return ctx->compiler->program.nativeTypes.stringType;
 }
