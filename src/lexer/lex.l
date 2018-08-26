@@ -73,6 +73,15 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 "namespace"		return yy::EulParser::token::NAMESPACE;
 "return"		return yy::EulParser::token::RETURN;
 
+"true" {
+    yylval->build<std::shared_ptr<EulBooleanToken>>() = std::make_shared<EulBooleanToken>(true);
+    return yy::EulParser::token::BOOLEAN;
+}
+
+"false" {
+    yylval->build<std::shared_ptr<EulBooleanToken>>() = std::make_shared<EulBooleanToken>(false);
+    return yy::EulParser::token::BOOLEAN;
+}
 
 
 [a-zA-Z]{WORD_TAIL}* {

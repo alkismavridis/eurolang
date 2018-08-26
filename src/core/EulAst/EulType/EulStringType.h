@@ -25,5 +25,6 @@ class EulStringType : public EulType {
     //region OVERRIDES
     public: virtual EulTypeEnum getTypeEnum();
     public: virtual llvm::Type* getLlvmType(EulCodeGenContext* ctx);
+    public: virtual llvm::Value* castValue(llvm::Value* sourceValue, EulType* sourceType, bool isExplicit, EulCodeGenContext* ctx);
     //endregion
 };

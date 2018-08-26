@@ -40,21 +40,6 @@ class EulCodeGenContext {
 
 
 
-    //region TYPE UTILS
-    /**
-        Returns a value that matches the given type.
-        If the sourceValue is already instance of targetType, this function will just return sourceValue.
-        If the conversion is impossible, an exception is thrown.
-        Otherwise, a copy of the sourceValue, converted to the targetType will be returned.
-
-        NOTE: this function may insert llvm instructions
-    */
-    public: llvm::Value* castValue(llvm::Value* sourceValue, llvm::Type* targetType, EulType* targetEulType);
-    public: llvm::Value* castToInteger(llvm::Value* sourceValue, llvm::IntegerType* targetType, EulIntegerType* targetEulType);
-    //endregion
-
-
-
     //region VALUE UTILS
     public: llvm::GlobalVariable* makeGlobalLiteral(llvm::Type* type);
     //endregion

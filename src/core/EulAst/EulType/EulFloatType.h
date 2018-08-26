@@ -26,5 +26,12 @@ class EulFloatType : public EulType {
     //region OVERRIDES
     public: virtual EulTypeEnum getTypeEnum();
     public: virtual llvm::Type* getLlvmType(EulCodeGenContext* ctx);
+    public: virtual llvm::Value* castValue(llvm::Value* sourceValue, EulType* sourceType, bool isExplicit, EulCodeGenContext* ctx);
+    //endregion
+
+
+    //region CASTING
+    public: llvm::Value* castIntToFloatValue(llvm::Value* sourceValue, EulIntegerType* sourceType, EulCodeGenContext* ctx);
+    public: llvm::Value* castFloatToFloatValue(llvm::Value* sourceValue, EulFloatType* sourceType, EulCodeGenContext* ctx);
     //endregion
 };

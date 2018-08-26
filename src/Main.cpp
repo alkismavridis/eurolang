@@ -51,6 +51,7 @@ class EulType;
 #include "../src/core/EulToken/EulToken.h"
 #include "../src/core/EulToken/EulIntToken.h"
 #include "../src/core/EulToken/EulCharToken.h"
+#include "../src/core/EulToken/EulBooleanToken.h"
 #include "../src/core/EulToken/EulFloatToken.h"
 #include "../src/core/EulToken/EulIdToken.h"
 #include "../src/core/EulToken/EulStringToken.h"
@@ -66,6 +67,8 @@ class EulType;
 #include "../src/core/EulAst/EulType/EulFunctionType.h"
 #include "../src/core/EulAst/EulType/EulPointerType.h"
 #include "../src/core/EulAst/EulType/EulNamedType.h"
+#include "../src/core/EulAst/EulType/EulVoidType.h"
+#include "../src/core/EulAst/EulType/EulBooleanType.h"
 
 #include "../src/core/EulAst/EulStatement/EulStatementType.h"
 #include "../src/core/EulAst/EulStatement/EulStatement.h"

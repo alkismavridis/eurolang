@@ -1,10 +1,6 @@
 #pragma once
 
-/**
-    This is a wrapper object for an llvm::Type*
-    The reason that we need a wrapper is because a Type may be not-yet-defined when it is requested.
-    There will be no forward declarations in eurolang.
-*/
+
 class EulFunctionType : public EulType {
     //region FIELDS
     public: std::shared_ptr<EulType> retType;
@@ -27,5 +23,6 @@ class EulFunctionType : public EulType {
     //region OVERRIDES
     public: virtual EulTypeEnum getTypeEnum();
     public: virtual llvm::Type* getLlvmType(EulCodeGenContext* ctx);
+    public: virtual llvm::Value* castValue(llvm::Value* sourceValue, EulType* sourceType, bool isExplicit, EulCodeGenContext* ctx);
     //endregion
 };

@@ -48,7 +48,7 @@ EulType* EulScope::getOwnSymbolAsType(const std::string& key) {
         throw EulError(EulErrorType::SEMANTIC, "Type not found: " + key);
 
     //3. Cast it and return it
-    return (EulType*)symbol->value.get();
+    return static_cast<EulType*>(symbol->value.get());
 }
 
 

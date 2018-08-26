@@ -39,7 +39,10 @@ void VarDeclarationStatement::generateStatement(EulCodeGenContext* ctx) {
 
         //1. Get the variable. Throw an error if it does not exists
         auto const symbol = ctx->currentScope->get(varName);
-        if (symbol == nullptr) ctx->compiler->addError(EulError(EulErrorType::SEMANTIC, varName + " not found."));
+        if (symbol == nullptr) {
+            ctx->compiler->addError(EulError(EulErrorType::SEMANTIC, varName + " not found."));
+            return;
+        }
 
         //2. Store the value.
         //2a. Get the runtime value
@@ -57,13 +60,12 @@ void VarDeclarationStatement::generateStatement(EulCodeGenContext* ctx) {
         symbol->varType = decl->getEulType(ctx, 0);
 
         //2b. cast the value to the declared type (or the type that the expression indicated, if no explicit type was specified)
-        auto declLlvmType = symbol->varType->getLlvmType(ctx);
         auto castedValue = decl->value==nullptr?
             runtimeValue:
-            ctx->castValue(runtimeValue, declLlvmType, symbol->varType.get());
+            symbol->varType->castValue(runtimeValue, symbol->varType.get(), false, ctx);
 
         //2c. create the allocation and the store instruction
-        auto allocInst = ctx->builder.CreateAlloca(declLlvmType, nullptr, varName);
+        auto allocInst = ctx->builder.CreateAlloca(symbol->varType->getLlvmType(ctx), nullptr, varName);
         ctx->builder.CreateStore(castedValue, allocInst);
         symbol->llvmValue = allocInst;
     }
@@ -84,10 +86,12 @@ void ReturnStatement::generateStatement(EulCodeGenContext* ctx) {
 
 
     //2. Cast to return type
-    auto castedValue = ctx->castValue(
+    auto retType = ctx->compiler->program.nativeTypes.int32Type.get(); //TODO when we implement functions, the actual return type will go here.
+    auto castedValue = retType->castValue(
         retValue,
-        ctx->builder.getCurrentFunctionReturnType(),
-        ctx->compiler->program.nativeTypes.int32Type.get() //TODO when we implement functions, the actual return type will go here.
+        this->exp->getEulType(ctx, 0).get(),
+        false,
+        ctx
     );
 
     //3. Return the value
@@ -120,10 +124,13 @@ llvm::Value* EulFunctionCallExp::generateValue(EulCodeGenContext* ctx, unsigned 
    std::vector<llvm::Value*> args;
    for (int i=0, len = paramsSize; i<len; ++i) {
         auto argType = funcType->argTypes[i];
-        auto castedArgument = ctx->castValue(
-           (*this->params)[i]->generateValue(ctx, EulCodeGenFlags_LOAD_VAR),
-           argType->getLlvmType(ctx),
-           argType.get()
+        auto param = (*this->params)[i];
+
+        auto castedArgument = argType->castValue(
+           param->generateValue(ctx, EulCodeGenFlags_LOAD_VAR),
+           param->getEulType(ctx,0).get(),
+           false,
+           ctx
         );
        args.push_back(castedArgument);
    }
@@ -132,18 +139,46 @@ llvm::Value* EulFunctionCallExp::generateValue(EulCodeGenContext* ctx, unsigned 
 }
 
 llvm::Value* EulInfixExp::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
-    //1. Calculate the two operands
+    if (this->oper->isAssignment()) return this->generateAssignment(ctx, flags);
+
+    //1. Calculate the values of the two operands. This will generate their types, too
     llvm::Value* leftValue = this->left->generateValue(ctx, EulCodeGenFlags_LOAD_VAR);
     llvm::Value* rightValue = this->right->generateValue(ctx, EulCodeGenFlags_LOAD_VAR);
     if (!leftValue || !rightValue) return nullptr;
 
-    //2. Get the result type.
-    auto leftEulType = this->left->getEulType(ctx, 0);
-    auto rightEulType = this->right->getEulType(ctx, 0);
-    this->compileTimeType = this->oper->getInfixResultType(leftEulType, rightEulType, ctx);
+    //2. Perform and return the operation
+    return this->oper->performInfix(
+        leftValue,
+        this->left->getEulType(ctx, 0),
+        rightValue,
+        this->right->getEulType(ctx, 0),
+        &this->compileTimeType, ctx
+    );
+}
 
-    //3. Perform and return the operation
-    return this->oper->performInfix(leftValue, rightValue, this->compileTimeType, ctx);
+llvm::Value* EulInfixExp::generateAssignment(EulCodeGenContext* ctx, unsigned int flags) {
+    //1. Get the id token out of the left operand
+    if (this->left->getType() != EulTokenType::ID)
+        throw new EulError(EulErrorType::NOT_IMPLEMENTED, "NOT_IMPLEMENTED Cannot assign a value to a non id token.");
+    EulIdToken* asId = static_cast<EulIdToken*>(this->left.get());
+
+    //2. Get the symbol, and assert that it is mutable.
+    auto symbol = ctx->currentScope->get(asId->name);
+    if (symbol==nullptr)
+        throw new EulError(EulErrorType::SEMANTIC, (asId->name) + " is not defined.");
+    if (symbol->changeType != yy::EulParser::token::VAR)
+        throw new EulError(EulErrorType::SEMANTIC, "Symbol " + (asId->name) + " is immutable. Reassigning a value to it is forbidden.");
+
+    //3. Calculate the right operand
+    llvm::Value* rightValue = this->right->generateValue(ctx, EulCodeGenFlags_LOAD_VAR);
+
+    //4. Make the assignment
+    return this->oper->assignInfix(
+        symbol.get(),
+        rightValue,
+        this->right->getEulType(ctx, 0),
+        &this->compileTimeType, ctx
+    );
 }
 
 llvm::Value* EulPrefixExp::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
@@ -159,60 +194,5 @@ llvm::Value* EulSuffixExp::generateValue(EulCodeGenContext* ctx, unsigned int fl
 llvm::Value* EulTokenExp::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
     std::cout << "EulTokenExp::generateValue" << std::endl;
     return nullptr; //TODO what this even means?
-}
-//endregion
-
-
-
-
-
-
-//region TYPES
-llvm::Type* EulType::getLlvmType(EulCodeGenContext* ctx) {
-    throw EulError(EulErrorType::SEMANTIC, "EulType::getLlvmType was called.");
-}
-
-llvm::Type* EulIntegerType::getLlvmType(EulCodeGenContext* ctx) {
-    return llvm::IntegerType::get(ctx->context, this->size);
-}
-
-llvm::Type* EulCharType::getLlvmType(EulCodeGenContext* ctx) {
-    return llvm::IntegerType::get(ctx->context, this->size);
-}
-
-llvm::Type* EulFloatType::getLlvmType(EulCodeGenContext* ctx) {
-    switch(this->size) {
-        case 32: return llvm::Type::getFloatTy(ctx->context);
-        case 64: return llvm::Type::getDoubleTy(ctx->context);
-        default: throw EulError(EulErrorType::SEMANTIC, "Invalid floating point size: " + std::to_string(this->size)+". Please use one of 32, 64.");
-    }
-}
-
-llvm::Type* EulStringType::getLlvmType(EulCodeGenContext* ctx) {
-    return llvm::IntegerType::get(ctx->context, 8)->getPointerTo();
-}
-
-llvm::Type* EulNamedType::getLlvmType(EulCodeGenContext* ctx) {
-    return ctx->module->getTypeByName(this->name);
-}
-
-llvm::Type* EulPointerType::getLlvmType(EulCodeGenContext* ctx) {
-    auto type = this->contentType->getLlvmType(ctx);
-    for (int i = this->depth; i--;) type = type->getPointerTo();
-    return type;
-}
-
-llvm::Type* EulFunctionType::getLlvmType(EulCodeGenContext* ctx) {
-    //1. Build argument list
-    std::vector<llvm::Type*> llvmArgList;
-    for (auto const& argType : this->argTypes) llvmArgList.push_back(argType->getLlvmType(ctx));
-
-    auto ret = llvm::FunctionType::get(
-        this->retType==nullptr? llvm::Type::getVoidTy(ctx->context) : this->retType->getLlvmType(ctx),
-        llvm::ArrayRef<llvm::Type*>(llvmArgList),
-        false
-    );
-
-    return ret;
 }
 //endregion

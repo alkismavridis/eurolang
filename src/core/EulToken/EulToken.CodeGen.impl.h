@@ -100,6 +100,18 @@ std::shared_ptr<EulType> EulIntToken::getEulType(EulCodeGenContext* ctx, unsigne
 }
 
 
+
+
+//BOOLEAN
+llvm::Value* EulBooleanToken::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
+    return llvm::ConstantInt::get(ctx->context, llvm::APInt(1, this->value? 1 : 0, true));
+}
+
+std::shared_ptr<EulType> EulBooleanToken::getEulType(EulCodeGenContext* ctx, unsigned int someParam) {
+    return ctx->compiler->program.nativeTypes.booleanType;
+}
+
+
 //STRING
 llvm::Value* EulStringToken::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
     //0. Defs

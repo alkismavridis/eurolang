@@ -7,5 +7,6 @@ enum EulTokenType {
     FLOAT,
     CHAR,
     STRING,
+    BOOLEAN,
     ID
 };

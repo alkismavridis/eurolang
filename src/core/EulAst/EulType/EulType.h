@@ -1,12 +1,24 @@
 #pragma once
 
+
+//region UGGLY FORWARD DECLARATIONS
+class EulIntegerType;
+class EulFloatType;
+//endregion
+
+
 /**
     A wrapper class to return llvm types.
     This class is abstract, please refer to sub classes for implementations.
     NOTE an EulType can exist before any llvm context is initialized.
 */
 class EulType : public EulAst {
-    //region FIELDS
+    //region STATIC UTILS
+    public: static std::shared_ptr<EulIntegerType> doCommonIntMerging(std::shared_ptr<EulType> left, std::shared_ptr<EulType> right, EulCodeGenContext* ctx);
+    public: static std::shared_ptr<EulFloatType> doCommonFloatMerging(std::shared_ptr<EulType> left, std::shared_ptr<EulType> right, EulCodeGenContext* ctx);
+    public: static std::shared_ptr<EulType> doCommonNumberMerging(std::shared_ptr<EulType> left, std::shared_ptr<EulType> right, EulCodeGenContext* ctx);
+
+    public: virtual llvm::Value* castValue(llvm::Value* sourceValue, EulType* sourceType, bool isExplicit, EulCodeGenContext* ctx);
     //endregion
 
 

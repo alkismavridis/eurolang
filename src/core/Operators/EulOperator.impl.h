@@ -2,75 +2,21 @@
 
 
 
-//region STATIC UTILS
-std::shared_ptr<EulType> EulOperator::doCommonIntMerging(std::shared_ptr<EulType> left, std::shared_ptr<EulType> right, EulCodeGenContext* ctx) {
-    //1. Check that operands are indeed integer types
-    if (left->getTypeEnum()!=EulTypeEnum::INT_TYPE || right->getTypeEnum()!=EulTypeEnum::INT_TYPE)
-        throw EulError(EulErrorType::SEMANTIC, "Int type expected.");
-
-    //2. Cast them into integers
-    const auto leftAsInt = static_cast<EulIntegerType*>(left.get());
-    const auto rightAsInt = static_cast<EulIntegerType*>(right.get());
-
-    //3. Decide the resulting size, and whether the result is unsigned or not.
-    // The biggest one wins for size, and unsigned wins over signed.
-    unsigned char resultSize = (leftAsInt->size > rightAsInt->size) ?
-        leftAsInt->size :
-        rightAsInt->size;
-    bool isResultUnsigned = leftAsInt->isUnsigned || rightAsInt->isUnsigned;
-
-    //4. Find the result type, according to the above constrains, and return in
-    switch(resultSize) {
-        case 8:
-            return isResultUnsigned?
-                ctx->compiler->program.nativeTypes.uint8Type :
-                ctx->compiler->program.nativeTypes.int8Type;
-
-        case 16:
-            return isResultUnsigned?
-                ctx->compiler->program.nativeTypes.uint16Type :
-                ctx->compiler->program.nativeTypes.int16Type;
-
-        case 32:
-            return isResultUnsigned?
-                ctx->compiler->program.nativeTypes.uint32Type :
-                ctx->compiler->program.nativeTypes.int32Type;
-
-        case 64:
-            return isResultUnsigned?
-                ctx->compiler->program.nativeTypes.uint64Type :
-                ctx->compiler->program.nativeTypes.int64Type;
-
-        default: throw EulError(EulErrorType::SEMANTIC, "Wrong int size: " + std::to_string(resultSize));
-    }
-}
-//endregion
-
-
-
-
 //region BASE CLASS
 llvm::Value* EulOperator::performPrefix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
     throw EulError(EulErrorType::SEMANTIC, "EulOperator::performPrefix was called, but should not.");
 }
-std::shared_ptr<EulType> EulOperator::getPrefixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx) {
-    throw EulError(EulErrorType::SEMANTIC, "EulOperator::getPrefixResultType was called, but should not.");
-}
 
-
-llvm::Value* EulOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
+llvm::Value* EulOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
     throw EulError(EulErrorType::SEMANTIC, "EulOperator::performInfix was called, but should not.");
 }
-std::shared_ptr<EulType> EulOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
-    throw EulError(EulErrorType::SEMANTIC, "EulOperator::getInfixResultType was called, but should not.");
-}
 
+llvm::Value* EulOperator::assignInfix(EulSymbol* symbol, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    throw EulError(EulErrorType::SEMANTIC, "EulOperator::assignInfix was called, but should not.");
+}
 
 llvm::Value* EulOperator::performSuffix(llvm::Value* arg, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
     throw EulError(EulErrorType::SEMANTIC, "EulOperator::performSuffix was called, but should not.");
-}
-std::shared_ptr<EulType> EulOperator::getSuffixResultType(std::shared_ptr<EulType> inputType, EulCodeGenContext* ctx) {
-    throw EulError(EulErrorType::SEMANTIC, "EulOperator::getSuffixResultType was called, but should not.");
 }
 
 int EulOperator::getOperatorType() {
@@ -79,6 +25,10 @@ int EulOperator::getOperatorType() {
 
 const std::string EulOperator::getOperatorText() {
     throw EulError(EulErrorType::SEMANTIC, "EulOperator::getOperatorText was called, but should not.");
+}
+
+bool EulOperator::isAssignment() {
+    throw EulError(EulErrorType::SEMANTIC, "EulOperator::isAssignment was called, but should not.");
 }
 //endregion
 
@@ -93,6 +43,18 @@ int AssignOperator::getOperatorType() {
 const std::string AssignOperator::getOperatorText() {
     return "=";
 }
+
+bool AssignOperator::isAssignment() { return true; }
+
+llvm::Value* AssignOperator::assignInfix(EulSymbol* symbol, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Cast the right expression to the symbols type.
+    auto castedValue = symbol->varType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = symbol->varType;
+
+    //2. Create the store instruction
+    ctx->builder.CreateStore(castedValue, symbol->llvmValue);
+    return right;
+}
 //endregion
 
 
@@ -105,6 +67,8 @@ int AssignModOperator::getOperatorType() {
 const std::string AssignModOperator::getOperatorText() {
     return "=%";
 }
+
+bool AssignModOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -117,6 +81,8 @@ int AssignXorOperator::getOperatorType() {
 const std::string AssignXorOperator::getOperatorText() {
     return "=^";
 }
+
+bool AssignXorOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -129,6 +95,8 @@ int AssignAndOperator::getOperatorType() {
 const std::string AssignAndOperator::getOperatorText() {
     return "=&";
 }
+
+bool AssignAndOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -142,6 +110,8 @@ int AssignStarOperator::getOperatorType() {
 const std::string AssignStarOperator::getOperatorText() {
     return "=*";
 }
+
+bool AssignStarOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -153,6 +123,8 @@ int AssignMinusOperator::getOperatorType() {
 const std::string AssignMinusOperator::getOperatorText() {
     return "=-";
 }
+
+bool AssignMinusOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -164,6 +136,8 @@ int AssignPlusOperator::getOperatorType() {
 const std::string AssignPlusOperator::getOperatorText() {
     return "=+";
 }
+
+bool AssignPlusOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -175,6 +149,8 @@ int AssignOrOperator::getOperatorType() {
 const std::string AssignOrOperator::getOperatorText() {
     return "=|";
 }
+
+bool AssignOrOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -186,6 +162,8 @@ int AssignDivOperator::getOperatorType() {
 const std::string AssignDivOperator::getOperatorText() {
     return "=/";
 }
+
+bool AssignDivOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -197,6 +175,8 @@ int AssignLeftShiftOperator::getOperatorType() {
 const std::string AssignLeftShiftOperator::getOperatorText() {
     return "=<<";
 }
+
+bool AssignLeftShiftOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -208,10 +188,9 @@ int AssignRightShiftOperator::getOperatorType() {
 const std::string AssignRightShiftOperator::getOperatorText() {
     return "=>>";
 }
+
+bool AssignRightShiftOperator::isAssignment() { return true; }
 //endregion
-
-
-
 
 
 
@@ -224,6 +203,8 @@ int OrOperator::getOperatorType() {
 const std::string OrOperator::getOperatorText() {
     return "||";
 }
+
+bool OrOperator::isAssignment() { return false; }
 //endregion
 
 //region AndOperator
@@ -234,6 +215,8 @@ int AndOperator::getOperatorType() {
 const std::string AndOperator::getOperatorText() {
     return "&&";
 }
+
+bool AndOperator::isAssignment() { return false; }
 //endregion
 
 
@@ -245,6 +228,8 @@ int XorOperator::getOperatorType() {
 const std::string XorOperator::getOperatorText() {
     return "^";
 }
+
+bool XorOperator::isAssignment() { return false; }
 //endregion
 
 
@@ -256,6 +241,23 @@ int NotEqualsOperator::getOperatorType() {
 const std::string NotEqualsOperator::getOperatorText() {
     return "!=";
 }
+
+bool NotEqualsOperator::isAssignment() { return false; }
+
+llvm::Value* NotEqualsOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) return ctx->builder.CreateICmpNE(left, right);
+    else return ctx->builder.CreateFCmpUNE(left, right); //TODO UNE or ONE?
+}
 //endregion
 
 //region NotSameOperator
@@ -265,6 +267,23 @@ int NotSameOperator::getOperatorType() {
 
 const std::string NotSameOperator::getOperatorText() {
     return "!==";
+}
+
+bool NotSameOperator::isAssignment() { return false; }
+
+llvm::Value* NotSameOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) return ctx->builder.CreateICmpNE(left, right);
+    else return ctx->builder.CreateFCmpUNE(left, right); //TODO UNE or ONE?
 }
 //endregion
 
@@ -278,6 +297,23 @@ int EqualsOperator::getOperatorType() {
 const std::string EqualsOperator::getOperatorText() {
     return "==";
 }
+
+bool EqualsOperator::isAssignment() { return false; }
+
+llvm::Value* EqualsOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) return ctx->builder.CreateICmpEQ(left, right);
+    else return ctx->builder.CreateFCmpUEQ(left, right); //TODO ordered or unordered?
+}
 //endregion
 
 
@@ -288,6 +324,23 @@ int SameOperator::getOperatorType() {
 
 const std::string SameOperator::getOperatorText() {
     return "===";
+}
+
+bool SameOperator::isAssignment() { return false; }
+
+llvm::Value* SameOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) return ctx->builder.CreateICmpEQ(left, right);
+    else return ctx->builder.CreateFCmpUEQ(left, right); //TODO ordered or unordered?
 }
 //endregion
 
@@ -301,6 +354,28 @@ int LessOperator::getOperatorType() {
 const std::string LessOperator::getOperatorText() {
     return "<";
 }
+
+bool LessOperator::isAssignment() { return false; }
+
+llvm::Value* LessOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) {
+        auto asInt = static_cast<EulIntegerType*>(targetEulType.get());
+        return asInt->isUnsigned?
+            ctx->builder.CreateICmpULT(left, right) :
+            ctx->builder.CreateICmpSLT(left, right);
+    }
+    else return ctx->builder.CreateFCmpULT(left, right); //TODO ordered or unordered?
+}
 //endregion
 
 
@@ -311,6 +386,28 @@ int LessEqualsOperator::getOperatorType() {
 
 const std::string LessEqualsOperator::getOperatorText() {
     return "<=";
+}
+
+bool LessEqualsOperator::isAssignment() { return false; }
+
+llvm::Value* LessEqualsOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) {
+        auto asInt = static_cast<EulIntegerType*>(targetEulType.get());
+        return asInt->isUnsigned?
+            ctx->builder.CreateICmpULE(left, right) :
+            ctx->builder.CreateICmpSLE(left, right);
+    }
+    else return ctx->builder.CreateFCmpULE(left, right); //TODO ordered or unordered?
 }
 //endregion
 
@@ -323,6 +420,28 @@ int MoreOperator::getOperatorType() {
 const std::string MoreOperator::getOperatorText() {
     return ">";
 }
+
+bool MoreOperator::isAssignment() { return false; }
+
+llvm::Value* MoreOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) {
+        auto asInt = static_cast<EulIntegerType*>(targetEulType.get());
+        return asInt->isUnsigned?
+            ctx->builder.CreateICmpUGT(left, right) :
+            ctx->builder.CreateICmpSGT(left, right);
+    }
+    else return ctx->builder.CreateFCmpUGT(left, right); //TODO ordered or unordered?
+}
 //endregion
 
 
@@ -333,6 +452,28 @@ int MoreEqualsOperator::getOperatorType() {
 
 const std::string MoreEqualsOperator::getOperatorText() {
     return ">=";
+}
+
+bool MoreEqualsOperator::isAssignment() { return false; }
+
+llvm::Value* MoreEqualsOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) {
+        auto asInt = static_cast<EulIntegerType*>(targetEulType.get());
+        return asInt->isUnsigned?
+            ctx->builder.CreateICmpUGE(left, right) :
+            ctx->builder.CreateICmpSGE(left, right);
+    }
+    else return ctx->builder.CreateFCmpUGE(left, right); //TODO ordered or unordered?
 }
 //endregion
 
@@ -345,6 +486,8 @@ int NotOperator::getOperatorType() {
 const std::string NotOperator::getOperatorText() {
     return "!";
 }
+
+bool NotOperator::isAssignment() { return false; }
 //endregion
 
 
@@ -358,6 +501,8 @@ int BinOrOperator::getOperatorType() {
 const std::string BinOrOperator::getOperatorText() {
     return "|";
 }
+
+bool BinOrOperator::isAssignment() { return false; }
 //endregion
 
 
@@ -369,6 +514,8 @@ int BinAndOperator::getOperatorType() {
 const std::string BinAndOperator::getOperatorText() {
     return "&";
 }
+
+bool BinAndOperator::isAssignment() { return false; }
 //endregion
 
 
@@ -381,18 +528,17 @@ const std::string LeftShiftOperator::getOperatorText() {
     return "<<";
 }
 
-llvm::Value* LeftShiftOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulIntegerType> targetType, EulCodeGenContext* ctx) {
-    //we know that this is an int, because getInfixResultType() returns always an int type
-    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
+bool LeftShiftOperator::isAssignment() { return false; }
 
-    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetType.get());
-    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetType.get());
+llvm::Value* LeftShiftOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    auto targetEulType = EulType::doCommonIntMerging(leftType, rightType, ctx);
+    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetEulType->getLlvmType(ctx));
 
-    return ctx->builder.CreateBinOp(llvm::Instruction::Shl, left, right);
-}
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = targetEulType;
 
-std::shared_ptr<EulType> LeftShiftOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
-    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
+    return ctx->builder.CreateShl(left, right);
 }
 //endregion
 
@@ -406,17 +552,19 @@ const std::string RightShiftOperator::getOperatorText() {
     return ">>";
 }
 
-llvm::Value* RightShiftOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulIntegerType> targetType, EulCodeGenContext* ctx) {
-    //we know that this is an int, because getInfixResultType() returns always an int type
-    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
+bool RightShiftOperator::isAssignment() { return false; }
 
-    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetType.get());
-    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetType.get());
+llvm::Value* RightShiftOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    auto targetEulType = EulType::doCommonIntMerging(leftType, rightType, ctx);
+    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetEulType->getLlvmType(ctx));
 
-    return ctx->builder.CreateBinOp(llvm::Instruction::Shl, left, right);
-}
-std::shared_ptr<EulType> RightShiftOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
-    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = targetEulType;
+
+    return targetEulType->isUnsigned?
+        ctx->builder.CreateLShr(left, right) :
+        ctx->builder.CreateAShr(left, right);
 }
 //endregion
 
@@ -429,18 +577,21 @@ const std::string PlusOperator::getOperatorText() {
     return "+";
 }
 
-llvm::Value* PlusOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
-    //TODO we are not sure that this is an IntegerType... This must be examined.
-    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
-    auto targetEulType = static_cast<EulIntegerType*>(targetType.get());
+bool PlusOperator::isAssignment() { return false; }
 
-    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetEulType);
-    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetEulType);
+llvm::Value* PlusOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
 
-    return ctx->builder.CreateBinOp(llvm::Instruction::Add, left, right);
-}
-std::shared_ptr<EulType> PlusOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
-    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = targetEulType;
+
+    //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) return ctx->builder.CreateAdd(left, right);
+    else return ctx->builder.CreateFAdd(left, right); //float adding
 }
 //endregion
 
@@ -453,18 +604,22 @@ const std::string MinusOperator::getOperatorText() {
     return "-";
 }
 
-llvm::Value* MinusOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
-    //TODO we are not sure that this is an IntegerType... This must be examined.
-    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
-    auto targetEulType = static_cast<EulIntegerType*>(targetType.get());
+bool MinusOperator::isAssignment() { return false; }
 
-    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetEulType);
-    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetEulType);
+llvm::Value* MinusOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
 
-    return ctx->builder.CreateBinOp(llvm::Instruction::Sub, left, right);
-}
-std::shared_ptr<EulType> MinusOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
-    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = targetEulType;
+
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) return ctx->builder.CreateSub(left, right);
+    else return ctx->builder.CreateFSub(left, right); //float adding
 }
 //endregion
 
@@ -477,6 +632,28 @@ int PercentOperator::getOperatorType() {
 const std::string PercentOperator::getOperatorText() {
     return "%";
 }
+
+bool PercentOperator::isAssignment() { return false; }
+
+llvm::Value* PercentOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = targetEulType;
+
+     //3. Create an instruction based on the result type
+     if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) {
+        auto asInt = static_cast<EulIntegerType*>(targetEulType.get());
+        return asInt->isUnsigned?
+                ctx->builder.CreateURem(left, right) :
+                ctx->builder.CreateSRem(left, right);
+     }
+     else return ctx->builder.CreateFRem(left, right);
+}
 //endregion
 
 //region StarOperator
@@ -488,18 +665,21 @@ const std::string StarOperator::getOperatorText() {
     return "*";
 }
 
-llvm::Value* StarOperator::performInfix(llvm::Value* left, llvm::Value* right, std::shared_ptr<EulType> targetType, EulCodeGenContext* ctx) {
-    //TODO we are not sure that this is an IntegerType... This must be examined.
-    auto targetLlvmType = static_cast<llvm::IntegerType*>(targetType->getLlvmType(ctx));
-    auto targetEulType = static_cast<EulIntegerType*>(targetType.get());
+bool StarOperator::isAssignment() { return false; }
 
-    if (targetLlvmType != left->getType()) left = ctx->castToInteger(left, targetLlvmType, targetEulType);
-    if (targetLlvmType != right->getType()) right = ctx->castToInteger(right, targetLlvmType, targetEulType);
+llvm::Value* StarOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
 
-    return ctx->builder.CreateBinOp(llvm::Instruction::Mul, left, right);
-}
-std::shared_ptr<EulType> StarOperator::getInfixResultType(std::shared_ptr<EulType> leftType, std::shared_ptr<EulType> rightType, EulCodeGenContext* ctx) {
-    return EulOperator::doCommonIntMerging(leftType, rightType, ctx);
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = targetEulType;
+
+     //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) return ctx->builder.CreateMul(left, right);
+    else return ctx->builder.CreateFMul(left, right);
 }
 //endregion
 
@@ -510,6 +690,28 @@ int SlashOperator::getOperatorType() {
 
 const std::string SlashOperator::getOperatorText() {
     return "/";
+}
+
+bool SlashOperator::isAssignment() { return false; }
+
+llvm::Value* SlashOperator::performInfix(llvm::Value* left, std::shared_ptr<EulType> leftType, llvm::Value* right, std::shared_ptr<EulType> rightType, std::shared_ptr<EulType>* resultTypeAddr, EulCodeGenContext* ctx) {
+    //1. Calculate result type
+    auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
+    auto targetLlvmType = targetEulType->getLlvmType(ctx);
+
+    //2. Cast operands, if needed
+    if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
+    if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
+    *resultTypeAddr = targetEulType;
+
+    //3. Create an instruction based on the result type
+    if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) {
+        auto asInt = static_cast<EulIntegerType*>(targetEulType.get());
+        return asInt->isUnsigned?
+            ctx->builder.CreateUDiv(left, right) :
+            ctx->builder.CreateSDiv(left, right);
+    }
+    else return ctx->builder.CreateFDiv(left, right);
 }
 //endregion
 
@@ -522,6 +724,8 @@ int TildeOperator::getOperatorType() {
 const std::string TildeOperator::getOperatorText() {
     return "~";
 }
+
+bool TildeOperator::isAssignment() { return false; }
 //endregion
 
 
@@ -533,6 +737,8 @@ int DecreaseOperator::getOperatorType() {
 const std::string DecreaseOperator::getOperatorText() {
     return "--";
 }
+
+bool DecreaseOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -544,6 +750,8 @@ int IncreaseOperator::getOperatorType() {
 const std::string IncreaseOperator::getOperatorText() {
     return "++";
 }
+
+bool IncreaseOperator::isAssignment() { return true; }
 //endregion
 
 
@@ -555,6 +763,8 @@ int DotOperator::getOperatorType() {
 const std::string DotOperator::getOperatorText() {
     return ".";
 }
+
+bool DotOperator::isAssignment() { return false; }
 //endregion
 
 
@@ -566,6 +776,8 @@ int QuestionOperator::getOperatorType() {
 const std::string QuestionOperator::getOperatorText() {
     return "?";
 }
+
+bool QuestionOperator::isAssignment() { return false; }
 //endregion
 
 
@@ -577,6 +789,8 @@ int ColonOperator::getOperatorType() {
 const std::string ColonOperator::getOperatorText() {
     return ":";
 }
+
+bool ColonOperator::isAssignment() { return false; }
 //endregion
 
 

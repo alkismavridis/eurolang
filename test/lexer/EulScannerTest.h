@@ -84,7 +84,19 @@ class EulScannerTest {
         Assert::equals(endLine, loc->end.line, label + "__endLine");
         Assert::equals(endCol, loc->end.column, label + "__endColumn");
    }
-    //endregion
+
+   private: static void checkBooleanToken(EulScanner &scanner, EulParsingContext *ctx, yy::EulParser::location_type* loc, bool expected, const std::string &label) {
+        yy::EulParser::semantic_type semantic;
+
+        int type = scanner.yylex(&semantic, loc, ctx);
+    	Assert::equals(yy::EulParser::token::BOOLEAN, type, label + "__type");
+
+        EulBooleanToken* token = semantic.as<EulBooleanToken*>();
+    	Assert::equals(expected, token->value, label + "__value");
+
+    	semantic.destroy<EulBooleanToken*>();
+   }
+   //endregion
 
 
 
@@ -352,6 +364,22 @@ class EulScannerTest {
     }
     //endregion
 
+
+
+    private: static void parseBooleanTest(const std::string& t) {
+        Compiler compiler(0);
+        EulParsingContext ctx(&compiler, 0);
+        yy::EulParser::location_type loc;
+
+
+        //int and float part present
+        std::stringstream stream = std::stringstream("true false");
+        EulScanner scanner(&stream);
+        checkBooleanToken(scanner, &ctx, &loc, true, t + "A1");
+        checkLocation(&loc, 1, 1, 1, 5, t + "A1_loc");
+        checkBooleanToken(scanner, &ctx, &loc, false, t + "A2");
+        checkLocation(&loc, 1, 6, 1, 11, t + "A2_loc");
+    }
 
 
 
@@ -630,6 +658,7 @@ class EulScannerTest {
         singleLineCommentTest("EulScannerTest.singleLineCommentTest ");
         parseIntegerTest("EulScannerTest.parseIntegerTest ");
         parseFloatTest("EulScannerTest.parseFloatTest ");
+        parseBooleanTest("EulScannerTest.parseBooleanTest ");
         parseIdTest("EulScannerTest.parseIdTest ");
         parseCharTest("EulScannerTest.parseCharTest ");
         parseStringTest("EulScannerTest.parseStringTest ");

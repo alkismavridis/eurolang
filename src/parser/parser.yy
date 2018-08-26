@@ -34,6 +34,7 @@
     #include "../core/EulToken/EulIntToken.h"
     #include "../core/EulToken/EulFloatToken.h"
     #include "../core/EulToken/EulCharToken.h"
+    #include "../core/EulToken/EulBooleanToken.h"
     #include "../core/EulToken/EulStringToken.h"
     #include "../core/EulToken/EulIdToken.h"
     #include "../core/EulAst/EulAstType.h"
@@ -45,6 +46,8 @@
     #include "../core/EulAst/EulType/EulCharType.h"
     #include "../core/EulAst/EulType/EulStringType.h"
     #include "../core/EulAst/EulType/EulNamedType.h"
+    #include "../core/EulAst/EulType/EulVoidType.h"
+    #include "../core/EulAst/EulType/EulBooleanType.h"
     #include "../core/EulAst/EulStatement/EulStatementType.h"
     #include "../core/EulAst/EulStatement/EulStatement.h"
     #include "../core/EulAst/EulStatement/EulImportStatement.h"
@@ -189,6 +192,7 @@
     <std::shared_ptr<EulFloatToken>> FLOAT
     <std::shared_ptr<EulStringToken>> STRING
     <std::shared_ptr<EulCharToken>> CHAR
+    <std::shared_ptr<EulBooleanToken>> BOOLEAN
     <std::shared_ptr<EulIdToken>> ID
 ;
 
@@ -318,6 +322,7 @@ statement:
 expression
     : INT { $$ = $1; }
     | FLOAT { $$ = $1; }
+    | BOOLEAN { $$ = $1; }
     | STRING { $$ = $1; }
     | CHAR { $$ = $1; }
     | ID   { $$ = $1; }

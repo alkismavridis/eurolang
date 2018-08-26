@@ -21,7 +21,7 @@ class EulProgramCodegenTest {
         Assert::equals(FUNCTION_TYPE, eulSymbol->varType->getTypeEnum(), t+"A3 is function");
 
         auto asFuncType = static_cast<EulFunctionType*>(eulSymbol->varType.get());
-        Assert::null(asFuncType->retType.get(), t+"A4 exit is void");
+        Assert::equals(comp.program.nativeTypes.voidType.get(), asFuncType->retType.get(), t+"A4 exit is void");
         Assert::equals(1, asFuncType->argTypes.size(), t+"A5 exit has one param");
         Assert::equals(comp.program.nativeTypes.int32Type.get(), asFuncType->argTypes[0].get(), t+"A6 exit param is int");
         Assert::notNull(eulSymbol->llvmValue, t+"A7 llvm value is set");

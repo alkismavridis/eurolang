@@ -231,16 +231,16 @@ class Assert {
 
     public: static EulStatement* statement(EulToken* token, const std::string& label) {
         Assert::equals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ast = (EulAst*)token;
+        EulAst* ast = static_cast<EulAst*>(token);
 
         Assert::equals(EulAstType::STATEMENT, ast->getAstType(), label + "__astType");
-        return (EulStatement*)ast;
+        return static_cast<EulStatement*>(ast);
     }
 
     public: static ReturnStatement* returnStatement(EulToken* token, const std::string& label) {
         EulStatement* stmt = statement(token, label);
         Assert::equals(EulStatementType::RETURN_STATEMENT, stmt->getStatementType(), label + "__getStatement");
-        return (ReturnStatement*)stmt;
+        return static_cast<ReturnStatement*>(stmt);
     }
     //endregion
 
@@ -250,7 +250,7 @@ class Assert {
     public: static llvm::ConstantInt* llvmIntConstant(llvm::Value* testVal, unsigned long int size, unsigned long int expected, const std::string& label) {
         Assert::that(llvm::ConstantInt::classof(testVal), label+"__isInteger");
 
-        auto asInt = (llvm::ConstantInt*) testVal;
+        auto asInt = static_cast<llvm::ConstantInt*>(testVal);
         Assert::equals(size, asInt->getType()->getBitWidth(), label + "__size");
         Assert::equals(expected, asInt->getValue().getZExtValue(), label + "__value");
 
@@ -260,7 +260,7 @@ class Assert {
     public: static llvm::ConstantFP* llvmFloatConstant(llvm::Value* testVal, unsigned long int size, double expected, double tolerance, const std::string& label) {
         Assert::that(testVal->getType()->isFloatTy() || testVal->getType()->isDoubleTy(), label+"__isFloat");
 
-        auto asFloat = (llvm::ConstantFP*) testVal;
+        auto asFloat = static_cast<llvm::ConstantFP*>(testVal);
         Assert::equals(size, asFloat->getType()->getPrimitiveSizeInBits(), label + "__size");
 
         double testPrimitiveValue = testVal->getType()->isFloatTy()?

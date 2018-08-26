@@ -3,6 +3,7 @@
 
 #include "EulAst.CodeGen.impl.h"
 #include "./EulType/EulType.impl.h"
+#include "./EulType/EulType.CodeGen.impl.h"
 
 
 

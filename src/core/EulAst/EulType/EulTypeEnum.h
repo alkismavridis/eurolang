@@ -7,6 +7,7 @@ enum EulTypeEnum {
     CHAR_TYPE,
     STRING_TYPE,
     FLOAT_TYPE,
+    BOOLEAN_TYPE,
     FUNCTION_TYPE,
     POINTER_TYPE
 };

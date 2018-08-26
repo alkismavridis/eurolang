@@ -214,6 +214,30 @@ void EulIntToken::toJson(std::ostream& out, int tabs) {
 
 
 
+//region BOOLEAN VALUE
+EulBooleanToken::EulBooleanToken(bool value) {
+    this->value = value;
+}
+
+
+EulTokenType EulBooleanToken::getType() { return BOOLEAN; }
+
+void EulBooleanToken::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulBooleanToken\"," << std::endl;
+
+    for (int i=tabs; i>=0; --i) out << "\t";
+    if (this->value) out << "\"value\": true" << std::endl;
+    else out << "\"value\": false" << std::endl;
+
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+//endregion
+
+
+
 //region STRING VALUE
 EulStringToken::EulStringToken(const std::string& buf) {
     this->value.assign(buf);

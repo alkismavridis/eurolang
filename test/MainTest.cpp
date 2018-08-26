@@ -50,6 +50,7 @@ class EulType;
 #include "../src/core/EulToken/EulToken.h"
 #include "../src/core/EulToken/EulIntToken.h"
 #include "../src/core/EulToken/EulCharToken.h"
+#include "../src/core/EulToken/EulBooleanToken.h"
 #include "../src/core/EulToken/EulFloatToken.h"
 #include "../src/core/EulToken/EulIdToken.h"
 #include "../src/core/EulToken/EulStringToken.h"
@@ -65,6 +66,8 @@ class EulType;
 #include "../src/core/EulAst/EulType/EulFunctionType.h"
 #include "../src/core/EulAst/EulType/EulPointerType.h"
 #include "../src/core/EulAst/EulType/EulNamedType.h"
+#include "../src/core/EulAst/EulType/EulVoidType.h"
+#include "../src/core/EulAst/EulType/EulBooleanType.h"
 
 #include "../src/core/EulAst/EulStatement/EulStatementType.h"
 #include "../src/core/EulAst/EulStatement/EulStatement.h"
@@ -114,11 +117,14 @@ class EulType;
 #include "./codegen/EulAstCodeGenTest.h"
 #include "./codegen/EulCodeGenContextTest.h"
 #include "./codegen/EulOperatorCodeGenTest.h"
+#include "./codegen/EulTypeCodeGenTest.h"
 //endregion
 
 
 
 int main() {
+    std::cout << "Start running tests...\n";
+
     //1. Core tests
 	EulTokenTest::runAll();
 	EulAstTest::runAll();
@@ -140,6 +146,7 @@ int main() {
     EulAstCodeGenTest::runAll();
     EulCodeGenContextTest::runAll();
     EulOperatorCodeGenTest::runAll();
+    EulTypeCodeGenTest::runAll();
 
 
     //============ NOT UNIT TESTS =============
@@ -152,6 +159,6 @@ int main() {
     //TODO EulSourceFile    parseAST
 
 
-	printf("All tests passed successfully.\n");
+	std::cout << "All tests passed successfully.\n";
 	return 0;
 }

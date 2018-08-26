@@ -3,6 +3,8 @@
 
 class EulNativeTypes {
     //region FIELDS
+    public: std::shared_ptr<EulVoidType> voidType;
+
     public: std::shared_ptr<EulIntegerType> int8Type;
     public: std::shared_ptr<EulIntegerType> int16Type;
     public: std::shared_ptr<EulIntegerType> int32Type;
@@ -25,6 +27,7 @@ class EulNativeTypes {
     public: std::shared_ptr<EulCharType> charType;
 
     public: std::shared_ptr<EulStringType> stringType;
+    public: std::shared_ptr<EulBooleanType> booleanType;
     //endregion
 
 

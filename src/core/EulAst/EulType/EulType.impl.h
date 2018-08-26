@@ -161,6 +161,38 @@ EulTypeEnum EulPointerType::getTypeEnum() { return POINTER_TYPE; }
 //endregion
 
 
+
+//region BOOLEAN TYPES
+void EulBooleanType::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulBooleanType\"," << std::endl;
+
+    //close json object
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+
+EulTypeEnum EulBooleanType::getTypeEnum() { return BOOLEAN_TYPE; }
+//endregion
+
+
+//region VOID TYPES
+void EulVoidType::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulVoidType\"," << std::endl;
+
+    //close json object
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+
+EulTypeEnum EulVoidType::getTypeEnum() { return VOID_TYPE; }
+//endregion
+
+
+
 //region FUNCTION TYPES
 EulFunctionType::EulFunctionType(const std::shared_ptr<EulType> retType) {
     this->retType = retType;
@@ -173,8 +205,7 @@ void EulFunctionType::toJson(std::ostream& out, int tabs) {
 
     for (int i=tabs; i>=0; --i) out << "\t";
     out << "\"retType\": ";
-    if (this->retType == nullptr) out << "\"void\"";
-    else this->retType->toJson(out, tabs+1);
+    this->retType->toJson(out, tabs+1);
     out << "," << std::endl;
 
     for (int i=tabs; i>=0; --i) out << "\t";
