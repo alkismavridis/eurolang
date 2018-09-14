@@ -6,5 +6,6 @@ enum EulAstType {
     SYMBOL,
     PARAM_DECLARATION,
     EXPRESSION,
-    EUL_TYPE
+    EUL_TYPE,
+    CODE_BLOCK_TYPE
 };

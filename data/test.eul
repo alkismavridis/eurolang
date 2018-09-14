@@ -1,1 +1,11 @@
-print("Hello world");
+print("Hello world")
+
+var x = 2200;
+
+if x>=1000 { print("positive"); }
+
+else if x==2200 { print("200"); }
+else if x==100 { print("100"); }
+else print("else!")
+
+return x

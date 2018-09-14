@@ -25,8 +25,8 @@ class EulCodeGenContext {
     public: llvm::Module* module;
     public: std::vector<std::shared_ptr<llvm::GlobalVariable>> moduleGlobals; //we collect them to be deleted at the end of the scope of this object
 
-    public: EulScope* currentScope;
-    public: EulScope* globalScope; //this equals by definition to compiler->program.globalScope, but for efficiency, we store a pointer to it here for quicker access.
+    public: std::shared_ptr<EulScope> currentScope;
+    public: std::shared_ptr<EulScope> globalScope; //this equals by definition to compiler->program.globalScope, but for efficiency, we store a pointer to it here for quicker access.
 
     public: Compiler* compiler;
     public: int globIndex;
@@ -35,7 +35,7 @@ class EulCodeGenContext {
 
 
     //region LIFE CYCLE
-    public: EulCodeGenContext(Compiler* compiler, llvm::LLVMContext& context, llvm::Module* module, EulScope* scope);
+    public: EulCodeGenContext(Compiler* compiler, llvm::LLVMContext& context, llvm::Module* module, std::shared_ptr<EulScope> scope);
     //endregion
 
 

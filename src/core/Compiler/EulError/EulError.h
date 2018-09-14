@@ -5,6 +5,7 @@ enum EulErrorType {
     LEXER,
     SYNTAX,
     SEMANTIC,
+    INTERNAL_COMPILER_ERROR,
     PARAMS_ERROR,
     NOT_IMPLEMENTED
 };

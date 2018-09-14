@@ -9,7 +9,7 @@ class EulTypeCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         auto& nativeTypes = comp.program.nativeTypes;
 
@@ -56,7 +56,7 @@ class EulTypeCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         auto& nativeTypes = comp.program.nativeTypes;
 
@@ -99,7 +99,7 @@ class EulTypeCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         auto& nativeTypes = comp.program.nativeTypes;
 
@@ -157,7 +157,7 @@ class EulTypeCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Cast an Int8 to Int32
         auto valueToConvert = llvm::ConstantInt::get(ctx.context, llvm::APInt(8, -1, false));
@@ -199,7 +199,7 @@ class EulTypeCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Cast a signed Int to Float
         auto valueToConvert = llvm::ConstantInt::get(ctx.context, llvm::APInt(8, -1, true));
@@ -227,7 +227,7 @@ class EulTypeCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Cast a equal types
         auto valueToConvert = llvm::ConstantFP::get(llvm::Type::getFloatTy(ctx.context), 99.543);

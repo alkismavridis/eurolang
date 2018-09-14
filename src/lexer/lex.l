@@ -65,6 +65,8 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 
 
 "if"	    return yy::EulParser::token::IF;
+"else"	    return yy::EulParser::token::ELSE;
+"else"[ \t]+"if"	    return yy::EulParser::token::ELSE_IF;
 "while"		return yy::EulParser::token::WHILE;
 "for"		return yy::EulParser::token::FOR;
 "var"		return yy::EulParser::token::VAR;

@@ -104,7 +104,7 @@ class EulScannerTest {
     //region COMMENTS PARSING
    private: static void multiLineCommentTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, nullptr);
         yy::EulParser::location_type loc;
 
         std::stringstream stream = std::stringstream("123/*hello\n*1/2*3*/world");
@@ -156,7 +156,7 @@ class EulScannerTest {
 
    private: static void singleLineCommentTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, nullptr);
         yy::EulParser::location_type loc;
 
 
@@ -284,7 +284,7 @@ class EulScannerTest {
 
     private: static void parseFloatTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, nullptr);
         yy::EulParser::location_type loc;
 
 
@@ -368,7 +368,7 @@ class EulScannerTest {
 
     private: static void parseBooleanTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, nullptr);
         yy::EulParser::location_type loc;
 
 
@@ -386,7 +386,7 @@ class EulScannerTest {
     //region TEXT
     private: static void parseIdTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, nullptr);
         yy::EulParser::location_type loc;
 
     	//int and float part present
@@ -405,7 +405,7 @@ class EulScannerTest {
 
     private: static void parseCharTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, nullptr);
         yy::EulParser::location_type loc;
 
         //1 byte long unicodes
@@ -510,7 +510,7 @@ class EulScannerTest {
 
     private: static void parseStringTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, nullptr);
         yy::EulParser::location_type loc;
 
 
@@ -581,7 +581,7 @@ class EulScannerTest {
     //region OPERATORS
     private: static void parseOperatorsTest(const std::string& t) {
         Compiler compiler(0);
-        EulParsingContext ctx(&compiler, 0);
+        EulParsingContext ctx(&compiler, nullptr);
         yy::EulParser::location_type loc;
 
 

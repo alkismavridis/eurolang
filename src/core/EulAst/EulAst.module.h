@@ -366,3 +366,69 @@ void EulExpStatement::toJson(std::ostream& out, int tabs) {
 
 EulStatementType EulExpStatement::getStatementType() { return EulStatementType::EXPRESSION_STATEMENT; }
 //endregion
+
+
+
+//region CODE BLOCK
+EulCodeBlock::EulCodeBlock(std::shared_ptr<std::vector<std::shared_ptr<EulStatement>>> statements, std::shared_ptr<EulScope> scope) {
+    this->statements = statements;
+    this->scope = scope;
+}
+
+void EulCodeBlock::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulCodeBlock TODO\"," << std::endl;
+
+    //close json object
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+
+EulAstType EulCodeBlock::getAstType() { return CODE_BLOCK_TYPE; }
+
+
+EulExpressionCodeBlock::EulExpressionCodeBlock(std::shared_ptr<EulToken> expression, std::shared_ptr<EulCodeBlock> block) {
+    this->block = block;
+    this->expression = expression;
+}
+//endregion
+
+
+//region IF STATEMENT
+EulIfStatement::EulIfStatement(std::shared_ptr<EulToken> condition, std::shared_ptr<EulCodeBlock> ifBlock) : ifSection(condition, ifBlock) {
+    this->elseIfs = nullptr;
+    this->elseSection = nullptr;
+}
+
+EulIfStatement::EulIfStatement(
+    std::shared_ptr<EulToken> condition,
+    std::shared_ptr<EulCodeBlock> ifBlock,
+    std::shared_ptr<EulCodeBlock> elseSection) :
+    ifSection(condition, ifBlock) {
+    this->elseIfs = nullptr;
+    this->elseSection = elseSection;
+}
+
+EulIfStatement::EulIfStatement(
+    std::shared_ptr<EulToken> condition,
+    std::shared_ptr<EulCodeBlock> ifBlock,
+    std::shared_ptr<std::vector<std::shared_ptr<EulExpressionCodeBlock>>> elseIfs,
+    std::shared_ptr<EulCodeBlock> elseSection) :
+    ifSection(condition, ifBlock) {
+    this->elseIfs = elseIfs;
+    this->elseSection = elseSection;
+}
+
+void EulIfStatement::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulCodeBlock TODO\"," << std::endl;
+
+    //close json object
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+
+EulStatementType EulIfStatement::getStatementType() { return IF_STATEMENT; }
+//endregion

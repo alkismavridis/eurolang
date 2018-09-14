@@ -8,7 +8,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
 
         //1. Test same sized operations
@@ -41,7 +41,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test same sized operations
         std::shared_ptr<EulType> resultType;
@@ -98,7 +98,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test same sized operations
         std::shared_ptr<EulType> resultType;
@@ -143,7 +143,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test same sized operations
         std::shared_ptr<EulType> resultType;
@@ -188,7 +188,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test same sized operations
         std::shared_ptr<EulType> resultType;
@@ -233,7 +233,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test same sized operations
         std::shared_ptr<EulType> resultType;
@@ -303,7 +303,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test same sized operations
         std::shared_ptr<EulType> resultType;
@@ -376,7 +376,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Make an entry point
         llvm::Function* mainFunc = (llvm::Function*)ctx.module->getOrInsertFunction("main", llvm::IntegerType::get(ctx.context, 32));
@@ -428,7 +428,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test integer equality
         std::shared_ptr<EulType> resultType;
@@ -487,7 +487,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test integer equality
         std::shared_ptr<EulType> resultType;
@@ -545,7 +545,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test integer equality
         std::shared_ptr<EulType> resultType;
@@ -604,7 +604,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test integer equality
         std::shared_ptr<EulType> resultType;
@@ -662,7 +662,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test signed integers
         std::shared_ptr<EulType> resultType;
@@ -782,7 +782,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test signed integers
         std::shared_ptr<EulType> resultType;
@@ -902,7 +902,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test signed integers
         std::shared_ptr<EulType> resultType;
@@ -1023,7 +1023,7 @@ class EulOperatorCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Test signed integers
         std::shared_ptr<EulType> resultType;

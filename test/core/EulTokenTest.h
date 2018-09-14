@@ -190,17 +190,17 @@ class EulTokenTest {
 
     //region ID TESTS
     public: static void idTokenTest(const std::string& t) {
-        EulScope scope(nullptr);
+        auto scope = std::make_shared<EulScope>(nullptr);
 
         std::string str = "someName";
-        EulIdToken tok = EulIdToken(str.c_str(), str.length(), &scope);
+        EulIdToken tok = EulIdToken(str.c_str(), str.length(), scope);
         Assert::equals("someName", tok.name, t+"A1");
-        Assert::equals(&scope, tok.scope, t+"A1_scope");
+        Assert::equals(scope.get(), tok.scope.get(), t+"A1_scope");
 
         str = "someOtherName";
-        EulIdToken tok2 = EulIdToken(str.c_str(), str.length(), &scope);
+        EulIdToken tok2 = EulIdToken(str.c_str(), str.length(), scope);
         Assert::equals("someOtherName", tok2.name, t+"A2");
-        Assert::equals(&scope, tok2.scope, t+"A2_scope");
+        Assert::equals(scope.get(), tok2.scope.get(), t+"A2_scope");
 
         //check that first token did not change
         Assert::equals("someName", tok.name, t+"A3");

@@ -8,14 +8,14 @@ class EulProgramCodegenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Call the function
         comp.program.declareClibSymbols(&ctx);
 
         //2. Assert that symbols are inserted into scope, and into the llvm module
         //exit(Int32)
-        auto eulSymbol = comp.program.globalScope.getOwnSymbol("exit");
+        auto eulSymbol = comp.program.globalScope->getOwnSymbol("exit");
         Assert::notNull(eulSymbol.get(), t+"A1 exit is defined in global scope");
         Assert::equals(yy::EulParser::token::VAL, eulSymbol->changeType, t+"A2 is val");
         Assert::equals(FUNCTION_TYPE, eulSymbol->varType->getTypeEnum(), t+"A3 is function");
@@ -28,7 +28,7 @@ class EulProgramCodegenTest {
         Assert::equals(ctx.module->getNamedValue("exit"), eulSymbol->llvmValue, t+"A8 exit is defined in llvm module");
 
         //print(String)
-        eulSymbol = comp.program.globalScope.getOwnSymbol("print");
+        eulSymbol = comp.program.globalScope->getOwnSymbol("print");
         Assert::notNull(eulSymbol.get(), t+"B1 print is defined in global scope");
         Assert::equals(yy::EulParser::token::VAL, eulSymbol->changeType, t+"B2 is val");
         Assert::equals(FUNCTION_TYPE, eulSymbol->varType->getTypeEnum(), t+"B3 is function");
@@ -46,7 +46,7 @@ class EulProgramCodegenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Call the function
         comp.program.makeMain(&ctx);
@@ -66,7 +66,7 @@ class EulProgramCodegenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
         comp.program.declareClibSymbols(&ctx);
         comp.program.makeMain(&ctx);
 

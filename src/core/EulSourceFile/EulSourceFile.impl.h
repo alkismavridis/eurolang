@@ -2,10 +2,11 @@
 
 
 //region LIFE CYCLE
-EulSourceFile::EulSourceFile(const std::string& id, EulScope* globalScope) : scope(globalScope) {
+EulSourceFile::EulSourceFile(const std::string& id, std::shared_ptr<EulScope> globalScope) {
     this->isParsed = 0;
     this->id = id;
     this->statements = nullptr;
+    this->scope = std::make_shared<EulScope>(globalScope);
 }
 //endregion
 
@@ -14,7 +15,7 @@ EulSourceFile::EulSourceFile(const std::string& id, EulScope* globalScope) : sco
 
 void EulSourceFile::parseAST(EulCodeGenContext* ctx) {
     //1. Parse every statement.
-    ctx->currentScope = &this->scope;
+    ctx->currentScope = this->scope;
     for (auto stmt : *this->statements) stmt->generateStatement(ctx);
 }
 

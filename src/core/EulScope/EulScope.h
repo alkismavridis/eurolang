@@ -15,14 +15,14 @@
 */
 class EulScope {
     //region FIELDS
-    public: EulScope* superScope;
+    public: std::shared_ptr<EulScope> superScope;
     public: std::map<std::string, std::shared_ptr<EulSymbol>> declarations;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulScope(EulScope* superScope);
+    public: EulScope(std::shared_ptr<EulScope> superScope);
     public: void reset();
     //endregion
 

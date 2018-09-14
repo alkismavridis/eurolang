@@ -6,7 +6,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Create a char token and get its llvm value
         EulCharToken tok('b', 8);
@@ -41,7 +41,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Create a char token and get its llvm value
         EulCharToken tok('b', 8);
@@ -80,7 +80,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Create a char token and get its llvm value
         EulFloatToken tok(12.5, 32);
@@ -110,7 +110,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Create a char token and get its llvm value
         EulFloatToken tok(12.5, 32);
@@ -142,7 +142,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Create a char token and get its llvm value
         EulIntToken tok(123, 8, false);
@@ -217,7 +217,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Create a char token and get its llvm value
         EulIntToken tok(123, 8, false);
@@ -295,7 +295,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Create a string and get its value
         EulStringToken tok("hello\n");
@@ -313,7 +313,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Create a string token and check its type
         EulStringToken tok("hello\n");
@@ -331,10 +331,10 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Declare a couple of symbols
-        comp.program.globalScope.declare(
+        comp.program.globalScope->declare(
             "new1",
             std::make_shared<EulSymbol>(
                 yy::EulParser::token::VAR,
@@ -342,7 +342,7 @@ class EulTokenCodeGenTest {
                 std::make_shared<EulStringToken>("123")
             )
         );
-        comp.program.globalScope.declare(
+        comp.program.globalScope->declare(
             "new2",
             std::make_shared<EulSymbol>(
                 yy::EulParser::token::VAR,
@@ -352,7 +352,7 @@ class EulTokenCodeGenTest {
         );
 
         //2. Get the type of the symbols
-        EulIdToken tok("new1", &comp.program.globalScope);
+        EulIdToken tok("new1", comp.program.globalScope);
         auto eulType = tok.getEulType(&ctx, 0);
         Assert::equals(eulType.get(), comp.program.nativeTypes.stringType.get(), t+"A1");
 
@@ -381,7 +381,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, &comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
 
         //1. Set an entry point
         llvm::Function* mainFunc = (llvm::Function*)ctx.module->getOrInsertFunction("main", llvm::IntegerType::get(ctx.context, 32));
@@ -399,7 +399,7 @@ class EulTokenCodeGenTest {
             llvm::ConstantInt::get(llvm::IntegerType::get(ctx.context, 32), 123, true),
             symbol->llvmValue
         );
-        comp.program.globalScope.declare("someIntVar", symbol);
+        comp.program.globalScope->declare("someIntVar", symbol);
 
         symbol = std::make_shared<EulSymbol>(
             yy::EulParser::token::VAR,
@@ -407,10 +407,10 @@ class EulTokenCodeGenTest {
             std::make_shared<EulFloatToken>(7.5, 32)
         );
         symbol->llvmValue = llvm::ConstantFP::get(comp.program.nativeTypes.float32Type->getLlvmType(&ctx), 7.5);
-        comp.program.globalScope.declare("someFloatLiteral", symbol);
+        comp.program.globalScope->declare("someFloatLiteral", symbol);
 
         //3. Get the type of the symbols
-        EulIdToken tok("someFloatLiteral", &comp.program.globalScope);
+        EulIdToken tok("someFloatLiteral", comp.program.globalScope);
         auto llvmValue = tok.generateValue(&ctx, EulCodeGenFlags_NONE);
         Assert::llvmFloatConstant(llvmValue, 32, 7.5, 0.001, t+"A1");
         Assert::equals(2, ctx.builder.GetInsertBlock()->size(), t+"A2"); //we start with 2 commands in the block: the alloca and the store.

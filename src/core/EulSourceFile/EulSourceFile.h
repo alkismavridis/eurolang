@@ -13,14 +13,14 @@ class EulSourceFile {
     //public: std::forward_list<EulExportStatement> exports;
     public: std::shared_ptr<std::vector<std::shared_ptr<EulStatement>>> statements; /** Can be null for empty files. */
 
-    public: EulScope scope;
+    public: std::shared_ptr<EulScope> scope;
     //endregion
 
 
 
 
     //region LIFE CYCLE
-    public: EulSourceFile(const std::string& id, EulScope* globalScope);
+    public: EulSourceFile(const std::string& id, std::shared_ptr<EulScope> globalScope);
     //endregion
 
 

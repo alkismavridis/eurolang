@@ -64,7 +64,7 @@ class EulParserTest {
         stream = std::stringstream("var x=\"hello\", y:Int64, z='\\n'; ");
         file = compiler.program.getSource("myFile2.eul", 1);
         ctx.sourceFile = file.get();
-        ctx.currentScope = &file->scope;
+        ctx.currentScope = file->scope;
         scanner.switch_streams(&stream);
         parser.parse();
 

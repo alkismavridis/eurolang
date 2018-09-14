@@ -1,7 +1,7 @@
 #pragma once
 
 ////region LIFE CYCLE
-EulScope::EulScope(EulScope* superScope) {
+EulScope::EulScope(std::shared_ptr<EulScope> superScope) {
     this->superScope = superScope;
 }
 

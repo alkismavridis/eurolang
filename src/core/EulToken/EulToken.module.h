@@ -143,12 +143,12 @@ void EulFloatToken::toJson(std::ostream& out, int tabs) {
 
 
 //region ID VALUE
-EulIdToken::EulIdToken(const char* text, unsigned int length, EulScope* scope) {
+EulIdToken::EulIdToken(const char* text, unsigned int length, std::shared_ptr<EulScope> scope) {
     this->name.assign(text, length);
     this->scope = scope;
 }
 
-EulIdToken::EulIdToken(const std::string& name, EulScope* scope) {
+EulIdToken::EulIdToken(const std::string& name, std::shared_ptr<EulScope> scope) {
     this->name = name;
     this->scope = scope;
 }

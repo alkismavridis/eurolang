@@ -6,5 +6,6 @@ enum EulStatementType {
     IMPORT,
     EXPORT,
     EXPRESSION_STATEMENT,
-    RETURN_STATEMENT
+    RETURN_STATEMENT,
+    IF_STATEMENT
 };

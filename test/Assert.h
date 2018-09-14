@@ -242,6 +242,24 @@ class Assert {
         Assert::equals(EulStatementType::RETURN_STATEMENT, stmt->getStatementType(), label + "__getStatement");
         return static_cast<ReturnStatement*>(stmt);
     }
+
+    public: static EulExpStatement* expStatement(EulToken* token, const std::string& label) {
+        EulStatement* stmt = statement(token, label);
+        Assert::equals(EulStatementType::EXPRESSION_STATEMENT, stmt->getStatementType(), label + "__getStatement");
+        return static_cast<EulExpStatement*>(stmt);
+    }
+
+    public: static VarDeclarationStatement* varDeclarationStatement(EulToken* token, const std::string& label) {
+        EulStatement* stmt = statement(token, label);
+        Assert::equals(EulStatementType::VAR_DECLARATION, stmt->getStatementType(), label + "__getStatement");
+        return static_cast<VarDeclarationStatement*>(stmt);
+    }
+
+    public: static EulIfStatement* ifStatement(EulToken* token, const std::string& label) {
+        EulStatement* stmt = statement(token, label);
+        Assert::equals(EulStatementType::IF_STATEMENT, stmt->getStatementType(), label + "__getStatement");
+        return static_cast<EulIfStatement*>(stmt);
+    }
     //endregion
 
 

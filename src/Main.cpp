@@ -80,6 +80,12 @@ class EulType;
 
 #include "../src/core/EulScope/EulSymbol.h"
 #include "../src/core/EulScope/EulScope.h"
+#include "../src/core/EulAst/blocks/EulCodeBlock.h"
+#include "../src/core/EulAst/blocks/EulExpressionCodeBlock.h"
+#include "../src/core/EulAst/EulStatement/EulIfStatement.h"
+
+
+
 #include "../src/core/EulSourceFile/EulSourceFile.h"
 #include "../src/core/EulProgram/EulNativeTypes.h"
 #include "../src/core/EulProgram/EulProgram.h"

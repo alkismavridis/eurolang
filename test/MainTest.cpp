@@ -79,6 +79,10 @@ class EulType;
 
 #include "../src/core/EulScope/EulSymbol.h"
 #include "../src/core/EulScope/EulScope.h"
+#include "../src/core/EulAst/blocks/EulCodeBlock.h"
+#include "../src/core/EulAst/blocks/EulExpressionCodeBlock.h"
+#include "../src/core/EulAst/EulStatement/EulIfStatement.h"
+
 #include "../src/core/EulSourceFile/EulSourceFile.h"
 #include "../src/core/EulProgram/EulNativeTypes.h"
 #include "../src/core/EulProgram/EulProgram.h"
@@ -109,7 +113,9 @@ class EulType;
 #include "./core/CompilerTest.h"
 
 #include "./lexer/EulScannerTest.h"
+
 #include "./parser/EulParserTest.h"
+#include "./parser/EulIfStatementTest.h"
 
 
 #include "./codegen/EulProgramCodegenTest.h"
@@ -138,6 +144,7 @@ int main() {
 
     //3. Parser tests
     EulParserTest::runAll();
+    EulIfStatementTest::runAll();
 
 
     //4. Core generation Tests

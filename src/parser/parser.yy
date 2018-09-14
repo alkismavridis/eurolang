@@ -18,6 +18,8 @@
         class Value;
         class Type;
         class AllocaInst;
+        class BasicBlock;
+        class Function;
     }
     //endregion
 
@@ -27,7 +29,6 @@
     # include <forward_list>
     # include <vector>
     #include <memory>
-
 
     #include "../core/EulToken/EulTokenType.h"
     #include "../core/EulToken/EulToken.h"
@@ -48,6 +49,7 @@
     #include "../core/EulAst/EulType/EulNamedType.h"
     #include "../core/EulAst/EulType/EulVoidType.h"
     #include "../core/EulAst/EulType/EulBooleanType.h"
+
     #include "../core/EulAst/EulStatement/EulStatementType.h"
     #include "../core/EulAst/EulStatement/EulStatement.h"
     #include "../core/EulAst/EulStatement/EulImportStatement.h"
@@ -70,6 +72,12 @@
 
     #include "../core/EulScope/EulSymbol.h"
     #include "../core/EulScope/EulScope.h"
+    #include "../core/EulAst/blocks/EulCodeBlock.h"
+    #include "../core/EulAst/blocks/EulExpressionCodeBlock.h"
+
+    #include "../core/EulAst/EulStatement/EulIfStatement.h"
+
+
     #include "../core/EulSourceFile/EulSourceFile.h"
     #include "../core/EulProgram/EulNativeTypes.h"
     #include "../core/EulProgram/EulProgram.h"
@@ -123,6 +131,8 @@
 %token
     END  0  "end of file"
     IF
+    ELSE
+    ELSE_IF
     FOR
     WHILE
     VAR
@@ -223,6 +233,15 @@
 %type  <std::shared_ptr<EulToken>> expression
 %type  <std::shared_ptr<std::vector<std::shared_ptr<EulToken>>>> expressions
 
+%type  <std::shared_ptr<EulCodeBlock>> block
+%type  <std::shared_ptr<EulCodeBlock>> block_or_statement
+
+
+
+%type  <std::shared_ptr<EulIfStatement>> if_block
+%type  <std::shared_ptr<std::vector<std::shared_ptr<EulExpressionCodeBlock>>>> else_if_sub_blocks
+%type  <std::shared_ptr<EulExpressionCodeBlock>> else_if_sub_block
+
 %type  <int> var_keyword
 //endregion
 
@@ -248,7 +267,6 @@
 //endregion
 
 
-
 %start source_file
 
 
@@ -262,8 +280,8 @@
 
 //========================== ROOT STRUCTURES ==============================
 source_file
-    : statements END {
-        ctx->sourceFile->statements = $1;
+    : lines statements END {
+        ctx->sourceFile->statements = $2;
         $$ = nullptr;
         return 0;
     }
@@ -272,7 +290,26 @@ source_file
 
 
 
-//============================== STATEMENTS  ==============================
+//============================== MISC ==============================
+lines:
+    lines NL |
+    %empty
+    ;
+
+lines_or_semicolon:
+    NL lines |
+    SEMICOLON lines |
+    END
+    ;
+
+var_keyword
+    : VAR { $$ = token::VAR; }
+    | CONST { $$ = token::CONST; }
+    | VAL { $$ = token::VAL; }
+    ;
+
+
+//============================== STATEMENT BASICS  ==============================
 statements:
     statements statement {
         if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<EulStatement>>>();
@@ -283,38 +320,85 @@ statements:
         $$ = std::make_shared<std::vector<std::shared_ptr<EulStatement>>>();
         if ($1!=nullptr) $$->push_back($1);
     }
-
-
-
-var_keyword
-    : VAR { $$ = token::VAR; }
-    | CONST { $$ = token::CONST; }
-    | VAL { $$ = token::VAL; }
     ;
 
+
 statement:
-    var_keyword parameter_declarations SEMICOLON {
+    var_keyword parameter_declarations lines_or_semicolon {
         $$ = std::make_shared<VarDeclarationStatement>($1, $2);
         ctx->currentScope->declare((VarDeclarationStatement*) $$.get());
     } |
 
-    expression SEMICOLON {
+    expression lines_or_semicolon {
         $$ = std::make_shared<EulExpStatement>($1);
     } |
 
-    RETURN expression SEMICOLON {
+    RETURN expression lines_or_semicolon {
         $$ = std::make_shared<ReturnStatement>($2);
     } |
 
-    RETURN SEMICOLON {
+    RETURN lines_or_semicolon {
         $$ = std::make_shared<ReturnStatement>(nullptr);
     } |
 
-    NL {
-        $$ = nullptr;
+    if_block {
+        $$ = $1;
     }
+    ;
+
+block_or_statement:
+    open_scope statement {
+        //1. make a vector with the statement
+        auto statementList = std::make_shared<std::vector<std::shared_ptr<EulStatement>>>();
+        statementList->push_back($2);
+
+        //2. Create the block object
+        $$ = std::make_shared<EulCodeBlock>(statementList, ctx->currentScope);
+        ctx->popScope();
+    } |
+    block { $$ = $1; }
+    ;
 
 
+block:
+    CURLY_OPEN lines open_scope statements CURLY_CLOSE lines {
+        $$ = std::make_shared<EulCodeBlock>($4, ctx->currentScope);
+        ctx->popScope();
+    } |
+    CURLY_OPEN lines CURLY_CLOSE lines {
+        $$ = std::make_shared<EulCodeBlock>(
+            std::make_shared<std::vector<std::shared_ptr<EulStatement>>>(),
+            ctx->currentScope
+        );
+    }
+    ;
+
+
+
+//============================== IF STATEMENT ==============================
+if_block:
+    IF expression block else_if_sub_blocks {
+        $$ = std::make_shared<EulIfStatement>($2, $3, $4, nullptr);
+    } |
+    IF expression block else_if_sub_blocks ELSE block_or_statement {
+        $$ = std::make_shared<EulIfStatement>($2, $3, $4, $6);
+    }
+    ;
+
+else_if_sub_block:
+    ELSE_IF expression block {
+        $$ = std::make_shared<EulExpressionCodeBlock>($2, $3);
+    }
+    ;
+
+else_if_sub_blocks:
+    else_if_sub_blocks else_if_sub_block {
+        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<EulExpressionCodeBlock>>>();
+        if ($2!=nullptr) $1->push_back($2);
+        $$ = $1;
+    } |
+    %empty { $$ = nullptr; }
+    ;
 
 
 
@@ -397,7 +481,7 @@ expressions:
 eul_type:
     ID {
 
-        //1. Find if the symbol already exitst in this scope, or any super scope.
+        //1. Find if the symbol already exists in this scope, or any super scope.
         std::shared_ptr<EulSymbol> alreadyExisting = ctx->currentScope->get($1->name);
 
         //2a. If it does not already exist, create one and return it.
@@ -445,9 +529,18 @@ parameter_declarations:
         $$->push_back($1);
     }
     ;
+
+//================================= ACTION NON TERMINALS =========================
+    open_scope:
+      %empty  { ctx->pushScope(); }
+    ;
+
+    //close_scope:
+    //  %empty  { ctx->popScope(); }
+    //;
 %%
 
 
-    void yy::EulParser::error( const location_type &l, const std::string &err_message ) {
-       std::cerr << "Error: " << err_message << " at " << l << "\n";
-    }
+void yy::EulParser::error( const location_type &l, const std::string &err_message ) {
+   std::cerr << "Error: " << err_message << " at " << l << "\n";
+}

@@ -120,9 +120,9 @@ class EulProgramTest {
         Assert::notNull(program.nativeTypes.stringType.get(), t+"A3");
 
         //2. Check that symbols are inserted into the scope
-        Assert::equals(program.globalScope.getOwnSymbolAsType("Int32"), program.nativeTypes.int32Type.get(), t+"B1");
-        Assert::equals(program.globalScope.getOwnSymbolAsType("UInt64"), program.nativeTypes.uint64Type.get(), t+"B2");
-        Assert::equals(program.globalScope.getOwnSymbolAsType("String"), program.nativeTypes.stringType.get(), t+"B3");
+        Assert::equals(program.globalScope->getOwnSymbolAsType("Int32"), program.nativeTypes.int32Type.get(), t+"B1");
+        Assert::equals(program.globalScope->getOwnSymbolAsType("UInt64"), program.nativeTypes.uint64Type.get(), t+"B2");
+        Assert::equals(program.globalScope->getOwnSymbolAsType("String"), program.nativeTypes.stringType.get(), t+"B3");
     }
 
     public: static void resetTest(const std::string& t) {
@@ -131,18 +131,18 @@ class EulProgramTest {
         //1. Add 2 source files and some symbols on the global scope
         auto file1 = program.getSource("someFileName1.eul", 1);
         auto file2 = program.getSource("someFileName2.eul", 1);
-        program.globalScope.declare("someNewSymbol", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("123")));
+        program.globalScope->declare("someNewSymbol", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("123")));
 
         Assert::notNull(program.getSource("someFileName1.eul", 0).get(), t+"A1");
-        Assert::notNull(program.globalScope.getOwnSymbol("someNewSymbol").get(), t+"A2");
-        Assert::notNull(program.globalScope.getOwnSymbol("Int32").get(), t+"A3");
+        Assert::notNull(program.globalScope->getOwnSymbol("someNewSymbol").get(), t+"A2");
+        Assert::notNull(program.globalScope->getOwnSymbol("Int32").get(), t+"A3");
 
 
         //2. Reset. Source files and the "someNewSymbol" symbol should disappear.
         program.reset();
         Assert::null(program.getSource("someFileName1.eul", 0).get(), t+"B1");
-        Assert::null(program.globalScope.getOwnSymbol("someNewSymbol").get(), t+"B2");
-        Assert::notNull(program.globalScope.getOwnSymbol("Int32").get(), t+"B3"); //Native types should be still here.
+        Assert::null(program.globalScope->getOwnSymbol("someNewSymbol").get(), t+"B2");
+        Assert::notNull(program.globalScope->getOwnSymbol("Int32").get(), t+"B3"); //Native types should be still here.
     }
 
 

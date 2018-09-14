@@ -6,15 +6,15 @@
 class EulIdToken : public EulToken {
     //region FIELDS
     public: std::string name;
-    public: EulScope* scope;
+    public: std::shared_ptr<EulScope> scope;
     //endregion
 
 
 
 
     //region LIFE CYCLE
-    public: EulIdToken(const char* text, unsigned int length, EulScope* scope);
-    public: EulIdToken(const std::string& name, EulScope* scope);
+    public: EulIdToken(const char* text, unsigned int length, std::shared_ptr<EulScope> scope);
+    public: EulIdToken(const std::string& name, std::shared_ptr<EulScope> scope);
     //endregion
 
 

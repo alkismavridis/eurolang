@@ -37,43 +37,44 @@ EulNativeTypes::EulNativeTypes() {
 
 //region LIFE CYCLE
 EulProgram::EulProgram() : globalScope(nullptr) {
+    this->globalScope = std::make_shared<EulScope>(nullptr);
     this->initGlobals();
 }
 
 
 void EulProgram::initGlobals() {
     //Define basic Integer types
-    this->globalScope.declare("void", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.voidType));
+    this->globalScope->declare("void", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.voidType));
 
-    this->globalScope.declare("Int8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int8Type));
-    this->globalScope.declare("Int16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int16Type));
-    this->globalScope.declare("Int32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int32Type));
-    this->globalScope.declare("Int64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int64Type));
-    this->globalScope.declare("Int", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.intType));
+    this->globalScope->declare("Int8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int8Type));
+    this->globalScope->declare("Int16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int16Type));
+    this->globalScope->declare("Int32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int32Type));
+    this->globalScope->declare("Int64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int64Type));
+    this->globalScope->declare("Int", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.intType));
 
-    this->globalScope.declare("UInt8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint8Type));
-    this->globalScope.declare("UInt16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint16Type));
-    this->globalScope.declare("UInt32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint32Type));
-    this->globalScope.declare("UInt64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint64Type));
-    this->globalScope.declare("UInt", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uintType));
+    this->globalScope->declare("UInt8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint8Type));
+    this->globalScope->declare("UInt16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint16Type));
+    this->globalScope->declare("UInt32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint32Type));
+    this->globalScope->declare("UInt64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uint64Type));
+    this->globalScope->declare("UInt", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.uintType));
 
-    this->globalScope.declare("Float32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.float32Type));
-    this->globalScope.declare("Float64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.float64Type));
-    this->globalScope.declare("Float", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.floatType));
+    this->globalScope->declare("Float32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.float32Type));
+    this->globalScope->declare("Float64", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.float64Type));
+    this->globalScope->declare("Float", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.floatType));
 
 
-    this->globalScope.declare("Char8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.char8Type));
-    this->globalScope.declare("Char16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.char16Type));
-    this->globalScope.declare("Char32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.char32Type));
-    this->globalScope.declare("Char", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.charType));
+    this->globalScope->declare("Char8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.char8Type));
+    this->globalScope->declare("Char16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.char16Type));
+    this->globalScope->declare("Char32", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.char32Type));
+    this->globalScope->declare("Char", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.charType));
 
-    this->globalScope.declare("String", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.stringType));
-    this->globalScope.declare("Bool", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.booleanType));
+    this->globalScope->declare("String", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.stringType));
+    this->globalScope->declare("Bool", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.booleanType));
 }
 
 void EulProgram::reset() {
     this->sources.clear();
-    this->globalScope.reset();
+    this->globalScope->reset();
     this->initGlobals();
 }
 //endregion
@@ -97,7 +98,7 @@ std::shared_ptr<EulSourceFile> EulProgram::getSource(const std::string& id, unsi
     if (!createIfNotExists) return 0;
 
     //we create a token, add it on our list, and return it.
-    auto ret = std::make_shared<EulSourceFile>(id, &this->globalScope);
+    auto ret = std::make_shared<EulSourceFile>(id, this->globalScope);
     this->sources[id] = ret;
     return ret;
 }
@@ -132,14 +133,14 @@ void EulProgram::declareClibSymbols(EulCodeGenContext* ctx) {
     auto eulFuncType = std::make_shared<EulFunctionType>(ctx->compiler->program.nativeTypes.voidType);  //returns void
     eulFuncType->argTypes.push_back(ctx->compiler->program.nativeTypes.int32Type);
     auto declaration = llvm::Function::Create(static_cast<llvm::FunctionType*>(eulFuncType->getLlvmType(ctx)), llvm::Function::ExternalLinkage, "exit", ctx->module);
-    this->globalScope.declare("exit", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
+    this->globalScope->declare("exit", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
 
 
     //2. define print (puts)
     eulFuncType = std::make_shared<EulFunctionType>(ctx->compiler->program.nativeTypes.int32Type);  //returns Int32
     eulFuncType->argTypes.push_back(ctx->compiler->program.nativeTypes.stringType);
     declaration = llvm::Function::Create(static_cast<llvm::FunctionType*>(eulFuncType->getLlvmType(ctx)), llvm::Function::ExternalLinkage, "puts", ctx->module);
-    this->globalScope.declare("print", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
+    this->globalScope->declare("print", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
 }
 
 
