@@ -49,6 +49,7 @@
     #include "../core/EulAst/EulType/EulNamedType.h"
     #include "../core/EulAst/EulType/EulVoidType.h"
     #include "../core/EulAst/EulType/EulBooleanType.h"
+    #include "../core/EulAst/EulType/EulFunctionType.h"
 
     #include "../core/EulAst/EulStatement/EulStatementType.h"
     #include "../core/EulAst/EulStatement/EulStatement.h"
@@ -73,9 +74,12 @@
     #include "../core/EulScope/EulSymbol.h"
     #include "../core/EulScope/EulScope.h"
     #include "../core/EulAst/blocks/EulCodeBlock.h"
+    #include "../core/EulAst/blocks/EulFunction.h"
     #include "../core/EulAst/blocks/EulExpressionCodeBlock.h"
 
     #include "../core/EulAst/EulStatement/EulIfStatement.h"
+    #include "../core/EulAst/EulStatement/EulWhileStatement.h"
+    #include "../core/EulAst/EulStatement/EulFuncDeclarationStatement.h"
 
 
     #include "../core/EulSourceFile/EulSourceFile.h"
@@ -139,6 +143,7 @@
     CONST
     VAL
     RETURN
+    FUNC
     NAMESPACE
 
     PLUS
@@ -227,6 +232,7 @@
 %type  <std::shared_ptr<EulStatement>> statement
 
 %type  <std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>>> parameter_declarations
+%type  <std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>>> func_params
 %type  <std::shared_ptr<VarDeclaration>> parameter_declaration
 %type  <std::shared_ptr<EulType>> eul_type
 
@@ -236,11 +242,19 @@
 %type  <std::shared_ptr<EulCodeBlock>> block
 %type  <std::shared_ptr<EulCodeBlock>> block_or_statement
 
-
-
+//if block related
 %type  <std::shared_ptr<EulIfStatement>> if_block
 %type  <std::shared_ptr<std::vector<std::shared_ptr<EulExpressionCodeBlock>>>> else_if_sub_blocks
 %type  <std::shared_ptr<EulExpressionCodeBlock>> else_if_sub_block
+
+
+//loops
+%type  <std::shared_ptr<EulWhileStatement>> while_block
+
+//function related
+%type  <std::shared_ptr<VarDeclaration>> func_param_declaration
+%type  <std::shared_ptr<EulFuncDeclarationStatement>> func_decl
+
 
 %type  <int> var_keyword
 //endregion
@@ -326,7 +340,7 @@ statements:
 statement:
     var_keyword parameter_declarations lines_or_semicolon {
         $$ = std::make_shared<VarDeclarationStatement>($1, $2);
-        ctx->currentScope->declare((VarDeclarationStatement*) $$.get());
+        ctx->currentScope->declare(static_cast<VarDeclarationStatement*>($$.get()));
     } |
 
     expression lines_or_semicolon {
@@ -340,10 +354,9 @@ statement:
     RETURN lines_or_semicolon {
         $$ = std::make_shared<ReturnStatement>(nullptr);
     } |
-
-    if_block {
-        $$ = $1;
-    }
+    if_block { $$ = $1; } |
+    while_block { $$ = $1; } |
+    func_decl { $$ = $1; }
     ;
 
 block_or_statement:
@@ -401,6 +414,109 @@ else_if_sub_blocks:
     ;
 
 
+
+//============================== LOOPS ==============================
+while_block:
+    WHILE expression block {
+        $$ = std::make_shared<EulWhileStatement>($2, $3);
+    }
+    ;
+
+
+
+//============================== FUNCTION RELATED ==============================
+func_param_declaration:
+    ID COLON eul_type {
+        $$ = std::make_shared<VarDeclaration>($1, $3, nullptr);
+    }
+    ;
+
+func_params:
+    func_params COMMA func_param_declaration {
+        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>();
+        $1->push_back($3);
+        $$ = $1;
+    } |
+    func_param_declaration {
+        $$ = std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>();
+        $$->push_back($1);
+    } |
+    %empty { $$ = nullptr; }
+    ;
+
+func_decl:
+    FUNC ID PARENTHESIS_OPEN func_params PARENTHESIS_CLOSE block {
+        auto funcType = std::make_shared<EulFunctionType>(ctx->compiler->program.nativeTypes.voidType, $4);
+        auto func = std::make_shared<EulFunction>(funcType, $4, $6);
+        ctx->currentScope->declare(
+            $2->name,
+            std::make_shared<EulSymbol>(token::CONST, funcType, func)
+        );
+        $$ = std::make_shared<EulFuncDeclarationStatement>(func, $2);
+    } |
+    FUNC ID PARENTHESIS_OPEN func_params PARENTHESIS_CLOSE COLON eul_type block {
+        auto funcType = std::make_shared<EulFunctionType>($7, $4);
+        auto func = std::make_shared<EulFunction>(funcType, $4, $8);
+        ctx->currentScope->declare(
+            $2->name,
+            std::make_shared<EulSymbol>(token::CONST, funcType, func)
+        );
+        $$ = std::make_shared<EulFuncDeclarationStatement>(func, $2);
+    }
+    ;
+
+
+//======================== VAR DECLARATIONS AND FUNCTION PARAMETERS ============================
+eul_type:
+    ID {
+
+        //1. Find if the symbol already exists in this scope, or any super scope.
+        std::shared_ptr<EulSymbol> alreadyExisting = ctx->currentScope->get($1->name);
+
+        //2a. If it does not already exist, create one and return it.
+        // But do NOT declare it as a symbol in the scope. This action does not belong here.
+        if (alreadyExisting==nullptr) $$ = std::make_shared<EulNamedType>($1->name);
+
+        //2b. If the symbol is found, check that it is really a EulType, and return it.
+        else if (EulType::isEulType(alreadyExisting->value.get())) {
+            $$ = std::dynamic_pointer_cast<EulType>(alreadyExisting->value);
+        }
+
+        //2c. found but not a type? add an error!
+        else {
+            ctx->compiler->addError(EulError(EulErrorType::SEMANTIC, "Type expected, but other token type was found."));
+            $$ = nullptr;
+        }
+    }
+    ;
+
+parameter_declaration:
+    ID ASSIGN expression {
+        $$ = std::make_shared<VarDeclaration>($1, nullptr, $3);
+    } |
+    ID {
+        $$ = std::make_shared<VarDeclaration>($1, nullptr, nullptr);
+    } |
+    ID COLON eul_type {
+        $$ = std::make_shared<VarDeclaration>($1, $3, nullptr);
+    } |
+    ID COLON eul_type ASSIGN expression {
+        $$ = std::make_shared<VarDeclaration>($1, $3, $5);
+    }
+    ;
+
+
+parameter_declarations:
+    parameter_declarations COMMA parameter_declaration {
+        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>();
+        $1->push_back($3);
+        $$ = $1;
+    } |
+    parameter_declaration {
+        $$ = std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>();
+        $$->push_back($1);
+    }
+    ;
 
 //============================== EXPRESSIONS  ==============================
 expression
@@ -474,61 +590,6 @@ expressions:
     %empty { $$ = nullptr; }
     ;
 
-
-
-
-//======================== VAR DECLARATIONS AND FUNCTION PARAMETERS ============================
-eul_type:
-    ID {
-
-        //1. Find if the symbol already exists in this scope, or any super scope.
-        std::shared_ptr<EulSymbol> alreadyExisting = ctx->currentScope->get($1->name);
-
-        //2a. If it does not already exist, create one and return it.
-        // But do NOT declare it as a symbol in the scope. This action does not belong here.
-        if (alreadyExisting==nullptr) $$ = std::make_shared<EulNamedType>($1->name);
-
-        //2b. If the symbol is found, check that it is really a EulType, and return it.
-        else if (EulType::isEulType(alreadyExisting->value.get())) {
-            $$ = std::dynamic_pointer_cast<EulType>(alreadyExisting->value);
-        }
-
-        //2c. found but not a type? add an error!
-        else {
-            ctx->compiler->addError(EulError(EulErrorType::SEMANTIC, "Type expected, but other token type was found."));
-            $$ = nullptr;
-        }
-    }
-    ;
-
-parameter_declaration:
-    ID ASSIGN expression {
-        $$ = std::make_shared<VarDeclaration>($1, nullptr, $3);
-    } |
-    ID {
-        $$ = std::make_shared<VarDeclaration>($1, nullptr, nullptr);
-    } |
-    ID COLON eul_type {
-        $$ = std::make_shared<VarDeclaration>($1, $3, nullptr);
-    } |
-    ID COLON eul_type ASSIGN expression {
-        $$ = std::make_shared<VarDeclaration>($1, $3, $5);
-    }
-    ;
-
-
-
-parameter_declarations:
-    parameter_declarations COMMA parameter_declaration {
-        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>();
-        $1->push_back($3);
-        $$ = $1;
-    } |
-    parameter_declaration {
-        $$ = std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>();
-        $$->push_back($1);
-    }
-    ;
 
 //================================= ACTION NON TERMINALS =========================
     open_scope:

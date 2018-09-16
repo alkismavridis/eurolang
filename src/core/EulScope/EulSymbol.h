@@ -13,6 +13,7 @@ class EulSymbol {
     //region LIFE CYCLE
     public: EulSymbol(int changeType, std::shared_ptr<EulType> varType, std::shared_ptr<EulToken> value);
     public: EulSymbol(int changeType, std::shared_ptr<EulType> varType, llvm::Value* llvmValue);
+    public: EulSymbol(int changeType, std::shared_ptr<EulType> varType);
     //endregion
 
 

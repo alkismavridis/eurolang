@@ -74,6 +74,7 @@ WORD_TAIL	([a-zA-Z0-9_]|{NON_ASCII})
 "const"		return yy::EulParser::token::CONST;
 "namespace"		return yy::EulParser::token::NAMESPACE;
 "return"		return yy::EulParser::token::RETURN;
+"func"		return yy::EulParser::token::FUNC;
 
 "true" {
     yylval->build<std::shared_ptr<EulBooleanToken>>() = std::make_shared<EulBooleanToken>(true);

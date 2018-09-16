@@ -8,7 +8,7 @@ class EulCodeGenContextTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create literals and check the results
         // NOTE: produced type is always the same as the input type, put with an extra pointer.

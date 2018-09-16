@@ -10,4 +10,5 @@ class EulStatement : public EulAst {
         Unlike, for example return 0; i++;
     */
     public: static void assertStatementReachable(EulCodeGenContext* ctx);
+    public: virtual void performPreParsing(EulCodeGenContext* ctx);
 };

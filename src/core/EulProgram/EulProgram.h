@@ -59,7 +59,7 @@ class EulProgram {
 
 
     //region CODE GENERATION
-    public: void makeMain(EulCodeGenContext* ctx);
+    public: std::shared_ptr<EulFunction> makeMain(EulCodeGenContext* ctx);
     public: void makeEntryPoint(EulCodeGenContext* ctx);
     public: void declareClibSymbols(EulCodeGenContext* ctx);
 

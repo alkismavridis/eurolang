@@ -2,6 +2,18 @@ PLEASE KEEP THIS FILE LATEST_ON_TOP SORTED
 
 
 
+2018.09.16
+    Yesterday, I could be able to write my first "useful" program in eul.
+    It just detects if an integer is a prime or not.
+    This was so exciting! Even if nothing more comes out of this project, going through this process
+    taught me so many things about what a language is, how it works etc, and was so much fun,
+    that I can say that it is definitely worth it!
+
+    We now have if statements (with else ifs and else), and a while loop.
+    Now working on functions!
+    This gets really exciting!
+
+
 2018.07.15
     TITLE llvm: diving deep.
     The compiler first steps (flex and bison) got much more mature.

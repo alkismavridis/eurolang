@@ -96,14 +96,15 @@ void Compiler::produceOutput(const std::string& outputFileName) {
     llvm::LLVMContext llvmCtx;
     llvm::Module globalModule("entryPointModule", llvmCtx);
 
-    EulCodeGenContext ctx(this, llvmCtx, &globalModule, nullptr);
+    EulCodeGenContext ctx(this, llvmCtx, &globalModule, nullptr, nullptr);
 
     //2. Setup entry point and main function
     auto sources = this->program.sources;
     auto entryPoint = this->program.getEntryPoint();
     this->program.declareClibSymbols(&ctx);
     this->program.makeEntryPoint(&ctx);
-    this->program.makeMain(&ctx);
+    ctx.currentFunction = this->program.makeMain(&ctx);
+
 
     //3. Pre parse
     for (auto const& source : sources) source.second->doASTPreParsing(&ctx);

@@ -20,7 +20,7 @@ std::shared_ptr<EulType> VarDeclaration::getEulType(EulCodeGenContext* ctx, unsi
 
 
 
-//region STATEMENTS
+//region SIMPLE STATEMENTS
 void EulStatement::generateStatement(EulCodeGenContext* ctx) {
     throw EulError(EulErrorType::SEMANTIC, "EulStatement::generateStatement was called.");
 }
@@ -84,12 +84,15 @@ void ReturnStatement::generateStatement(EulCodeGenContext* ctx) {
         nullptr :
         this->exp->generateValue(ctx, EulCodeGenFlags_LOAD_VAR);
 
+    //2. Cast the expression type to the return type
+    auto retType = ctx->currentFunction->functionType->retType.get();
+    auto expressionType = this->exp==nullptr?
+        ctx->compiler->program.nativeTypes.voidType.get() :
+        this->exp->getEulType(ctx, 0).get();
 
-    //2. Cast to return type
-    auto retType = ctx->compiler->program.nativeTypes.int32Type.get(); //TODO when we implement functions, the actual return type will go here.
     auto castedValue = retType->castValue(
         retValue,
-        this->exp->getEulType(ctx, 0).get(),
+        expressionType,
         false,
         ctx
     );
@@ -97,8 +100,19 @@ void ReturnStatement::generateStatement(EulCodeGenContext* ctx) {
     //3. Return the value
     ctx->builder.CreateRet(castedValue);
 }
+//endregion
 
 
+//region BLOCK
+void EulCodeBlock::generateStatements(EulCodeGenContext* ctx) {
+    for (auto instr : *this->statements) instr->performPreParsing(ctx);
+    for (auto instr : *this->statements) instr->generateStatement(ctx);
+}
+//endregion
+
+
+
+//region IF STATEMENT
 /** The scope and the basic block for the CONDITION must be already set in ctx before this function is being called.  */
 void EulIfStatement::generateConditionBlock(EulExpressionCodeBlock* expBlock, llvm::BasicBlock* blockOnFail, llvm::BasicBlock* endBlock, llvm::Function* currentFunction, EulCodeGenContext* ctx) {
     //1. Generate condition statement and cast the result into a boolean
@@ -117,12 +131,12 @@ void EulIfStatement::generateConditionBlock(EulExpressionCodeBlock* expBlock, ll
     //4. Jump into the if block and execute its statements
     ctx->currentScope = expBlock->block->scope;
     ctx->builder.SetInsertPoint(blockForStatements);
-    for (auto instr : *expBlock->block->statements) instr->generateStatement(ctx);
-    ctx->builder.CreateBr(endBlock);
+    expBlock->block->generateStatements(ctx);
+
+    if (ctx->builder.GetInsertBlock()->getTerminator() == nullptr) {
+        ctx->builder.CreateBr(endBlock);
+    }
 }
-
-
-
 
 
 llvm::BasicBlock* EulIfStatement::getFailingIfBLock(llvm::Function* currentFunction, llvm::BasicBlock* endBlock, EulCodeGenContext* ctx) {
@@ -138,6 +152,8 @@ llvm::BasicBlock* EulIfStatement::getFailingIfBLock(llvm::Function* currentFunct
 }
 
 void EulIfStatement::generateStatement(EulCodeGenContext* ctx) {
+    EulStatement::assertStatementReachable(ctx);
+
     //1. Create the if section
     auto currentFunction = ctx->builder.GetInsertBlock()->getParent();
     auto endIfBlock = llvm::BasicBlock::Create(ctx->context, "", currentFunction);
@@ -177,13 +193,115 @@ void EulIfStatement::generateStatement(EulCodeGenContext* ctx) {
     if (hasElse) {
         //SetInsertPoint should be already called at this point...
         ctx->currentScope = this->elseSection->scope;
-        for (auto instr : *this->elseSection->statements) instr->generateStatement(ctx);
-        ctx->builder.CreateBr(endIfBlock);
+        this->elseSection->generateStatements(ctx);
+        if (ctx->builder.GetInsertBlock()->getTerminator() == nullptr) ctx->builder.CreateBr(endIfBlock);
     }
 
     //4. Restore scope and inserting block
     ctx->currentScope = ctx->currentScope->superScope;
     ctx->builder.SetInsertPoint(endIfBlock);
+}
+//endregion
+
+
+//region WHILE STATEMENT
+void EulWhileStatement::generateStatement(EulCodeGenContext* ctx) {
+    EulStatement::assertStatementReachable(ctx);
+
+    //1. Create the necessary blocks
+    auto currentFunction = ctx->builder.GetInsertBlock()->getParent();
+    auto conditionBlock = llvm::BasicBlock::Create(ctx->context, "", currentFunction);
+    auto statementsBlock = llvm::BasicBlock::Create(ctx->context, "", currentFunction);
+    auto endBlock = llvm::BasicBlock::Create(ctx->context, "", currentFunction);
+
+    //2. Jump into the condition block
+    ctx->builder.CreateBr(conditionBlock);
+    ctx->builder.SetInsertPoint(conditionBlock);
+
+    //3. Execute the condition
+    auto condition = this->expBlock.expression->generateValue(ctx, EulCodeGenFlags_LOAD_VAR);
+    condition = ctx->compiler->program.nativeTypes.booleanType->castValue(
+        condition,
+        this->expBlock.expression->getEulType(ctx, 0).get(),
+        true,
+        ctx
+    );
+    ctx->builder.CreateCondBr(condition, statementsBlock, endBlock);
+
+    //4. Execute the statements block
+    ctx->currentScope = this->expBlock.block->scope;
+    ctx->builder.SetInsertPoint(statementsBlock);
+    this->expBlock.block->generateStatements(ctx);
+    if (ctx->builder.GetInsertBlock()->getTerminator() == nullptr) {
+        ctx->builder.CreateBr(conditionBlock);
+    }
+
+    //5. Restore scope and block for the next commands
+    ctx->currentScope = ctx->currentScope->superScope;
+    ctx->builder.SetInsertPoint(endBlock);
+}
+//endregion
+
+
+//region FUNCTION DECLARATION
+void EulFuncDeclarationStatement::generateStatement(EulCodeGenContext* ctx) {
+    EulStatement::assertStatementReachable(ctx);
+
+    //1. Save the current state to restore later.
+    auto blockToReturnTo = ctx->builder.GetInsertBlock();
+    auto functionToReturnTo = ctx->currentFunction;
+
+    //2. Prepare the block
+    auto eulBlock = this->func->block;
+    ctx->currentScope = eulBlock->scope;
+    llvm::BasicBlock *basicBlock = llvm::BasicBlock::Create(ctx->context, "entry", this->llvmFunc);
+    ctx->currentFunction = this->func;
+    ctx->builder.SetInsertPoint(basicBlock);
+
+
+    //3. Create the parameters, if any exist
+    auto params = this->func->parameters;
+    if (params != nullptr) {
+        auto argIterator = this->llvmFunc->arg_begin();
+        for (auto& paramDecl : *params) {
+            auto symbol = ctx->currentScope->get(paramDecl->id->name);
+            auto allocInst = ctx->builder.CreateAlloca(paramDecl->varType->getLlvmType(ctx), nullptr, paramDecl->id->name);
+            ctx->builder.CreateStore(&(*argIterator), allocInst);
+            symbol->llvmValue = allocInst;
+            argIterator++;
+        }
+    }
+
+    //4. Generate the function statements
+    eulBlock->generateStatements(ctx);
+
+
+    //5. Finally, handle possible non terminated blocks
+    if ( ctx->builder.GetInsertBlock()->getTerminator()==nullptr) {
+        if (this->func->functionType->retType == ctx->compiler->program.nativeTypes.voidType) {
+            ctx->builder.CreateRet(nullptr);
+        }
+        else throw EulError(EulErrorType::SEMANTIC, "Missing return statement from a non void function: " + this->name->name);
+    }
+
+
+    //6. Restore all needed variables in order to continue
+    ctx->builder.SetInsertPoint(blockToReturnTo);
+    ctx->currentScope = ctx->currentScope->superScope;
+    ctx->currentFunction = functionToReturnTo;
+}
+
+void EulFuncDeclarationStatement::performPreParsing(EulCodeGenContext* ctx) {
+    //1. Declare the function in llvm
+    this->llvmFunc = llvm::Function::Create(
+        static_cast<llvm::FunctionType*>(this->func->functionType->getLlvmType(ctx)),
+        llvm::Function::CommonLinkage, //TODO maybe make some more research about that one...
+        this->name->name,
+        ctx->module
+    );
+
+    //2. Store the llvmFunc in the variable
+    ctx->currentScope->get(this->name->name)->llvmValue = this->llvmFunc;
 }
 //endregion
 

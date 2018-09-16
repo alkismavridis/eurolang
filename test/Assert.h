@@ -260,6 +260,12 @@ class Assert {
         Assert::equals(EulStatementType::IF_STATEMENT, stmt->getStatementType(), label + "__getStatement");
         return static_cast<EulIfStatement*>(stmt);
     }
+
+    public: static EulWhileStatement* whileStatement(EulToken* token, const std::string& label) {
+        EulStatement* stmt = statement(token, label);
+        Assert::equals(EulStatementType::WHILE_STATEMENT, stmt->getStatementType(), label + "__getStatement");
+        return static_cast<EulWhileStatement*>(stmt);
+    }
     //endregion
 
 

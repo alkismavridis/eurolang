@@ -6,7 +6,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
         EulCharToken tok('b', 8);
@@ -41,7 +41,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
         EulCharToken tok('b', 8);
@@ -80,7 +80,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
         EulFloatToken tok(12.5, 32);
@@ -110,7 +110,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
         EulFloatToken tok(12.5, 32);
@@ -142,7 +142,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
         EulIntToken tok(123, 8, false);
@@ -217,7 +217,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
         EulIntToken tok(123, 8, false);
@@ -295,7 +295,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a string and get its value
         EulStringToken tok("hello\n");
@@ -313,7 +313,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a string token and check its type
         EulStringToken tok("hello\n");
@@ -331,7 +331,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Declare a couple of symbols
         comp.program.globalScope->declare(
@@ -381,7 +381,7 @@ class EulTokenCodeGenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Set an entry point
         llvm::Function* mainFunc = (llvm::Function*)ctx.module->getOrInsertFunction("main", llvm::IntegerType::get(ctx.context, 32));

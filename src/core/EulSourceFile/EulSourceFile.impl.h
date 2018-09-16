@@ -20,6 +20,8 @@ void EulSourceFile::parseAST(EulCodeGenContext* ctx) {
 }
 
 void EulSourceFile::doASTPreParsing(EulCodeGenContext* ctx) {
+    ctx->currentScope = this->scope;
+    for (auto stmt : *this->statements) stmt->performPreParsing(ctx);
 }
 
 

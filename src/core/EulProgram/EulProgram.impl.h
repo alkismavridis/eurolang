@@ -141,18 +141,37 @@ void EulProgram::declareClibSymbols(EulCodeGenContext* ctx) {
     eulFuncType->argTypes.push_back(ctx->compiler->program.nativeTypes.stringType);
     declaration = llvm::Function::Create(static_cast<llvm::FunctionType*>(eulFuncType->getLlvmType(ctx)), llvm::Function::ExternalLinkage, "puts", ctx->module);
     this->globalScope->declare("print", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
+
+    //2. define printf TODO
+    //eulFuncType = std::make_shared<EulFunctionType>(ctx->compiler->program.nativeTypes.int32Type);  //returns Int32
+    //eulFuncType->argTypes.push_back(ctx->compiler->program.nativeTypes.stringType);
+    //declaration = llvm::Function::Create(static_cast<llvm::FunctionType*>(eulFuncType->getLlvmType(ctx)), llvm::Function::ExternalLinkage, "printf", ctx->module);
+    //this->globalScope->declare("printf", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
 }
 
 
-void EulProgram::makeMain(EulCodeGenContext* ctx) {
+std::shared_ptr<EulFunction> EulProgram::makeMain(EulCodeGenContext* ctx) {
+    //1. Create the eul function
+    std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>> mainParams = nullptr; //TODO main accepts argv and argc
+    auto mainEulFunc = std::make_shared<EulFunction>(
+        std::make_shared<EulFunctionType>(ctx->compiler->program.nativeTypes.int32Type, mainParams),
+        mainParams,
+        nullptr //main is a special case. We do not need to assign a block to it. By default this is the whole content of all source files.
+    );
+
+    //2. Create the llvm definition
     llvm::Function* mainFunc = static_cast<llvm::Function*>(
         ctx->module->getOrInsertFunction(
             "main",
             llvm::IntegerType::get(ctx->context, 32)
         )
     );
+
+    //3. Setup basic block
     llvm::BasicBlock *block = llvm::BasicBlock::Create(ctx->context, "entry", mainFunc);
     ctx->builder.SetInsertPoint(block);
+
+    return mainEulFunc;
 }
 
 
@@ -178,7 +197,7 @@ void EulProgram::makeEntryPoint(EulCodeGenContext* ctx) {
     ctx->builder.CreateCall(exitFunc, mainReturnValue);
 
 
-    //5. Add return statement, just in case none was created already.
+    //5. Add return statement.
     auto zero = llvm::ConstantInt::get(llvm::IntegerType::get(ctx->context, 32), 0, true);
     ctx->builder.CreateRet(zero);
 }
@@ -250,7 +269,7 @@ void EulProgram::emmitIRAssembly(EulCodeGenContext* ctx, const std::string& outp
     std::error_code code;
     llvm::raw_fd_ostream out(outputFileName, code, llvm::sys::fs::OpenFlags::F_None);
 
-    ctx->module->print(llvm::errs(), nullptr);
+    //ctx->module->print(llvm::errs(), nullptr);
     ctx->module->print(out, nullptr);
 }
 //endregion

@@ -27,6 +27,7 @@ class EulCodeGenContext {
 
     public: std::shared_ptr<EulScope> currentScope;
     public: std::shared_ptr<EulScope> globalScope; //this equals by definition to compiler->program.globalScope, but for efficiency, we store a pointer to it here for quicker access.
+    public: std::shared_ptr<EulFunction> currentFunction;
 
     public: Compiler* compiler;
     public: int globIndex;
@@ -35,7 +36,7 @@ class EulCodeGenContext {
 
 
     //region LIFE CYCLE
-    public: EulCodeGenContext(Compiler* compiler, llvm::LLVMContext& context, llvm::Module* module, std::shared_ptr<EulScope> scope);
+    public: EulCodeGenContext(Compiler* compiler, llvm::LLVMContext& context, llvm::Module* module, std::shared_ptr<EulScope> scope, std::shared_ptr<EulFunction> currentFunction);
     //endregion
 
 

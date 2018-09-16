@@ -96,6 +96,13 @@ EulSymbol::EulSymbol(int changeType, std::shared_ptr<EulType> varType, llvm::Val
     this->llvmValue = llvmValue;
 }
 
+EulSymbol::EulSymbol(int changeType, std::shared_ptr<EulType> varType) {
+    this->changeType = changeType;
+    this->varType = varType;
+    this->value = nullptr;
+    this->llvmValue = nullptr;
+}
+
 void EulSymbol::toJson(std::ostream& out, int tabs) {
     out << "{" << std::endl;
     for (int i=tabs; i>=0; --i) out << "\t";

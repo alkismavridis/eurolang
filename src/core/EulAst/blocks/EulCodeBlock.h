@@ -20,4 +20,5 @@ class EulCodeBlock : public EulAst {
     //endregion
 
     public: virtual EulAstType getAstType();
+    public: void generateStatements(EulCodeGenContext* ctx);
 };

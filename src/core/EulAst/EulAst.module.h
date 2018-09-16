@@ -58,6 +58,7 @@ void VarDeclaration::toJson(std::ostream& out, int tabs) {
 //region STATEMENT BASE
 EulStatementType EulStatement::getStatementType() { return UNKNOWN_STATEMENT; }
 EulAstType EulStatement::getAstType() { return STATEMENT; }
+void EulStatement::performPreParsing(EulCodeGenContext* ctx) {}
 //endregion
 
 
@@ -395,6 +396,41 @@ EulExpressionCodeBlock::EulExpressionCodeBlock(std::shared_ptr<EulToken> express
 //endregion
 
 
+//region FUNCTION
+EulFunction::EulFunction(
+     std::shared_ptr<EulFunctionType> functionType,
+     std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>> parameters,
+     std::shared_ptr<EulCodeBlock> block) {
+    //1. Setup basic fields
+    this->functionType = functionType;
+    this->parameters = parameters;
+    this->block = block;
+
+    //2. Add all parameters to scope
+    if (parameters == nullptr) return;      //TODO unit test this TOO
+    for (auto& paramDecl : *parameters) {
+        auto symbol = std::make_shared<EulSymbol>(
+            yy::EulParser::token::VAR, //TODO add const params
+            paramDecl->varType
+        );
+        block->scope->declare(paramDecl->id->name, symbol);
+    }
+}
+
+void EulFunction::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulFunction TODO\"," << std::endl;
+
+    //close json object
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+
+EulAstType EulFunction::getAstType() { return FUNC_DECLARATION_TYPE; }
+//endregion
+
+
 //region IF STATEMENT
 EulIfStatement::EulIfStatement(std::shared_ptr<EulToken> condition, std::shared_ptr<EulCodeBlock> ifBlock) : ifSection(condition, ifBlock) {
     this->elseIfs = nullptr;
@@ -431,4 +467,44 @@ void EulIfStatement::toJson(std::ostream& out, int tabs) {
 }
 
 EulStatementType EulIfStatement::getStatementType() { return IF_STATEMENT; }
+//endregion
+
+
+
+//region WHILE STATEMENT
+EulWhileStatement::EulWhileStatement(std::shared_ptr<EulToken> condition, std::shared_ptr<EulCodeBlock> ifBlock) : expBlock(condition, ifBlock) {
+}
+
+void EulWhileStatement::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulWhileStatement TODO\"," << std::endl;
+
+    //close json object
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+
+EulStatementType EulWhileStatement::getStatementType() { return WHILE_STATEMENT; }
+//endregion
+
+
+//region FUNCTION DECLARATION STATEMENT
+EulFuncDeclarationStatement::EulFuncDeclarationStatement(std::shared_ptr<EulFunction> func, std::shared_ptr<EulIdToken> name) {
+    this->func = func;
+    this->name = name;
+    this->llvmFunc = nullptr;
+}
+
+void EulFuncDeclarationStatement::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulFuncDeclarationStatement TODO\"," << std::endl;
+
+    //close json object
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+
+EulStatementType EulFuncDeclarationStatement::getStatementType() { return FUNC_DECLARATION_STATEMENT; }
 //endregion

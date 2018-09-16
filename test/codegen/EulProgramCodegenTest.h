@@ -8,7 +8,7 @@ class EulProgramCodegenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Call the function
         comp.program.declareClibSymbols(&ctx);
@@ -46,7 +46,7 @@ class EulProgramCodegenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Call the function
         comp.program.makeMain(&ctx);
@@ -66,7 +66,7 @@ class EulProgramCodegenTest {
         Compiler comp(0);
         llvm::LLVMContext llvmCtx;
         llvm::Module module("dummyName", llvmCtx);
-        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope);
+        EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
         comp.program.declareClibSymbols(&ctx);
         comp.program.makeMain(&ctx);
 
@@ -114,7 +114,7 @@ class EulProgramCodegenTest {
 
     public: static void runAll() {
         declareClibSymbolsTest("EulProgramCodegenTest.declareClibSymbolsTest ");
-        makeMainTest("EulProgramCodegenTest.makeMainTest ");
+        makeMainTest("EulProgramCodegenTest.makeMainTest "); //TODO new addition: unit test return value!!
         makeEntryPoint("EulProgramCodegenTest.makeEntryPoint ");
     }
 };

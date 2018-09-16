@@ -80,8 +80,11 @@ class EulType;
 #include "../src/core/EulScope/EulSymbol.h"
 #include "../src/core/EulScope/EulScope.h"
 #include "../src/core/EulAst/blocks/EulCodeBlock.h"
+#include "../src/core/EulAst/blocks/EulFunction.h"
 #include "../src/core/EulAst/blocks/EulExpressionCodeBlock.h"
 #include "../src/core/EulAst/EulStatement/EulIfStatement.h"
+#include "../src/core/EulAst/EulStatement/EulWhileStatement.h"
+#include "../src/core/EulAst/EulStatement/EulFuncDeclarationStatement.h"
 
 #include "../src/core/EulSourceFile/EulSourceFile.h"
 #include "../src/core/EulProgram/EulNativeTypes.h"
@@ -116,6 +119,7 @@ class EulType;
 
 #include "./parser/EulParserTest.h"
 #include "./parser/EulIfStatementTest.h"
+#include "./parser/EulWhileStatementTest.h"
 
 
 #include "./codegen/EulProgramCodegenTest.h"
@@ -124,6 +128,8 @@ class EulType;
 #include "./codegen/EulCodeGenContextTest.h"
 #include "./codegen/EulOperatorCodeGenTest.h"
 #include "./codegen/EulTypeCodeGenTest.h"
+#include "./codegen/IfStatementCodeGenTest.h"
+#include "./codegen/WhileStatementCodeGenTest.h"
 //endregion
 
 
@@ -145,6 +151,7 @@ int main() {
     //3. Parser tests
     EulParserTest::runAll();
     EulIfStatementTest::runAll();
+    EulWhileStatementTest::runAll();
 
 
     //4. Core generation Tests
@@ -154,6 +161,8 @@ int main() {
     EulCodeGenContextTest::runAll();
     EulOperatorCodeGenTest::runAll();
     EulTypeCodeGenTest::runAll();
+    IfStatementCodeGenTest::runAll(); //TODO <------ not done yet
+    WhileStatementCodeGenTest::runAll(); //TODO <------ not done yet
 
 
     //============ NOT UNIT TESTS =============

@@ -1,5 +1,6 @@
 #pragma once
 
+class VarDeclaration;
 
 class EulFunctionType : public EulType {
     //region FIELDS
@@ -11,6 +12,7 @@ class EulFunctionType : public EulType {
 
     //region LIFE CYCLE
     public: EulFunctionType(const std::shared_ptr<EulType> retType);
+    public: EulFunctionType(const std::shared_ptr<EulType> retType, std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>> argDeclarations);
     //endregion
 
 

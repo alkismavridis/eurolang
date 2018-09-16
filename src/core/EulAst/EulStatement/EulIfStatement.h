@@ -1,9 +1,5 @@
 #pragma once
 
-/**
-    EulExpStatement stands for Eul Expression Statement.
-    This is a statement that is made of one Expression, like a function call or an assignment.
-*/
 class EulIfStatement : public EulStatement {
     //region FIELDS
     public: EulExpressionCodeBlock ifSection;

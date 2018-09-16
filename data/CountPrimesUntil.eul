@@ -1,0 +1,24 @@
+func isPrime(numToTest:Int64) : Bool {
+    if numToTest % 2 == 0 { return false; }
+
+    var d = 3
+    while (d*d <= numToTest) {
+        if numToTest % d == 0 { return false; }
+        d = d+2
+    }
+
+    return true
+}
+
+
+const limit = 100
+var primeCount = 1
+var numToTest = 3
+while (numToTest < limit) {
+    if isPrime(numToTest) { primeCount = primeCount+1u64; }
+    numToTest = numToTest + 2
+}
+
+
+
+return primeCount //unfortunatelly the return status on linux is 1 byte long. So we must wait for printf in order to view the result, if it is bigger than 255.

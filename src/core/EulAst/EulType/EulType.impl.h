@@ -198,6 +198,16 @@ EulFunctionType::EulFunctionType(const std::shared_ptr<EulType> retType) {
     this->retType = retType;
 }
 
+EulFunctionType::EulFunctionType(const std::shared_ptr<EulType> retType, std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>> argDeclarations) {
+    this->retType = retType;
+    if (argDeclarations != nullptr) {
+        for (auto param : *argDeclarations) {
+            this->argTypes.push_back(param->varType);
+        }
+    }
+}
+
+
 void EulFunctionType::toJson(std::ostream& out, int tabs) {
     out << "{" << std::endl;
     for (int i=tabs; i>=0; --i) out << "\t";
