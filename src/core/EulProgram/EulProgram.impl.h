@@ -5,6 +5,7 @@
 //region NATIVE TYPES
 EulNativeTypes::EulNativeTypes() {
     this->voidType = std::make_shared<EulVoidType>();
+    this->anyType = std::make_shared<EulAnyType>();
 
     this->int8Type = std::make_shared<EulIntegerType>(8, false);
     this->int16Type = std::make_shared<EulIntegerType>(16, false);
@@ -45,6 +46,7 @@ EulProgram::EulProgram() : globalScope(nullptr) {
 void EulProgram::initGlobals() {
     //Define basic Integer types
     this->globalScope->declare("void", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.voidType));
+    this->globalScope->declare("Any", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.anyType));
 
     this->globalScope->declare("Int8", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int8Type));
     this->globalScope->declare("Int16", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, nullptr, this->nativeTypes.int16Type));
@@ -142,11 +144,12 @@ void EulProgram::declareClibSymbols(EulCodeGenContext* ctx) {
     declaration = llvm::Function::Create(static_cast<llvm::FunctionType*>(eulFuncType->getLlvmType(ctx)), llvm::Function::ExternalLinkage, "puts", ctx->module);
     this->globalScope->declare("print", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
 
-    //2. define printf TODO
-    //eulFuncType = std::make_shared<EulFunctionType>(ctx->compiler->program.nativeTypes.int32Type);  //returns Int32
-    //eulFuncType->argTypes.push_back(ctx->compiler->program.nativeTypes.stringType);
-    //declaration = llvm::Function::Create(static_cast<llvm::FunctionType*>(eulFuncType->getLlvmType(ctx)), llvm::Function::ExternalLinkage, "printf", ctx->module);
-    //this->globalScope->declare("printf", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
+    //2. define printf
+    eulFuncType = std::make_shared<EulFunctionType>(ctx->compiler->program.nativeTypes.int32Type);  //returns Int32
+    eulFuncType->argTypes.push_back(ctx->compiler->program.nativeTypes.stringType);
+    eulFuncType->varArgsType = ctx->compiler->program.nativeTypes.anyType;
+    declaration = llvm::Function::Create(static_cast<llvm::FunctionType*>(eulFuncType->getLlvmType(ctx)), llvm::Function::ExternalLinkage, "printf", ctx->module);
+    this->globalScope->declare("printf", std::make_shared<EulSymbol>(yy::EulParser::token::VAL, eulFuncType, declaration));
 }
 
 

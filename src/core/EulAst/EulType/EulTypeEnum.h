@@ -9,5 +9,6 @@ enum EulTypeEnum {
     FLOAT_TYPE,
     BOOLEAN_TYPE,
     FUNCTION_TYPE,
-    POINTER_TYPE
+    POINTER_TYPE,
+    ANY_TYPE
 };

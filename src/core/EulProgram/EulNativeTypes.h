@@ -4,6 +4,7 @@
 class EulNativeTypes {
     //region FIELDS
     public: std::shared_ptr<EulVoidType> voidType;
+    public: std::shared_ptr<EulAnyType> anyType;
 
     public: std::shared_ptr<EulIntegerType> int8Type;
     public: std::shared_ptr<EulIntegerType> int16Type;

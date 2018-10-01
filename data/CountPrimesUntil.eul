@@ -11,14 +11,14 @@ func isPrime(numToTest:Int64) : Bool {
 }
 
 
-const limit = 100
+
+const limit = 1000
 var primeCount = 1
 var numToTest = 3
+
 while (numToTest < limit) {
     if isPrime(numToTest) { primeCount = primeCount+1u64; }
     numToTest = numToTest + 2
 }
 
-
-
-return primeCount //unfortunatelly the return status on linux is 1 byte long. So we must wait for printf in order to view the result, if it is bigger than 255.
+printf("I found %d primes until %d. I go sleep now.\n", primeCount, limit)

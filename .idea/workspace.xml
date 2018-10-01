@@ -4,48 +4,24 @@
     <bookmark url="file://$PROJECT_DIR$/src/lexer/EulScanner.h" line="11" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d5091fb7-ff95-4216-91d9-ab26aad80d8f" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/data/CountPrimesUntil.eul" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/IsPrime.eul" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulFuncDeclarationStatement.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulWhileStatement.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/core/EulAst/blocks/EulFunction.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/codegen/IfStatementCodeGenTest.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/codegen/WhileStatementCodeGenTest.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/parser/EulWhileStatementTest.h" afterDir="false" />
+    <list default="true" id="d5091fb7-ff95-4216-91d9-ab26aad80d8f" name="Default" comment="We ve got loops and functions! The baby language has became a small child now!">
+      <change afterPath="$PROJECT_DIR$/data/Printing.eul" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulAnyType.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DIARY" beforeDir="false" afterPath="$PROJECT_DIR$/DIARY" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README" beforeDir="false" afterPath="$PROJECT_DIR$/README" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/CountPrimesUntil.eul" beforeDir="false" afterPath="$PROJECT_DIR$/data/CountPrimesUntil.eul" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/test.eul" beforeDir="false" afterPath="$PROJECT_DIR$/data/test.eul" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/eulc" beforeDir="false" afterPath="$PROJECT_DIR$/out/eulc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/Compiler/Compiler.module.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/Compiler/Compiler.module.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulAst.CodeGen.impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulAst.CodeGen.impl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulAst.module.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulAst.module.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulAstType.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulAstType.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulIfStatement.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulIfStatement.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulStatement.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulStatement.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulStatementType.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulStatementType.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulType/EulFunctionType.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulFunctionType.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.CodeGen.impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.CodeGen.impl.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.impl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/blocks/EulCodeBlock.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/blocks/EulCodeBlock.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulProgram/EulProgram.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulProgram/EulProgram.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulType/EulTypeEnum.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulTypeEnum.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/EulProgram/EulNativeTypes.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulProgram/EulNativeTypes.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/core/EulProgram/EulProgram.impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulProgram/EulProgram.impl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulScope/EulScope.module.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulScope/EulScope.module.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulScope/EulSymbol.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulScope/EulSymbol.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulSourceFile/EulSourceFile.impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulSourceFile/EulSourceFile.impl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lexer/lex.l" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexer/lex.l" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/llvm/EulCodeGenContext.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/llvm/EulCodeGenContext.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/llvm/EulCodeGenContext.module.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/llvm/EulCodeGenContext.module.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/parser/parser.yy" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.yy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Assert.h" beforeDir="false" afterPath="$PROJECT_DIR$/test/Assert.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/MainTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/MainTest.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/codegen/EulAstCodeGenTest.h" beforeDir="false" afterPath="$PROJECT_DIR$/test/codegen/EulAstCodeGenTest.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/codegen/EulCodeGenContextTest.h" beforeDir="false" afterPath="$PROJECT_DIR$/test/codegen/EulCodeGenContextTest.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/codegen/EulOperatorCodeGenTest.h" beforeDir="false" afterPath="$PROJECT_DIR$/test/codegen/EulOperatorCodeGenTest.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/codegen/EulProgramCodegenTest.h" beforeDir="false" afterPath="$PROJECT_DIR$/test/codegen/EulProgramCodegenTest.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/codegen/EulTokenCodeGenTest.h" beforeDir="false" afterPath="$PROJECT_DIR$/test/codegen/EulTokenCodeGenTest.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/codegen/EulTypeCodeGenTest.h" beforeDir="false" afterPath="$PROJECT_DIR$/test/codegen/EulTypeCodeGenTest.h" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -67,17 +43,17 @@
       <file leaf-file-name="test.eul" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data/test.eul">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="13" column="18" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
+            <state relative-caret-position="96">
+              <caret line="6" column="41" selection-start-line="6" selection-start-column="41" selection-end-line="6" selection-end-column="42" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="obj.o_IR" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/out/obj.o_IR">
+      <file leaf-file-name="Printing.eul" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/Printing.eul">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1091">
-              <caret line="99" column="14" selection-start-line="99" selection-start-column="14" selection-end-line="99" selection-end-column="14" />
+            <state>
+              <caret selection-end-line="4" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -85,17 +61,17 @@
       <file leaf-file-name="CountPrimesUntil.eul" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data/CountPrimesUntil.eul">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="208">
+              <caret line="13" lean-forward="true" selection-end-line="24" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IsPrime.eul" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/data/IsPrime.eul">
+      <file leaf-file-name="parser.yy" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/parser/parser.yy">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="32">
-              <caret line="2" selection-start-line="2" selection-end-line="20" selection-end-column="14" />
+            <state relative-caret-position="8">
+              <caret line="43" column="47" lean-forward="true" selection-start-line="43" selection-start-column="47" selection-end-line="43" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -103,53 +79,53 @@
       <file leaf-file-name="EulProgram.impl.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/core/EulProgram/EulProgram.impl.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="136" lean-forward="true" selection-start-line="136" selection-end-line="136" />
+            <state relative-caret-position="368">
+              <caret line="149" column="73" selection-start-line="149" selection-start-column="73" selection-end-line="149" selection-end-column="73" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EulFunction.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/core/EulAst/blocks/EulFunction.h">
+      <file leaf-file-name="MainTest.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/MainTest.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="6" column="17" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="17" />
+            <state relative-caret-position="467">
+              <caret line="69" column="44" selection-start-line="69" selection-end-line="70" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EulAst.CodeGen.impl.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulAst.CodeGen.impl.h">
+      <file leaf-file-name="Main.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="291" selection-start-line="291" selection-end-line="291" />
+            <state relative-caret-position="237">
+              <caret line="65" column="21" lean-forward="true" selection-start-line="65" selection-start-column="21" selection-end-line="65" selection-end-column="21" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EulScope.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/core/EulScope/EulScope.h">
+      <file leaf-file-name="EulType.CodeGen.impl.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulType.CodeGen.impl.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="18" column="74" selection-start-line="18" selection-start-column="62" selection-end-line="18" selection-end-column="74" />
+            <state relative-caret-position="272">
+              <caret line="110" column="37" selection-start-line="110" selection-start-column="37" selection-end-line="110" selection-end-column="37" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EulSymbol.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/core/EulScope/EulSymbol.h">
+      <file leaf-file-name="EulProgram.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/core/EulProgram/EulProgram.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="15" column="21" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="21" />
+            <state relative-caret-position="277">
+              <caret line="61" column="49" selection-start-line="61" selection-start-column="41" selection-end-line="61" selection-end-column="49" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EulToken.CodeGen.impl.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/core/EulToken/EulToken.CodeGen.impl.h">
+      <file leaf-file-name="EulNativeTypes.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/core/EulProgram/EulNativeTypes.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="51" column="33" selection-start-line="51" selection-start-column="33" selection-end-line="51" selection-end-column="33" />
+            <state relative-caret-position="-61">
+              <caret line="6" column="47" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -158,24 +134,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>EulFunctionType::E</find>
-      <find>makeMain</find>
-      <find>EulCodeGenContext</find>
-      <find>TODO</find>
-      <find>EulFunctionType</find>
-      <find>LinkageTypes</find>
-      <find>basicBlock</find>
-      <find>ctx</find>
-      <find>currentFunction</find>
-      <find>retType</find>
-      <find>cout</find>
-      <find>funcType</find>
-      <find>EulSymbol::Eul</find>
-      <find>CONST</find>
-      <find>AllocaInst</find>
-      <find>this-&gt;func</find>
-      <find>paramDecl</find>
-      <find>CreateAlloca</find>
       <find>EulFunction</find>
       <find>castedValue</find>
       <find>does not have a value.</find>
@@ -186,8 +144,26 @@
       <find>symbol</find>
       <find>scope</find>
       <find>DONE</find>
+      <find>EulFunctionCallExp</find>
+      <find>EulFunctionType::</find>
+      <find>argTypes</find>
       <find>this-&gt;name-&gt;name</find>
+      <find>paramsSize</find>
+      <find>expParamCount</find>
+      <find>funcType</find>
+      <find>ReturnState</find>
       <find>GetInser</find>
+      <find>eulReturnStatementValueTest</find>
+      <find>ctx</find>
+      <find>makeMain</find>
+      <find>currentFunction</find>
+      <find>EulFuncDeclarationStatement::g</find>
+      <find>EulFunctionType::g</find>
+      <find>7f</find>
+      <find>mainFunc</find>
+      <find>printf</find>
+      <find>getLlvmType</find>
+      <find>eulFuncType</find>
     </findStrings>
     <replaceStrings>
       <replace>Assert::equals</replace>
@@ -228,12 +204,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/test/codegen/EulAstCodeGenTest.h" />
-        <option value="$PROJECT_DIR$/test/codegen/EulCodeGenContextTest.h" />
-        <option value="$PROJECT_DIR$/test/codegen/EulOperatorCodeGenTest.h" />
-        <option value="$PROJECT_DIR$/test/codegen/EulTypeCodeGenTest.h" />
-        <option value="$PROJECT_DIR$/test/lexer/EulScannerTest.h" />
-        <option value="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulCodeBlock.h" />
         <option value="$PROJECT_DIR$/src/core/Compiler/EulError/EulError.h" />
         <option value="$PROJECT_DIR$/scripts/compile.sh" />
         <option value="$PROJECT_DIR$/scripts/test.sh" />
@@ -250,34 +220,40 @@
         <option value="$PROJECT_DIR$/test/parser/EulWhileStatementTest.h" />
         <option value="$PROJECT_DIR$/src/core/EulAst/EulAstType.h" />
         <option value="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulStatementType.h" />
-        <option value="$PROJECT_DIR$/test/MainTest.cpp" />
         <option value="$PROJECT_DIR$/src/lexer/lex.l" />
-        <option value="$PROJECT_DIR$/src/Main.cpp" />
         <option value="$PROJECT_DIR$/scripts/compileTheCompiler.sh" />
         <option value="$PROJECT_DIR$/README" />
         <option value="$PROJECT_DIR$/DIARY" />
         <option value="$PROJECT_DIR$/src/core/EulAst/blocks/EulCodeBlock.h" />
         <option value="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulStatement.h" />
-        <option value="$PROJECT_DIR$/src/core/EulAst/blocks/EulFunction.h" />
         <option value="$PROJECT_DIR$/src/core/EulSourceFile/EulSourceFile.impl.h" />
         <option value="$PROJECT_DIR$/src/core/EulAst/EulStatement/EulFuncDeclarationStatement.h" />
         <option value="$PROJECT_DIR$/src/llvm/EulCodeGenContext.module.h" />
         <option value="$PROJECT_DIR$/src/llvm/EulCodeGenContext.h" />
-        <option value="$PROJECT_DIR$/src/core/EulAst/EulType/EulFunctionType.h" />
         <option value="$PROJECT_DIR$/src/core/EulProgram/EulProgram.h" />
         <option value="$PROJECT_DIR$/src/core/Compiler/Compiler.module.h" />
         <option value="$PROJECT_DIR$/test/codegen/EulProgramCodegenTest.h" />
-        <option value="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.impl.h" />
         <option value="$PROJECT_DIR$/data/IsPrime.eul" />
-        <option value="$PROJECT_DIR$/src/parser/parser.yy" />
         <option value="$PROJECT_DIR$/src/core/EulScope/EulSymbol.h" />
         <option value="$PROJECT_DIR$/src/core/EulScope/EulScope.module.h" />
         <option value="$PROJECT_DIR$/src/core/EulAst/EulAst.module.h" />
         <option value="$PROJECT_DIR$/out/obj.o_IR" />
         <option value="$PROJECT_DIR$/src/core/EulToken/EulToken.CodeGen.impl.h" />
+        <option value="$PROJECT_DIR$/src/core/EulAst/blocks/EulFunction.h" />
+        <option value="$PROJECT_DIR$/src/core/EulAst/EulType/EulFunctionType.h" />
         <option value="$PROJECT_DIR$/src/core/EulAst/EulAst.CodeGen.impl.h" />
+        <option value="$PROJECT_DIR$/test/codegen/EulAstCodeGenTest.h" />
+        <option value="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.impl.h" />
+        <option value="$PROJECT_DIR$/src/core/EulAst/EulType/EulTypeEnum.h" />
+        <option value="$PROJECT_DIR$/src/core/EulAst/EulType/EulAnyType.h" />
+        <option value="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.CodeGen.impl.h" />
+        <option value="$PROJECT_DIR$/src/core/EulProgram/EulNativeTypes.h" />
+        <option value="$PROJECT_DIR$/test/MainTest.cpp" />
+        <option value="$PROJECT_DIR$/src/Main.cpp" />
+        <option value="$PROJECT_DIR$/src/parser/parser.yy" />
         <option value="$PROJECT_DIR$/src/core/EulProgram/EulProgram.impl.h" />
         <option value="$PROJECT_DIR$/data/CountPrimesUntil.eul" />
+        <option value="$PROJECT_DIR$/data/Printing.eul" />
         <option value="$PROJECT_DIR$/data/test.eul" />
       </list>
     </option>
@@ -295,10 +271,9 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="49" />
-    <option name="y" value="-3" />
-    <option name="width" value="1385" />
-    <option name="height" value="788" />
+    <option name="y" value="24" />
+    <option name="width" value="1366" />
+    <option name="height" value="695" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -394,7 +369,23 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="core" type="462c0819:PsiDirectoryNode" />
               <item name="EulAst" type="462c0819:PsiDirectoryNode" />
+              <item name="EulExpression" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="eurolang" type="b2602c69:ProjectViewProjectNode" />
+              <item name="eurolang" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="EulAst" type="462c0819:PsiDirectoryNode" />
               <item name="EulStatement" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="eurolang" type="b2602c69:ProjectViewProjectNode" />
+              <item name="eurolang" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="EulAst" type="462c0819:PsiDirectoryNode" />
+              <item name="EulType" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="eurolang" type="b2602c69:ProjectViewProjectNode" />
@@ -449,6 +440,35 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="parser" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="eurolang" type="b2602c69:ProjectViewProjectNode" />
+              <item name="eurolang" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="eurolang" type="b2602c69:ProjectViewProjectNode" />
+              <item name="eurolang" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="codegen" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="eurolang" type="b2602c69:ProjectViewProjectNode" />
+              <item name="eurolang" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="eurolang" type="b2602c69:ProjectViewProjectNode" />
+              <item name="eurolang" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="lexer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="eurolang" type="b2602c69:ProjectViewProjectNode" />
+              <item name="eurolang" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="parser" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -467,11 +487,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/core/EulAst/EulType" />
       <recent name="$PROJECT_DIR$/data" />
       <recent name="$PROJECT_DIR$/src/core/EulAst/EulStatement" />
       <recent name="$PROJECT_DIR$/test/parser" />
       <recent name="$PROJECT_DIR$/test/codegen" />
-      <recent name="$PROJECT_DIR$/src/core/EulAst/blocks" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/core/EulAst/blocks" />
@@ -593,7 +613,7 @@
       <workItem from="1534536703199" duration="186697000" />
       <workItem from="1536405366519" duration="51441000" />
       <workItem from="1536914854582" duration="496000" />
-      <workItem from="1536915776675" duration="39547000" />
+      <workItem from="1536915776675" duration="53335000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <created>1526679886850</created>
@@ -686,11 +706,18 @@
       <option name="project" value="LOCAL" />
       <updated>1536951779191</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="We ve got loops and functions! The baby language has became a small child now!">
+      <created>1537138773959</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1537138773959</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1057583000" />
+    <option name="totallyTimeSpent" value="1071371000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -703,7 +730,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="49" y="-3" width="1871" height="1083" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="7" weight="0.32938644" />
@@ -756,54 +782,10 @@
     <MESSAGE value="Unit testing catches up production" />
     <MESSAGE value="More operators" />
     <MESSAGE value="We ve got if statements. YEY!!!" />
-    <option name="LAST_COMMIT_MESSAGE" value="We ve got if statements. YEY!!!" />
+    <MESSAGE value="We ve got loops and functions! The baby language has became a small child now!" />
+    <option name="LAST_COMMIT_MESSAGE" value="We ve got loops and functions! The baby language has became a small child now!" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/scripts/runEul.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="9" lean-forward="true" selection-start-column="9" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/compileEul.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="12" column="34" selection-start-line="12" selection-start-column="34" selection-end-line="12" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/core/EulProgramTest.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="467">
-          <caret line="144" column="35" selection-start-line="144" selection-start-column="35" selection-end-line="144" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/core/EulSourceFileTest.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/codegen/WhileStatementCodeGenTest.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="12" column="47" selection-start-line="12" selection-start-column="47" selection-end-line="12" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/parser/EulWhileStatementTest.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/EulAst/blocks/EulExpressionCodeBlock.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32">
-          <caret line="2" selection-start-line="2" selection-end-line="17" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/codegen/IfStatementCodeGenTest.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="208">
@@ -829,20 +811,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="355">
           <caret line="25" column="28" selection-start-line="25" selection-start-column="28" selection-end-line="25" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/MainTest.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="86" column="69" selection-start-line="86" selection-start-column="69" selection-end-line="86" selection-end-column="69" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="88" selection-start-line="88" selection-end-line="88" />
         </state>
       </provider>
     </entry>
@@ -926,31 +894,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulType.CodeGen.impl.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="187" column="12" selection-start-line="187" selection-start-column="12" selection-end-line="187" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/core/EulSourceFile/EulSourceFile.impl.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="325">
           <caret line="22" column="36" selection-start-line="22" selection-start-column="36" selection-end-line="22" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulFunctionType.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="84" selection-start-line="14" selection-start-column="84" selection-end-line="14" selection-end-column="84" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/EulProgram/EulProgram.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
-          <caret line="61" column="49" selection-start-line="61" selection-start-column="41" selection-end-line="61" selection-end-column="49" />
         </state>
       </provider>
     </entry>
@@ -968,31 +915,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/Compiler/Compiler.module.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="347">
-          <caret line="118" column="29" selection-start-line="118" selection-start-column="20" selection-end-line="118" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/llvm/EulCodeGenContext.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="275">
           <caret line="38" column="177" selection-start-line="38" selection-start-column="177" selection-end-line="38" selection-end-column="177" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulType.impl.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="204" column="37" selection-start-line="204" selection-start-column="37" selection-end-line="204" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/parser/parser.yy">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="449" column="48" selection-start-line="449" selection-start-column="37" selection-end-line="449" selection-end-column="48" />
         </state>
       </provider>
     </entry>
@@ -1007,27 +933,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
           <caret line="5" column="44" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulAst.module.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="416" column="5" selection-start-line="416" selection-start-column="5" selection-end-line="416" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/EulAst/blocks/EulFunction.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="6" column="17" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulStatement/EulFuncDeclarationStatement.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="7" column="45" selection-start-line="7" selection-start-column="41" selection-end-line="7" selection-end-column="45" />
         </state>
       </provider>
     </entry>
@@ -1066,41 +971,163 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/out/pr">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulExpression/EulFunctionCallExp.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="5" column="74" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulAst.module.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2947">
+          <caret line="416" column="5" selection-start-line="416" selection-start-column="5" selection-end-line="416" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/blocks/EulFunction.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="25" column="43" selection-start-line="23" selection-start-column="8" selection-end-line="25" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/Compiler/Compiler.module.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="347">
+          <caret line="105" column="8" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulStatement/EulFuncDeclarationStatement.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="5" column="33" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/codegen/EulAstCodeGenTest.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="200" selection-start-line="200" selection-end-line="200" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulAst.CodeGen.impl.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="291" selection-start-line="291" selection-end-line="291" />
+        <state relative-caret-position="694">
+          <caret line="246" column="5" selection-start-line="246" selection-start-column="5" selection-end-line="246" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulFunctionType.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="7" column="74" selection-start-line="7" selection-start-column="74" selection-end-line="7" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/out/obj.o_IR">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="77">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulType.impl.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="34" column="55" selection-start-line="34" selection-start-column="47" selection-end-line="34" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulTypeEnum.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="12" column="12" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulIntegerType.h">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulAnyType.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="22" column="42" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulAst/EulType/EulType.CodeGen.impl.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="110" column="37" selection-start-line="110" selection-start-column="37" selection-end-line="110" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulProgram/EulProgram.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="61" column="49" selection-start-line="61" selection-start-column="41" selection-end-line="61" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/EulProgram/EulNativeTypes.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-61">
+          <caret line="6" column="47" selection-start-line="6" selection-start-column="40" selection-end-line="6" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/MainTest.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="467">
+          <caret line="69" column="44" selection-start-line="69" selection-end-line="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="65" column="21" lean-forward="true" selection-start-line="65" selection-start-column="21" selection-end-line="65" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/parser.yy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8">
+          <caret line="43" column="47" lean-forward="true" selection-start-line="43" selection-start-column="47" selection-end-line="43" selection-end-column="47" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/core/EulProgram/EulProgram.impl.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="136" lean-forward="true" selection-start-line="136" selection-end-line="136" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/out/pr">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/out/obj.o_IR">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1091">
-          <caret line="99" column="14" selection-start-line="99" selection-start-column="14" selection-end-line="99" selection-end-column="14" />
+        <state relative-caret-position="368">
+          <caret line="149" column="73" selection-start-line="149" selection-start-column="73" selection-end-line="149" selection-end-column="73" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/data/CountPrimesUntil.eul">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+        <state relative-caret-position="208">
+          <caret line="13" lean-forward="true" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/Printing.eul">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="4" selection-end-column="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/data/test.eul">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="13" column="18" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
+        <state relative-caret-position="96">
+          <caret line="6" column="41" selection-start-line="6" selection-start-column="41" selection-end-line="6" selection-end-column="42" />
         </state>
       </provider>
     </entry>

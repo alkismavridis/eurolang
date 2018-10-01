@@ -107,6 +107,17 @@ llvm::Type* EulType::getLlvmType(EulCodeGenContext* ctx) {
 
 
 
+//region ANY TYPE
+llvm::Value* EulAnyType::castValue(llvm::Value* sourceValue, EulType* sourceType, bool isExplicit, EulCodeGenContext* ctx) {
+    return sourceValue;
+}
+
+llvm::Type* EulAnyType::getLlvmType(EulCodeGenContext* ctx) {
+    return llvm::IntegerType::get(ctx->context, 8)->getPointerTo();
+}
+//endregion
+
+
 
 //region CHAR TYPES
 llvm::Value* EulCharType::castValue(llvm::Value* sourceValue, EulType* sourceType, bool isExplicit, EulCodeGenContext* ctx) {
@@ -193,7 +204,7 @@ llvm::Type* EulFunctionType::getLlvmType(EulCodeGenContext* ctx) {
     auto ret = llvm::FunctionType::get(
         this->retType->getLlvmType(ctx),
         llvm::ArrayRef<llvm::Type*>(llvmArgList),
-        false
+        this->varArgsType != nullptr
     );
 
     return ret;

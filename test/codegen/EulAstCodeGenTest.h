@@ -173,10 +173,7 @@ class EulAstCodeGenTest {
         comp.program.declareClibSymbols(&ctx);
 
         //1. Set an entry point
-        llvm::Function* mainFunc = (llvm::Function*)ctx.module->getOrInsertFunction("main", llvm::IntegerType::get(ctx.context, 32));
-        llvm::BasicBlock *block = llvm::BasicBlock::Create(ctx.context, "entry", mainFunc);
-        ctx.builder.SetInsertPoint(block);
-
+        ctx.currentFunction = comp.program.makeMain(&ctx);
 
         //2. Create an operation (like a binary one), and insert it into an EulExpStatement
         ReturnStatement tok(std::make_shared<EulIntToken>(123,32,false));
@@ -190,7 +187,6 @@ class EulAstCodeGenTest {
 
         auto asRetInst = static_cast<llvm::ReturnInst*>(instruction);
         Assert::llvmIntConstant(asRetInst->getReturnValue(), 32, 123, t+"A3");
-
 
         //4. Check that unreachable statements are not allowed
         ctx.builder.CreateRet(llvm::ConstantInt::get(llvm::IntegerType::get(llvmCtx, 32), 0, true));
@@ -432,10 +428,6 @@ class EulAstCodeGenTest {
     //endregion
 
 
-
-
-
-
     public: static void runAll() {
         varDeclarationGetEulTypeTest("EulAstCodeGenTest.varDeclarationGetEulTypeTest ");
 
@@ -446,7 +438,6 @@ class EulAstCodeGenTest {
         eulFunctionCallExpValueTest("EulAstCodeGenTest.eulFunctionCallExpValueTest ");
         eulInfixExpValueTest("EulAstCodeGenTest.eulInfixExpValueTest ");
         assignmentInfixExpValueTest("EulAstCodeGenTest.assignmentInfixExpValueTest ");
-
 
         primitiveTypesTest("EulAstCodeGenTest.primitiveTypesTest ");
         namedTypeTest("EulAstCodeGenTest.namedTypeTest ");

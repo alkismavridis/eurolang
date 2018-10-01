@@ -316,20 +316,22 @@ llvm::Value* EulArrayAccessExp::generateValue(EulCodeGenContext* ctx, unsigned i
 
 llvm::Value* EulFunctionCallExp::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
     //1. Get the function, and set the result type of the expression
-   auto functionToCall = this->func->generateValue(ctx, EulCodeGenFlags_NONE);
-   auto funcType = static_cast<EulFunctionType*>(this->func->getEulType(ctx, 0).get());
-   this->compileTimeType = funcType->retType;
+    auto functionToCall = this->func->generateValue(ctx, EulCodeGenFlags_NONE);
+    auto funcType = static_cast<EulFunctionType*>(this->func->getEulType(ctx, 0).get());
+    this->compileTimeType = funcType->retType;
 
 
-   //2. Check that parameter count matches
-   auto paramsSize = (this->params == nullptr)? 0 : this->params->size();
-   if (funcType->argTypes.size() != paramsSize)
+    //2. Check that parameter count matches
+    int actualParamCount = (this->params == nullptr)? 0 : this->params->size();
+    int nonVarargParamCount = funcType->argTypes.size();
+    if (!funcType->isParameterCountValid(actualParamCount))
         throw EulError(EulErrorType::NOT_IMPLEMENTED, "NOT_IMPLEMENTED wrong parameter list count.");
 
-   //3. Get the args
-   std::vector<llvm::Value*> args;
-   for (int i=0, len = paramsSize; i<len; ++i) {
-        auto argType = funcType->argTypes[i];
+    //3. Get the args
+    std::vector<llvm::Value*> args;
+    for (int i=0; i<actualParamCount; ++i) {
+        //the type may be in the regular area, or in the varArg area. In any case, get it.
+        auto argType = i<nonVarargParamCount? funcType->argTypes[i] : funcType->varArgsType;
         auto param = (*this->params)[i];
 
         auto castedArgument = argType->castValue(
@@ -338,10 +340,10 @@ llvm::Value* EulFunctionCallExp::generateValue(EulCodeGenContext* ctx, unsigned 
            false,
            ctx
         );
-       args.push_back(castedArgument);
-   }
+        args.push_back(castedArgument);
+    }
 
-   return ctx->builder.CreateCall(functionToCall, llvm::ArrayRef<llvm::Value*>(args));
+    return ctx->builder.CreateCall(functionToCall, llvm::ArrayRef<llvm::Value*>(args));
 }
 
 llvm::Value* EulInfixExp::generateValue(EulCodeGenContext* ctx, unsigned int flags) {

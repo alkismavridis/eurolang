@@ -19,6 +19,24 @@ EulTypeEnum EulType::getTypeEnum() { return VOID_TYPE; }
 
 
 
+//region ANY TYPE
+EulAnyType::EulAnyType() {}
+
+void EulAnyType::toJson(std::ostream& out, int tabs) {
+    out << "{" << std::endl;
+    for (int i=tabs; i>=0; --i) out << "\t";
+    out << "\"type\":\"EulAnyType\"," << std::endl;
+
+    //close json object
+    for (int i=tabs-1; i>=0; --i) out << "\t";
+    out << "}";
+}
+
+EulTypeEnum EulAnyType::getTypeEnum() { return ANY_TYPE; }
+//endregion
+
+
+
 //region INT TYPE
 EulIntegerType::EulIntegerType(unsigned char size, bool isUnsigned) {
     this->size = size;
@@ -196,10 +214,26 @@ EulTypeEnum EulVoidType::getTypeEnum() { return VOID_TYPE; }
 //region FUNCTION TYPES
 EulFunctionType::EulFunctionType(const std::shared_ptr<EulType> retType) {
     this->retType = retType;
+    this->varArgsType = nullptr;
 }
 
 EulFunctionType::EulFunctionType(const std::shared_ptr<EulType> retType, std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>> argDeclarations) {
     this->retType = retType;
+    this->varArgsType = nullptr;
+    if (argDeclarations != nullptr) {
+        for (auto param : *argDeclarations) {
+            this->argTypes.push_back(param->varType);
+        }
+    }
+}
+
+EulFunctionType::EulFunctionType(
+  const std::shared_ptr<EulType> retType,
+  std::shared_ptr<std::vector<std::shared_ptr<VarDeclaration>>> argDeclarations,
+  const std::shared_ptr<EulType> varArgsType)
+{
+    this->retType = retType;
+    this->varArgsType = varArgsType;
     if (argDeclarations != nullptr) {
         for (auto param : *argDeclarations) {
             this->argTypes.push_back(param->varType);
@@ -227,6 +261,11 @@ void EulFunctionType::toJson(std::ostream& out, int tabs) {
     //close json object
     for (int i=tabs-1; i>=0; --i) out << "\t";
     out << "}";
+}
+
+bool EulFunctionType::isParameterCountValid(unsigned int paramCount) {
+    if (this->varArgsType==nullptr) return paramCount == this->argTypes.size();
+    else return paramCount >= this->argTypes.size();
 }
 
 

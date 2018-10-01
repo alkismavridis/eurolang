@@ -67,6 +67,7 @@ class EulType;
 #include "../src/core/EulAst/EulType/EulPointerType.h"
 #include "../src/core/EulAst/EulType/EulNamedType.h"
 #include "../src/core/EulAst/EulType/EulVoidType.h"
+#include "../src/core/EulAst/EulType/EulAnyType.h"
 #include "../src/core/EulAst/EulType/EulBooleanType.h"
 
 #include "../src/core/EulAst/EulStatement/EulStatementType.h"

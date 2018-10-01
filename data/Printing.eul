@@ -1,0 +1,5 @@
+var i = 0
+while i<100 {
+    if i%2===0 { printf("Even number found: %d\n", i); }
+    else { printf("Odd number found: %d\n", i); }
+}
