@@ -1,33 +1,28 @@
 #pragma once
 
-
-class Compiler;
-
-
-
 /**
-    This represents a char token. Chars in eul can have various sizes, just like ints.
+    This class represents an ID token, like a variable name or a method.
 */
-class EulCharToken : public EulToken {
+class EulSymbolNameNode : public EulNode {
     //region FIELDS
-    public: unsigned long int value;
-    public: unsigned char size; //in bytes
+    public: std::string name;
+    public: std::shared_ptr<EulScope> scope;
     //endregion
 
 
 
 
     //region LIFE CYCLE
-    public: EulCharToken(unsigned long int value, unsigned char size);
-    public: EulCharToken(const char* text, unsigned int len, Compiler* compiler);
+    public: EulSymbolNameNode(const char* text, unsigned int length, std::shared_ptr<EulScope> scope);
+    public: EulSymbolNameNode(const std::string& name, std::shared_ptr<EulScope> scope);
     //endregion
+
 
 
 
     //region SERIALIZING
     public: virtual void toJson(std::ostream& out, int tabs);
     //endregion
-
 
 
 

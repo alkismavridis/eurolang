@@ -9,12 +9,12 @@ class EulExpression : public EulStatement {
         It is NOT available during the building of the AST. So, assume that it is null at this point.
     */
     public: std::shared_ptr<EulType> compileTimeType = nullptr;
+    public: virtual EulExpressionType getExpressionType();
     //endregion
 
 
     //region OVERRIDES
     public: EulAstType getAstType();
     public: std::shared_ptr<EulType> getEulType(EulCodeGenContext* ctx, unsigned int someParam);
-    public: virtual EulExpressionType getExpressionType();
     //endregion
 };

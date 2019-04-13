@@ -39,8 +39,8 @@ class EulScanner : public yyFlexLexer {
 
 
     //region PARSING
-    public: std::shared_ptr<EulStringToken> parseStringValue(Compiler* compiler, yy::EulParser::location_type* loc);
-    public: std::shared_ptr<EulCharToken> parseEscapedChar(Compiler* compiler, yy::EulParser::location_type* loc);
+    public: std::shared_ptr<EulStringNode> parseStringValue(Compiler* compiler, yy::EulParser::location_type* loc);
+    public: std::shared_ptr<EulCharNode> parseEscapedChar(Compiler* compiler, yy::EulParser::location_type* loc);
     //endregion
 
 

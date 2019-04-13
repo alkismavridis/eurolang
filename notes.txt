@@ -1,3 +1,21 @@
+LANGUAGE NOTES
+  Nice ideas in Kotlin
+    - class members public by default.
+    - @Override
+
+  Terrible ideas in Kotlin
+    - static class methods go to ugly unacceptable companion object thing.
+
+
+
+
+
+
+
+
+
+
+
 DOCU for REENTRANT SCANNERS:  http://sector7.xray.aps.anl.gov/~dohnarms/programming/flex/html/Reentrant-Functions.html
 
 

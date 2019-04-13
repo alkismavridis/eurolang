@@ -2,11 +2,11 @@
 
 
 //region BASE CLASS
-EulAstType EulType::getAstType() { return EUL_TYPE; }
+EulAstType EulType::getAstType() { return EulAstType::EUL_TYPE; }
 
-bool EulType::isEulType(EulToken* tok) {
-    if (tok->getType() != AST) return false;
-    if ( ((EulAst*)tok)->getAstType() != EUL_TYPE) return false;
+bool EulType::isEulType(EulNode* tok) {
+    if (tok->getType() != EulTokenType::AST) return false;
+    if (static_cast<EulAst*>(tok)->getAstType() != EulAstType::EUL_TYPE) return false;
     return true;
 }
 
@@ -14,7 +14,7 @@ std::shared_ptr<EulType> EulType::getPointerTo(unsigned char depth) {
     return std::make_shared<EulPointerType>(this, depth);
 }
 
-EulTypeEnum EulType::getTypeEnum() { return VOID_TYPE; }
+EulTypeEnum EulType::getTypeEnum() { return EulTypeEnum::VOID_TYPE; }
 //endregion
 
 
@@ -32,7 +32,7 @@ void EulAnyType::toJson(std::ostream& out, int tabs) {
     out << "}";
 }
 
-EulTypeEnum EulAnyType::getTypeEnum() { return ANY_TYPE; }
+EulTypeEnum EulAnyType::getTypeEnum() { return EulTypeEnum::ANY_TYPE; }
 //endregion
 
 
@@ -59,7 +59,7 @@ void EulIntegerType::toJson(std::ostream& out, int tabs) {
     out << "}";
 }
 
-EulTypeEnum EulIntegerType::getTypeEnum() { return INT_TYPE; }
+EulTypeEnum EulIntegerType::getTypeEnum() { return EulTypeEnum::INT_TYPE; }
 //endregion
 
 
@@ -81,7 +81,7 @@ void EulCharType::toJson(std::ostream& out, int tabs) {
     out << "}";
 }
 
-EulTypeEnum EulCharType::getTypeEnum() { return CHAR_TYPE; }
+EulTypeEnum EulCharType::getTypeEnum() { return EulTypeEnum::CHAR_TYPE; }
 //endregion
 
 
@@ -104,7 +104,7 @@ void EulFloatType::toJson(std::ostream& out, int tabs) {
     out << "}";
 }
 
-EulTypeEnum EulFloatType::getTypeEnum() { return FLOAT_TYPE; }
+EulTypeEnum EulFloatType::getTypeEnum() { return EulTypeEnum::FLOAT_TYPE; }
 //endregion
 
 
@@ -124,7 +124,7 @@ void EulStringType::toJson(std::ostream& out, int tabs) {
     out << "}";
 }
 
-EulTypeEnum EulStringType::getTypeEnum() { return STRING_TYPE; }
+EulTypeEnum EulStringType::getTypeEnum() { return EulTypeEnum::STRING_TYPE; }
 //endregion
 
 
@@ -146,7 +146,7 @@ void EulNamedType::toJson(std::ostream& out, int tabs) {
     out << "}";
 }
 
-EulTypeEnum EulNamedType::getTypeEnum() { return NAMED_TYPE; }
+EulTypeEnum EulNamedType::getTypeEnum() { return EulTypeEnum::NAMED_TYPE; }
 //endregion
 
 
@@ -175,7 +175,7 @@ void EulPointerType::toJson(std::ostream& out, int tabs) {
     out << "}";
 }
 
-EulTypeEnum EulPointerType::getTypeEnum() { return POINTER_TYPE; }
+EulTypeEnum EulPointerType::getTypeEnum() { return EulTypeEnum::POINTER_TYPE; }
 //endregion
 
 
@@ -191,7 +191,7 @@ void EulBooleanType::toJson(std::ostream& out, int tabs) {
     out << "}";
 }
 
-EulTypeEnum EulBooleanType::getTypeEnum() { return BOOLEAN_TYPE; }
+EulTypeEnum EulBooleanType::getTypeEnum() { return EulTypeEnum::BOOLEAN_TYPE; }
 //endregion
 
 
@@ -206,7 +206,7 @@ void EulVoidType::toJson(std::ostream& out, int tabs) {
     out << "}";
 }
 
-EulTypeEnum EulVoidType::getTypeEnum() { return VOID_TYPE; }
+EulTypeEnum EulVoidType::getTypeEnum() { return EulTypeEnum::VOID_TYPE; }
 //endregion
 
 
@@ -254,8 +254,8 @@ void EulFunctionType::toJson(std::ostream& out, int tabs) {
 
     for (int i=tabs; i>=0; --i) out << "\t";
     out << "\"argTypes\": ";
-    auto tokenVector = (std::vector<std::shared_ptr<EulToken>>*) &this->argTypes;
-    EulToken::toJson(out, *tokenVector, tabs+1);
+    auto tokenVector = (std::vector<std::shared_ptr<EulNode>>*) &this->argTypes;
+    EulNode::toJson(out, *tokenVector, tabs+1);
     out << std::endl;
 
     //close json object
@@ -269,5 +269,5 @@ bool EulFunctionType::isParameterCountValid(unsigned int paramCount) {
 }
 
 
-EulTypeEnum EulFunctionType::getTypeEnum() { return FUNCTION_TYPE; }
+EulTypeEnum EulFunctionType::getTypeEnum() { return EulTypeEnum::FUNCTION_TYPE; }
 //endregion

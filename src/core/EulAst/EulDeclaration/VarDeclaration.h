@@ -2,15 +2,15 @@
 
 class VarDeclaration : public EulAst {
     //region FIELDS
-    public: std::shared_ptr<EulIdToken> id;
+    public: std::shared_ptr<EulSymbolNameNode> id;
     public: std::shared_ptr<EulType> varType;
-    public: std::shared_ptr<EulToken> value; //either an expression or a IntToken, CharToken etc.
+    public: std::shared_ptr<EulNode> value; //either an expression or a IntToken, CharToken etc.
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: VarDeclaration(std::shared_ptr<EulIdToken> id, std::shared_ptr<EulType> varType, std::shared_ptr<EulToken>);
+    public: VarDeclaration(std::shared_ptr<EulSymbolNameNode> id, std::shared_ptr<EulType> varType, std::shared_ptr<EulNode>);
     //endregion
 
 

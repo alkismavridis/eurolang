@@ -110,7 +110,7 @@ void EulScanner::skipSingleLineComment(yy::EulParser::location_type* loc) {
 
   For ensuring best possible reusability, we will store this buffer at the Compiler object.
 */
-std::shared_ptr<EulStringToken> EulScanner::parseStringValue(Compiler* compiler, yy::EulParser::location_type* loc) {
+std::shared_ptr<EulStringNode> EulScanner::parseStringValue(Compiler* compiler, yy::EulParser::location_type* loc) {
     int c;
     std::string& buffer = compiler->buffer;
     buffer.clear();
@@ -119,7 +119,7 @@ std::shared_ptr<EulStringToken> EulScanner::parseStringValue(Compiler* compiler,
         switch(c = this->yyinput()) {
             case '"': {
                 loc->columns();
-                return std::make_shared<EulStringToken>(buffer);
+                return std::make_shared<EulStringNode>(buffer);
             }
 
             //case '$':
@@ -164,7 +164,7 @@ std::shared_ptr<EulStringToken> EulScanner::parseStringValue(Compiler* compiler,
     return 0;
 }
 
-std::shared_ptr<EulCharToken> EulScanner::parseEscapedChar(Compiler* compiler, yy::EulParser::location_type* loc) {
+std::shared_ptr<EulCharNode> EulScanner::parseEscapedChar(Compiler* compiler, yy::EulParser::location_type* loc) {
     int c = this->yyinput();
     loc->columns();
 
@@ -185,6 +185,6 @@ std::shared_ptr<EulCharToken> EulScanner::parseEscapedChar(Compiler* compiler, y
     }
     loc->columns();
 
-    return std::make_shared<EulCharToken>(escaped, 8);
+    return std::make_shared<EulCharNode>(escaped, 8);
 }
 //endregion

@@ -1,11 +1,16 @@
 #pragma once
 
+
+class Compiler;
+
+
+
 /**
-    This class represents a float token. Floats in EUL have a size.
+    This represents a char token. Chars in eul can have various sizes, just like ints.
 */
-class EulFloatToken : public EulToken {
+class EulCharNode : public EulNode {
     //region FIELDS
-    public: double value;
+    public: unsigned long int value;
     public: unsigned char size; //in bytes
     //endregion
 
@@ -13,8 +18,8 @@ class EulFloatToken : public EulToken {
 
 
     //region LIFE CYCLE
-    public: EulFloatToken(double value, unsigned char size);
-    public: EulFloatToken(char* text);
+    public: EulCharNode(unsigned long int value, unsigned char size);
+    public: EulCharNode(const char* text, unsigned int len, Compiler* compiler);
     //endregion
 
 
@@ -22,6 +27,8 @@ class EulFloatToken : public EulToken {
     //region SERIALIZING
     public: virtual void toJson(std::ostream& out, int tabs);
     //endregion
+
+
 
 
     public: virtual EulTokenType getType();

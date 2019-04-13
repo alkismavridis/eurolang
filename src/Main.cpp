@@ -47,14 +47,14 @@ class EulType;
 //region APP HEADERS
 #include "../src/constants/Constants.h"
 
-#include "../src/core/EulToken/EulTokenType.h"
-#include "../src/core/EulToken/EulToken.h"
-#include "../src/core/EulToken/EulIntToken.h"
-#include "../src/core/EulToken/EulCharToken.h"
-#include "../src/core/EulToken/EulBooleanToken.h"
-#include "../src/core/EulToken/EulFloatToken.h"
-#include "../src/core/EulToken/EulIdToken.h"
-#include "../src/core/EulToken/EulStringToken.h"
+#include "../src/core/EulNode/enums/EulTokenType.h"
+#include "../src/core/EulNode/EulNode.h"
+#include "../src/core/EulNode/LeafNodes/EulIntNode/EulIntNode.h"
+#include "../src/core/EulNode/LeafNodes/EulCharNode/EulCharNode.h"
+#include "../src/core/EulNode/LeafNodes/EulBooleanNode/EulBooleanNode.h"
+#include "../src/core/EulNode/LeafNodes/EulFloatNode/EulFloatNode.h"
+#include "../src/core/EulNode/LeafNodes/EulSymbolNameNode/EulSymbolNameNode.h"
+#include "../src/core/EulNode/LeafNodes/EulStringNode/EulStringNode.h"
 
 #include "../src/core/EulAst/EulAstType.h"
 #include "../src/core/EulAst/EulAst.h"

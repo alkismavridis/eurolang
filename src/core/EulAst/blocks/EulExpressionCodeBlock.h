@@ -6,13 +6,13 @@
 */
 class EulExpressionCodeBlock {
     //region FIELDS
-    public: std::shared_ptr<EulToken> expression;
+    public: std::shared_ptr<EulNode> expression;
     public: std::shared_ptr<EulCodeBlock> block;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulExpressionCodeBlock(std::shared_ptr<EulToken> expression, std::shared_ptr<EulCodeBlock> block);
+    public: EulExpressionCodeBlock(std::shared_ptr<EulNode> expression, std::shared_ptr<EulCodeBlock> block);
     //endregion
 };

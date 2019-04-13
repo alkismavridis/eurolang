@@ -12,12 +12,12 @@ class EulScannerTest {
     	int type = scanner.yylex(&semantic, loc, ctx);
     	Assert::equals(yy::EulParser::token::INT, type, label + "__1");
 
-    	EulIntToken* token = semantic.as<EulIntToken*>();
+    	EulIntNode* token = semantic.as<EulIntNode*>();
     	Assert::equals(expected, token->value, label + "__2");
     	Assert::equals(size, token->size, label + "__3");
     	Assert::equals(isUnsigned, token->isUnsigned, label + "__4");
 
-    	semantic.destroy<EulIntToken*>();
+    	semantic.destroy<EulIntNode*>();
     }
 
     private: static void checkFloatToken(EulScanner &scanner, EulParsingContext *ctx, yy::EulParser::location_type* loc, double expected, unsigned char size, double tolerance, const std::string &label) {
@@ -26,11 +26,11 @@ class EulScannerTest {
     	int type = scanner.yylex(&semantic, loc, ctx);
     	Assert::equals(yy::EulParser::token::FLOAT, type, label + "__1");
 
-        EulFloatToken* token = semantic.as<EulFloatToken*>();
+        EulFloatNode* token = semantic.as<EulFloatNode*>();
     	Assert::equals(expected, token->value, tolerance, label + "__2");
     	Assert::equals(size, token->size, label + "__3");
 
-    	semantic.destroy<EulFloatToken*>();
+    	semantic.destroy<EulFloatNode*>();
     }
 
     private: static void checkCharToken(EulScanner &scanner, EulParsingContext *ctx, yy::EulParser::location_type* loc, unsigned long int expected, unsigned char size, const std::string &label) {
@@ -39,11 +39,11 @@ class EulScannerTest {
         int type = scanner.yylex(&semantic, loc, ctx);
     	Assert::equals(yy::EulParser::token::CHAR, type, label + "__type");
 
-        EulCharToken* token = semantic.as<EulCharToken*>();
+        EulCharNode* token = semantic.as<EulCharNode*>();
     	Assert::equals(expected, token->value, label + "__value");
     	Assert::equals(size, token->size, label + "__size");
 
-    	semantic.destroy<EulCharToken*>();
+    	semantic.destroy<EulCharNode*>();
     }
 
     private: static void checkStringToken(EulScanner &scanner, EulParsingContext *ctx, yy::EulParser::location_type* loc, const std::string& expected, const std::string &label) {
@@ -52,10 +52,10 @@ class EulScannerTest {
         int type = scanner.yylex(&semantic, loc, ctx);
     	Assert::equals(yy::EulParser::token::STRING, type, label + "__1");
 
-        EulStringToken* token = semantic.as<EulStringToken*>();
+        EulStringNode* token = semantic.as<EulStringNode*>();
         Assert::equals(expected, token->value, label + "__2");
 
-        semantic.destroy<EulStringToken*>();
+        semantic.destroy<EulStringNode*>();
     }
 
     private: static void checkIdToken(EulScanner &scanner, EulParsingContext *ctx, yy::EulParser::location_type* loc, const std::string &name, const std::string &label) {
@@ -64,10 +64,10 @@ class EulScannerTest {
         int type = scanner.yylex(&semantic, loc, ctx);
         Assert::equals(yy::EulParser::token::ID, type, label + "__1");
 
-        EulIdToken* token = semantic.as<EulIdToken*>();
+        EulSymbolNameNode* token = semantic.as<EulSymbolNameNode*>();
         Assert::equals(name, token->name, label + "__2");
 
-        semantic.destroy<EulIdToken*>();
+        semantic.destroy<EulSymbolNameNode*>();
     }
 
 
@@ -91,10 +91,10 @@ class EulScannerTest {
         int type = scanner.yylex(&semantic, loc, ctx);
     	Assert::equals(yy::EulParser::token::BOOLEAN, type, label + "__type");
 
-        EulBooleanToken* token = semantic.as<EulBooleanToken*>();
+        EulBooleanNode* token = semantic.as<EulBooleanNode*>();
     	Assert::equals(expected, token->value, label + "__value");
 
-    	semantic.destroy<EulBooleanToken*>();
+    	semantic.destroy<EulBooleanNode*>();
    }
    //endregion
 
@@ -149,7 +149,7 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "D3");
 
         Assert::equals(1, compiler.errors.size(), t + "D4");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "D4");
+        Assert::enumEquals(EulErrorType::LEXER, compiler.errors[0].type, t + "D4");
         Assert::equals("End of file while parsing comment", compiler.errors[0].message, t + "D5");
    }
 
@@ -476,7 +476,7 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "E2");
         checkLocation(&loc, 1, 1, 1, 4, t + "E2_loc");
         Assert::equals(1, compiler.errors.size(), t + "E3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "E4");
+        Assert::enumEquals(EulErrorType::LEXER, compiler.errors[0].type, t + "E4");
         Assert::equals("Illegal escaped character.", compiler.errors[0].message, t + "E5");
 
 
@@ -489,7 +489,7 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "F2");
         checkLocation(&loc, 1, 1, 1, 4, t + "F2_loc");
         Assert::equals(1, compiler.errors.size(), t + "F3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "F4");
+        Assert::enumEquals(EulErrorType::LEXER, compiler.errors[0].type, t + "F4");
         Assert::equals("Illegal escaped character.", compiler.errors[0].message, t + "F5");
 
 
@@ -502,7 +502,7 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "G2");
         checkLocation(&loc, 1, 1, 1, 4, t + "G2_loc");
         Assert::equals(1, compiler.errors.size(), t + "G3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "G4");
+        Assert::enumEquals(EulErrorType::LEXER, compiler.errors[0].type, t + "G4");
         Assert::equals("Closing ' expected in char literal.", compiler.errors[0].message, t + "G5");
     }
 
@@ -547,7 +547,7 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "C2");
         checkLocation(&loc, 1, 1, 1, 53, t + "C2_loc");
         Assert::equals(1, compiler.errors.size(), t + "C3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "C3");
+        Assert::enumEquals(EulErrorType::LEXER, compiler.errors[0].type, t + "C3");
         Assert::equals("End of file while parsing String.", compiler.errors[0].message, t + "C4");
 
         //non existent escape character
@@ -558,7 +558,7 @@ class EulScannerTest {
         loc.initialize();
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "D2");
         checkLocation(&loc, 1, 1, 1, 43, t + "D2_loc"); //43 is the location that the error happened
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "D3");
+        Assert::enumEquals(EulErrorType::LEXER, compiler.errors[0].type, t + "D3");
         Assert::equals("Illegal escaped character inside String.", compiler.errors[0].message, t + "D4");
 
         //EOF during escaped character
@@ -570,7 +570,7 @@ class EulScannerTest {
         checkTokenType(scanner, &ctx, &loc, yy::EulParser::token::ERROR, t + "E2");
         checkLocation(&loc, 1, 1, 1, 33, t + "E2_loc");
         Assert::equals(1, compiler.errors.size(), t + "E3");
-        Assert::equals(EulErrorType::LEXER, compiler.errors[0].type, t + "E3");
+        Assert::enumEquals(EulErrorType::LEXER, compiler.errors[0].type, t + "E3");
         Assert::equals("Illegal escaped character inside String.", compiler.errors[0].message, t + "E4");
     }
     //endregion

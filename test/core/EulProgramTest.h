@@ -131,7 +131,7 @@ class EulProgramTest {
         //1. Add 2 source files and some symbols on the global scope
         auto file1 = program.getSource("someFileName1.eul", 1);
         auto file2 = program.getSource("someFileName2.eul", 1);
-        program.globalScope->declare("someNewSymbol", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("123")));
+        program.globalScope->declare("someNewSymbol", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("123")));
 
         Assert::notNull(program.getSource("someFileName1.eul", 0).get(), t+"A1");
         Assert::notNull(program.globalScope->getOwnSymbol("someNewSymbol").get(), t+"A2");

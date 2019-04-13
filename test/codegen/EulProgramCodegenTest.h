@@ -18,7 +18,7 @@ class EulProgramCodegenTest {
         auto eulSymbol = comp.program.globalScope->getOwnSymbol("exit");
         Assert::notNull(eulSymbol.get(), t+"A1 exit is defined in global scope");
         Assert::equals(yy::EulParser::token::VAL, eulSymbol->changeType, t+"A2 is val");
-        Assert::equals(FUNCTION_TYPE, eulSymbol->varType->getTypeEnum(), t+"A3 is function");
+        Assert::enumEquals(EulTypeEnum::FUNCTION_TYPE, eulSymbol->varType->getTypeEnum(), t+"A3 is function");
 
         auto asFuncType = static_cast<EulFunctionType*>(eulSymbol->varType.get());
         Assert::equals(comp.program.nativeTypes.voidType.get(), asFuncType->retType.get(), t+"A4 exit is void");
@@ -31,7 +31,7 @@ class EulProgramCodegenTest {
         eulSymbol = comp.program.globalScope->getOwnSymbol("print");
         Assert::notNull(eulSymbol.get(), t+"B1 print is defined in global scope");
         Assert::equals(yy::EulParser::token::VAL, eulSymbol->changeType, t+"B2 is val");
-        Assert::equals(FUNCTION_TYPE, eulSymbol->varType->getTypeEnum(), t+"B3 is function");
+        Assert::enumEquals(EulTypeEnum::FUNCTION_TYPE, eulSymbol->varType->getTypeEnum(), t+"B3 is function");
 
         asFuncType = static_cast<EulFunctionType*>(eulSymbol->varType.get());
         Assert::equals(comp.program.nativeTypes.int32Type.get(), asFuncType->retType.get(), t+"B4 print returns int");

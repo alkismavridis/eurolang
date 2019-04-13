@@ -3,13 +3,13 @@
 
 class ReturnStatement : public EulStatement {
     //region FIELDS
-    public: std::shared_ptr<EulToken> exp; //can be null in case of void
+    public: std::shared_ptr<EulNode> exp; //can be null in case of void
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: ReturnStatement(std::shared_ptr<EulToken> exp);
+    public: ReturnStatement(std::shared_ptr<EulNode> exp);
     //endregion
 
 

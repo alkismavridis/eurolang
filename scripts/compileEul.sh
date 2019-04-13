@@ -1,5 +1,11 @@
 #1. Compile
-    ../out/eulc ../data/test.eul ../out/obj.o
+	echo $1;
+	TARGET_FILE=$1
+	if [ $# -eq 0 ]
+	then
+		TARGET_FILE="../data/test.eul"
+	fi
+    ../out/eulc $TARGET_FILE ../out/obj.o
 
 
 #2. Link

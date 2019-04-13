@@ -6,14 +6,14 @@
 class EulFuncDeclarationStatement : public EulStatement {
     //region FIELDS
     public: std::shared_ptr<EulFunction> func;
-    public: std::shared_ptr<EulIdToken> name;
+    public: std::shared_ptr<EulSymbolNameNode> name;
     public: llvm::Function* llvmFunc;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulFuncDeclarationStatement(std::shared_ptr<EulFunction> func, std::shared_ptr<EulIdToken> name);
+    public: EulFuncDeclarationStatement(std::shared_ptr<EulFunction> func, std::shared_ptr<EulSymbolNameNode> name);
     //endregion
 
 

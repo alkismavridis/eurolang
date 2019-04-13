@@ -1,6 +1,6 @@
 #pragma once
 
-enum EulAstType {
+enum class EulAstType {
     NO_TYPE,
     STATEMENT,
     SYMBOL,

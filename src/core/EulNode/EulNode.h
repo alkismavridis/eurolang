@@ -5,8 +5,8 @@
     This is the base class of all tokens. It only provides a getType() method, which will determine if this token
     is an Operator token, an Integer token and so on.
 */
-class EulToken {
-    public: virtual ~EulToken();
+class EulNode {
+    public: virtual ~EulNode();
     public: virtual EulTokenType getType();
 
 
@@ -18,9 +18,9 @@ class EulToken {
 
     //region SERIALIZING
     public: virtual void toJson(std::ostream& out, int tabs);
-    public: static void toJson(std::ostream& out, std::vector<EulToken*>* tokens, int tabs);
-    public: static void toJson(std::ostream& out, std::vector<std::shared_ptr<EulToken>> tokens, int tabs);
+    public: static void toJson(std::ostream& out, std::vector<EulNode*>* tokens, int tabs);
+    public: static void toJson(std::ostream& out, std::vector<std::shared_ptr<EulNode>> tokens, int tabs);
     //endregion
 };
 
-std::ostream& operator<<(std::ostream& os, EulToken* tok);
+std::ostream& operator<<(std::ostream& os, EulNode* tok);

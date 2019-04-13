@@ -10,16 +10,16 @@ class EulIfStatement : public EulStatement {
 
 
     //region LIFE CYCLE
-    public: EulIfStatement(std::shared_ptr<EulToken> condition, std::shared_ptr<EulCodeBlock> ifBlock); //single if
+    public: EulIfStatement(std::shared_ptr<EulNode> condition, std::shared_ptr<EulCodeBlock> ifBlock); //single if
 
     public: EulIfStatement( //if else
-        std::shared_ptr<EulToken> condition,
+        std::shared_ptr<EulNode> condition,
         std::shared_ptr<EulCodeBlock> ifBlock,
         std::shared_ptr<EulCodeBlock> elseSection
     );
 
     public: EulIfStatement(  //if else-ifs else
-        std::shared_ptr<EulToken> condition,
+        std::shared_ptr<EulNode> condition,
         std::shared_ptr<EulCodeBlock> ifBlock,
         std::shared_ptr<std::vector<std::shared_ptr<EulExpressionCodeBlock>>> elseIfs,
         std::shared_ptr<EulCodeBlock> elseSection

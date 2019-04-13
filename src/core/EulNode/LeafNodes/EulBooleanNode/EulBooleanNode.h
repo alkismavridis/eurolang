@@ -1,23 +1,19 @@
 #pragma once
 
 /**
-    This class represents an ID token, like a variable name or a method.
+    This class represents an int token. Ints in EUL have a size, and can be signed or unsigned.
 */
-class EulIdToken : public EulToken {
+class EulBooleanNode : public EulNode {
     //region FIELDS
-    public: std::string name;
-    public: std::shared_ptr<EulScope> scope;
+    public: bool value;
     //endregion
 
 
 
 
     //region LIFE CYCLE
-    public: EulIdToken(const char* text, unsigned int length, std::shared_ptr<EulScope> scope);
-    public: EulIdToken(const std::string& name, std::shared_ptr<EulScope> scope);
+    public: EulBooleanNode(bool value);
     //endregion
-
-
 
 
     //region SERIALIZING

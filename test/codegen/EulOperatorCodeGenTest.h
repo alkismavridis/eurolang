@@ -387,9 +387,9 @@ class EulOperatorCodeGenTest {
         VarDeclarationStatement tok(yy::EulParser::token::VAR, std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>());
         tok.declarations->push_back(
             std::make_shared<VarDeclaration>(
-                std::make_shared<EulIdToken>("myVar", ctx.currentScope),
+                std::make_shared<EulSymbolNameNode>("myVar", ctx.currentScope),
                 nullptr,
-                std::make_shared<EulIntToken>(123, 32, false)
+                std::make_shared<EulIntNode>(123, 32, false)
             )
         );
         ctx.currentScope->declare(&tok);

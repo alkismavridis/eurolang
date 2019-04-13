@@ -25,7 +25,7 @@ class EulType : public EulAst {
 
     //region CLASS HIERARCHY UTILSs
     public: EulAstType getAstType();
-    public: static bool isEulType(EulToken* tok);
+    public: static bool isEulType(EulNode* tok);
     //endregion
 
 

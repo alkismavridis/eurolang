@@ -9,7 +9,7 @@ class EulTokenCodeGenTest {
         EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
-        EulCharToken tok('b', 8);
+        EulCharNode tok('b', 8);
         auto llvmValue = tok.generateValue(&ctx, EulCodeGenFlags_NONE);
         Assert::llvmIntConstant(llvmValue, 8, (int)'b', t+"A1");
 
@@ -31,7 +31,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid size, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"B1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"B1");
             Assert::equals("Invalid character size: 64. Please use one of 8, 16, 32.", e.message, t+"B2");
         }
     }
@@ -44,7 +44,7 @@ class EulTokenCodeGenTest {
         EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
-        EulCharToken tok('b', 8);
+        EulCharNode tok('b', 8);
         auto eulType = tok.getEulType(&ctx, 0);
         Assert::equals(eulType.get(), comp.program.nativeTypes.char8Type.get(), t+"A1");
 
@@ -66,7 +66,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid size, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"B1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"B1");
             Assert::equals("Invalid character size: 64. Please use one of 8, 16, 32.", e.message, t+"B2");
         }
     }
@@ -83,7 +83,7 @@ class EulTokenCodeGenTest {
         EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
-        EulFloatToken tok(12.5, 32);
+        EulFloatNode tok(12.5, 32);
         auto llvmValue = tok.generateValue(&ctx, EulCodeGenFlags_NONE);
         Assert::llvmFloatConstant(llvmValue, 32, 12.5, 0.001, t+"A1");
 
@@ -100,7 +100,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid size, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"B1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"B1");
             Assert::equals("Invalid floating point size: 14. Please use one of 32, 64.", e.message, t+"B2");
         }
     }
@@ -113,7 +113,7 @@ class EulTokenCodeGenTest {
         EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
-        EulFloatToken tok(12.5, 32);
+        EulFloatNode tok(12.5, 32);
         auto eulType = tok.getEulType(&ctx, 0);
         Assert::equals(eulType.get(), comp.program.nativeTypes.float32Type.get(), t+"A1");
 
@@ -129,7 +129,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid size, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"B1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"B1");
             Assert::equals("Invalid floating point size: 14. Please use one of 32, 64.", e.message, t+"B2");
         }
     }
@@ -145,7 +145,7 @@ class EulTokenCodeGenTest {
         EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
-        EulIntToken tok(123, 8, false);
+        EulIntNode tok(123, 8, false);
         auto llvmValue = tok.generateValue(&ctx, EulCodeGenFlags_NONE);
         Assert::llvmIntConstant(llvmValue, 8, 123, t+"A1");
 
@@ -196,7 +196,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid size, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"C1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"C1");
             Assert::equals("Invalid integer size: 33. Please use one of 8, 16, 32, 64.", e.message, t+"C2");
         }
 
@@ -207,7 +207,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid size, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"D1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"D1");
             Assert::equals("Invalid integer size: 33. Please use one of 8, 16, 32, 64.", e.message, t+"D2");
         }
     }
@@ -220,7 +220,7 @@ class EulTokenCodeGenTest {
         EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a char token and get its llvm value
-        EulIntToken tok(123, 8, false);
+        EulIntNode tok(123, 8, false);
         auto eulType = tok.getEulType(&ctx, 0);
         Assert::equals(eulType.get(), comp.program.nativeTypes.int8Type.get(), t+"A1");
 
@@ -271,7 +271,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid size, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"C1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"C1");
             Assert::equals("Invalid integer size: 33. Please use one of 8, 16, 32, 64.", e.message, t+"C2");
         }
 
@@ -282,7 +282,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid size, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"D1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"D1");
             Assert::equals("Invalid integer size: 33. Please use one of 8, 16, 32, 64.", e.message, t+"D2");
         }
     }
@@ -298,12 +298,12 @@ class EulTokenCodeGenTest {
         EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a string and get its value
-        EulStringToken tok("hello\n");
+        EulStringNode tok("hello\n");
         auto llvmValue = tok.generateValue(&ctx, EulCodeGenFlags_NONE);
         Assert::llvmStringConstant(llvmValue, "hello\n", &ctx, t+"A1");
 
         //2. Create a string and get its value
-        EulStringToken tok2("one_two\n");
+        EulStringNode tok2("one_two\n");
         llvmValue = tok2.generateValue(&ctx, EulCodeGenFlags_NONE);
         Assert::llvmStringConstant(llvmValue, "one_two\n", &ctx, t+"A2");
 
@@ -316,7 +316,7 @@ class EulTokenCodeGenTest {
         EulCodeGenContext ctx(&comp, llvmCtx, &module, comp.program.globalScope, nullptr);
 
         //1. Create a string token and check its type
-        EulStringToken tok("hello\n");
+        EulStringNode tok("hello\n");
         auto eulType = tok.getEulType(&ctx, 0);
         Assert::equals(eulType.get(), comp.program.nativeTypes.stringType.get(), t+"A1");
     }
@@ -339,7 +339,7 @@ class EulTokenCodeGenTest {
             std::make_shared<EulSymbol>(
                 yy::EulParser::token::VAR,
                 comp.program.nativeTypes.stringType,
-                std::make_shared<EulStringToken>("123")
+                std::make_shared<EulStringNode>("123")
             )
         );
         comp.program.globalScope->declare(
@@ -347,12 +347,12 @@ class EulTokenCodeGenTest {
             std::make_shared<EulSymbol>(
                 yy::EulParser::token::VAR,
                 comp.program.nativeTypes.float32Type,
-                std::make_shared<EulFloatToken>(2.3, 32)
+                std::make_shared<EulFloatNode>(2.3, 32)
             )
         );
 
         //2. Get the type of the symbols
-        EulIdToken tok("new1", comp.program.globalScope);
+        EulSymbolNameNode tok("new1", comp.program.globalScope);
         auto eulType = tok.getEulType(&ctx, 0);
         Assert::equals(eulType.get(), comp.program.nativeTypes.stringType.get(), t+"A1");
 
@@ -372,7 +372,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to non existing symbol, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"C1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"C1");
             Assert::equals("iDoNotExist: Symbol not found.", e.message, t+"C2");
         }
     }
@@ -392,7 +392,7 @@ class EulTokenCodeGenTest {
         auto symbol = std::make_shared<EulSymbol>(
             yy::EulParser::token::VAR,
             comp.program.nativeTypes.stringType,
-            std::make_shared<EulIntToken>(123, 32, false)
+            std::make_shared<EulIntNode>(123, 32, false)
         );
         symbol->llvmValue = ctx.builder.CreateAlloca(llvm::IntegerType::get(ctx.context, 32), nullptr, "someIntVar");
         auto store = ctx.builder.CreateStore(
@@ -404,13 +404,13 @@ class EulTokenCodeGenTest {
         symbol = std::make_shared<EulSymbol>(
             yy::EulParser::token::VAR,
             comp.program.nativeTypes.float32Type,
-            std::make_shared<EulFloatToken>(7.5, 32)
+            std::make_shared<EulFloatNode>(7.5, 32)
         );
         symbol->llvmValue = llvm::ConstantFP::get(comp.program.nativeTypes.float32Type->getLlvmType(&ctx), 7.5);
         comp.program.globalScope->declare("someFloatLiteral", symbol);
 
         //3. Get the type of the symbols
-        EulIdToken tok("someFloatLiteral", comp.program.globalScope);
+        EulSymbolNameNode tok("someFloatLiteral", comp.program.globalScope);
         auto llvmValue = tok.generateValue(&ctx, EulCodeGenFlags_NONE);
         Assert::llvmFloatConstant(llvmValue, 32, 7.5, 0.001, t+"A1");
         Assert::equals(2, ctx.builder.GetInsertBlock()->size(), t+"A2"); //we start with 2 commands in the block: the alloca and the store.
@@ -428,7 +428,7 @@ class EulTokenCodeGenTest {
             Assert::fail(t+" Expected exception due to non existing symbol, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"D1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"D1");
             Assert::equals("iDoNotExist: Symbol not found.", e.message, t+"D2");
             Assert::equals(2, ctx.builder.GetInsertBlock()->size(), t+"D3");
         }

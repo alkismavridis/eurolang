@@ -2,14 +2,14 @@
 
 class EulSuffixExp : public EulExpression {
     //region LIFE CYCLE
-    public: std::shared_ptr<EulToken> exp;
+    public: std::shared_ptr<EulNode> exp;
     public: EulOperator* oper;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulSuffixExp(std::shared_ptr<EulToken> exp, EulOperator* oper);
+    public: EulSuffixExp(std::shared_ptr<EulNode> exp, EulOperator* oper);
     //endregion
 
 

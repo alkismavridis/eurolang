@@ -48,11 +48,11 @@ class EulScope;
 
 #include "../src/core/EulToken/EulTokenType.h"
 #include "../src/core/EulToken/EulToken.h"
-#include "../src/core/EulToken/EulIntToken.h"
-#include "../src/core/EulToken/EulCharToken.h"
-#include "../src/core/EulToken/EulFloatToken.h"
-#include "../src/core/EulToken/EulIdToken.h"
-#include "../src/core/EulToken/EulStringToken.h"
+#include "../src/core/EulToken/EulIntNode.h"
+#include "../src/core/EulToken/EulCharNode.h"
+#include "../src/core/EulToken/EulFloatNode.h"
+#include "../src/core/EulToken/EulSymbolNameNode.h"
+#include "../src/core/EulToken/EulStringNode.h"
 
 #include "../src/core/EulAst/EulAstType.h"
 #include "../src/core/EulAst/EulAst.h"

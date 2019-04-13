@@ -82,14 +82,14 @@ class CompilerTest {
         //1. make a lexer error, including error handler, using 2-params constructor
         comp.addError(EulErrorType::LEXER, "lex");
         Assert::equals(1, comp.errors.size(), t + "A1");
-        Assert::equals(EulErrorType::LEXER, comp.errors[0].type, t + "A2");
+        Assert::enumEquals(EulErrorType::LEXER, comp.errors[0].type, t + "A2");
         Assert::equals("lex", comp.errors[0].message, t + "A3");
         Assert::equals(".", comp.buffer, t + "A4");
 
         //2. make a parser error, including error handler, using 1-param constructor
         comp.addError(EulError(EulErrorType::SYNTAX, "file not found"));
         Assert::equals(2, comp.errors.size(), t + "B1");
-        Assert::equals(EulErrorType::SYNTAX, comp.errors[1].type, t + "B2");
+        Assert::enumEquals(EulErrorType::SYNTAX, comp.errors[1].type, t + "B2");
         Assert::equals("file not found", comp.errors[1].message, t + "B3");
         Assert::equals("..", comp.buffer, t + "B4");
 
@@ -105,14 +105,14 @@ class CompilerTest {
         //5. make a lexer error, without error handler, using 2-params constructor
         comp.addError(EulErrorType::LEXER, "lex");
         Assert::equals(1, comp.errors.size(), t + "E1");
-        Assert::equals(EulErrorType::LEXER, comp.errors[0].type, t + "E2");
+        Assert::enumEquals(EulErrorType::LEXER, comp.errors[0].type, t + "E2");
         Assert::equals("lex", comp.errors[0].message, t + "E3");
         Assert::equals("", comp.buffer, t + "E4");
 
         //6. make a parser error, without error handler, using 1-param constructor
         comp.addError(EulError(EulErrorType::SYNTAX, "file not found"));
         Assert::equals(2, comp.errors.size(), t + "F1");
-        Assert::equals(EulErrorType::SYNTAX, comp.errors[1].type, t + "F2");
+        Assert::enumEquals(EulErrorType::SYNTAX, comp.errors[1].type, t + "F2");
         Assert::equals("file not found", comp.errors[1].message, t + "F3");
         Assert::equals("", comp.buffer, t + "F4");
 

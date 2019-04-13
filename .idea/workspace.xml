@@ -4,25 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/src/lexer/EulScanner.h" line="11" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d5091fb7-ff95-4216-91d9-ab26aad80d8f" name="Default" comment="We ve got loops and functions! The baby language has became a small child now!">
-      <change afterPath="$PROJECT_DIR$/data/Printing.eul" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulAnyType.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/CountPrimesUntil.eul" beforeDir="false" afterPath="$PROJECT_DIR$/data/CountPrimesUntil.eul" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/test.eul" beforeDir="false" afterPath="$PROJECT_DIR$/data/test.eul" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/eulc" beforeDir="false" afterPath="$PROJECT_DIR$/out/eulc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulAst.CodeGen.impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulAst.CodeGen.impl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulType/EulFunctionType.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulFunctionType.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.CodeGen.impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.CodeGen.impl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulType.impl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulAst/EulType/EulTypeEnum.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulAst/EulType/EulTypeEnum.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulProgram/EulNativeTypes.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulProgram/EulNativeTypes.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/EulProgram/EulProgram.impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/EulProgram/EulProgram.impl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/parser.yy" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/parser.yy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/MainTest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/MainTest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/codegen/EulAstCodeGenTest.h" beforeDir="false" afterPath="$PROJECT_DIR$/test/codegen/EulAstCodeGenTest.h" afterDir="false" />
-    </list>
+    <list default="true" id="d5091fb7-ff95-4216-91d9-ab26aad80d8f" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -270,10 +252,11 @@
       <select />
     </treeState>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="24" />
-    <option name="width" value="1366" />
-    <option name="height" value="695" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="49" />
+    <option name="y" value="27" />
+    <option name="width" value="1375" />
+    <option name="height" value="788" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -613,7 +596,7 @@
       <workItem from="1534536703199" duration="186697000" />
       <workItem from="1536405366519" duration="51441000" />
       <workItem from="1536914854582" duration="496000" />
-      <workItem from="1536915776675" duration="53335000" />
+      <workItem from="1536915776675" duration="54330000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <created>1526679886850</created>
@@ -713,11 +696,18 @@
       <option name="project" value="LOCAL" />
       <updated>1537138773959</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="printf varargs first implementation.">
+      <created>1538378652163</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1538378652163</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1071371000" />
+    <option name="totallyTimeSpent" value="1072366000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -729,7 +719,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="49" y="-3" width="1871" height="1083" extended-state="6" />
+    <frame x="49" y="27" width="1375" height="788" extended-state="0" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="7" weight="0.32938644" />
@@ -741,10 +731,10 @@
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32843652" />
       <window_info anchor="bottom" id="Run" order="3" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49863315" visible="true" weight="0.4348762" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49863315" visible="true" weight="0.63722396" />
       <window_info id="Capture Tool" order="6" />
       <window_info id="Designer" order="3" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49714285" visible="true" weight="0.2695462" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49714285" visible="true" weight="0.36984247" />
       <window_info anchor="right" id="Database" order="7" />
       <window_info anchor="bottom" id="Find" order="2" weight="0.32938644" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -783,7 +773,8 @@
     <MESSAGE value="More operators" />
     <MESSAGE value="We ve got if statements. YEY!!!" />
     <MESSAGE value="We ve got loops and functions! The baby language has became a small child now!" />
-    <option name="LAST_COMMIT_MESSAGE" value="We ve got loops and functions! The baby language has became a small child now!" />
+    <MESSAGE value="printf varargs first implementation." />
+    <option name="LAST_COMMIT_MESSAGE" value="printf varargs first implementation." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/test/codegen/IfStatementCodeGenTest.h">

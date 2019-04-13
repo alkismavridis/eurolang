@@ -1,8 +1,6 @@
 #pragma once
 
 /**
-    A code block paired with an expression.
-    This can be used for if blocks, else if blocks, while blocks etc.
 */
 class EulFunction : public EulAst {
     //region FIELDS

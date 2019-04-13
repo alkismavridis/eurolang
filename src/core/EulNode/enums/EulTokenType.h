@@ -1,6 +1,6 @@
 #pragma once
 
-enum EulTokenType {
+enum class EulTokenType {
     UNKNOWN,
     AST,
     INT,

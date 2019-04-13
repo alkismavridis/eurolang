@@ -18,19 +18,19 @@ class EulParserTest {
 
 
         //2. Assert AST
-        Assert::equals(EulTokenType::AST, file->statements->operator[](0)->getType(), t + "A2");
-        Assert::equals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](0).get())->getAstType(), t + "A3");
-        Assert::equals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](0).get())->getStatementType(), t + "A4");
+        Assert::enumEquals(EulTokenType::AST, file->statements->operator[](0)->getType(), t + "A2");
+        Assert::enumEquals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](0).get())->getAstType(), t + "A3");
+        Assert::enumEquals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](0).get())->getStatementType(), t + "A4");
         Assert::equals(yy::EulParser::token::VAR, ((VarDeclarationStatement*)file->statements->operator[](0).get())->varType, t + "A5");
         Assert::equals(1, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->size(), t + "A6");
         Assert::equals("x", ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->id->name, t + "A7");
-        Assert::equals(EulTokenType::INT, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A8");
-        Assert::equals(5, ((EulIntToken*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->value, t + "A9");
+        Assert::enumEquals(EulTokenType::INT, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A8");
+        Assert::equals(5, ((EulIntNode*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->value, t + "A9");
         Assert::null(((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->varType.get(), t + "A10");
 
-        Assert::equals(EulTokenType::AST, file->statements->operator[](1)->getType(), t + "B1");
-        Assert::equals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](1).get())->getAstType(), t + "B2");
-        Assert::equals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](1).get())->getStatementType(), t + "B3");
+        Assert::enumEquals(EulTokenType::AST, file->statements->operator[](1)->getType(), t + "B1");
+        Assert::enumEquals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](1).get())->getAstType(), t + "B2");
+        Assert::enumEquals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](1).get())->getStatementType(), t + "B3");
         Assert::equals(yy::EulParser::token::VAR, ((VarDeclarationStatement*)file->statements->operator[](1).get())->varType, t + "B4");
         Assert::equals(1, ((VarDeclarationStatement*)file->statements->operator[](1).get())->declarations->size(), t + "B5");
         Assert::equals("y", ((VarDeclarationStatement*)file->statements->operator[](1).get())->declarations->operator[](0)->id->name, t + "B6");
@@ -38,25 +38,25 @@ class EulParserTest {
         Assert::null(((VarDeclarationStatement*)file->statements->operator[](1).get())->declarations->operator[](0)->varType.get(), t + "B8");
 
 
-        Assert::equals(EulTokenType::AST, file->statements->operator[](2)->getType(), t + "C1");
-        Assert::equals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](2).get())->getAstType(), t + "C2");
-        Assert::equals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](2).get())->getStatementType(), t + "C3");
+        Assert::enumEquals(EulTokenType::AST, file->statements->operator[](2)->getType(), t + "C1");
+        Assert::enumEquals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](2).get())->getAstType(), t + "C2");
+        Assert::enumEquals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](2).get())->getStatementType(), t + "C3");
         Assert::equals(yy::EulParser::token::VAR, ((VarDeclarationStatement*)file->statements->operator[](2).get())->varType, t + "C4");
         Assert::equals(1, ((VarDeclarationStatement*)file->statements->operator[](2).get())->declarations->size(), t + "C5");
         Assert::equals("z", ((VarDeclarationStatement*)file->statements->operator[](2).get())->declarations->operator[](0)->id->name, t + "C6");
-        Assert::equals(EulTokenType::INT, ((VarDeclarationStatement*)file->statements->operator[](2).get())->declarations->operator[](0)->value->getType(), t + "C7");
-        Assert::equals(7, ((EulIntToken*)((VarDeclarationStatement*)file->statements->operator[](2).get())->declarations->operator[](0)->value.get())->value, t + "C8");
+        Assert::enumEquals(EulTokenType::INT, ((VarDeclarationStatement*)file->statements->operator[](2).get())->declarations->operator[](0)->value->getType(), t + "C7");
+        Assert::equals(7, ((EulIntNode*)((VarDeclarationStatement*)file->statements->operator[](2).get())->declarations->operator[](0)->value.get())->value, t + "C8");
         Assert::equals(((VarDeclarationStatement*)file->statements->operator[](2).get())->declarations->operator[](0)->varType.get(), compiler.program.nativeTypes.uint16Type.get(), t + "C9");
 
 
-        Assert::equals(EulTokenType::AST, file->statements->operator[](3)->getType(), t + "D1");
-        Assert::equals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](3).get())->getAstType(), t + "D2");
-        Assert::equals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](3).get())->getStatementType(), t + "D3");
+        Assert::enumEquals(EulTokenType::AST, file->statements->operator[](3)->getType(), t + "D1");
+        Assert::enumEquals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](3).get())->getAstType(), t + "D2");
+        Assert::enumEquals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](3).get())->getStatementType(), t + "D3");
         Assert::equals(yy::EulParser::token::CONST, ((VarDeclarationStatement*)file->statements->operator[](3).get())->varType, t + "D4");
         Assert::equals(1, ((VarDeclarationStatement*)file->statements->operator[](3).get())->declarations->size(), t + "D5");
         Assert::equals("z2", ((VarDeclarationStatement*)file->statements->operator[](3).get())->declarations->operator[](0)->id->name, t + "D6");
-        Assert::equals(EulTokenType::INT, ((VarDeclarationStatement*)file->statements->operator[](3).get())->declarations->operator[](0)->value->getType(), t + "D7");
-        Assert::equals(8, ((EulIntToken*)((VarDeclarationStatement*)file->statements->operator[](3).get())->declarations->operator[](0)->value.get())->value, t + "D8");
+        Assert::enumEquals(EulTokenType::INT, ((VarDeclarationStatement*)file->statements->operator[](3).get())->declarations->operator[](0)->value->getType(), t + "D7");
+        Assert::equals(8, ((EulIntNode*)((VarDeclarationStatement*)file->statements->operator[](3).get())->declarations->operator[](0)->value.get())->value, t + "D8");
         Assert::null(((VarDeclarationStatement*)file->statements->operator[](3).get())->declarations->operator[](0)->varType.get(), t + "D9");
 
         //3. Parse the source file
@@ -69,15 +69,15 @@ class EulParserTest {
         parser.parse();
 
         //4. Check the result
-        Assert::equals(EulTokenType::AST, file->statements->operator[](0)->getType(), t + "E1");
-        Assert::equals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](0).get())->getAstType(), t + "E2");
-        Assert::equals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](0).get())->getStatementType(), t + "E3");
+        Assert::enumEquals(EulTokenType::AST, file->statements->operator[](0)->getType(), t + "E1");
+        Assert::enumEquals(EulAstType::STATEMENT, ((EulAst*)file->statements->operator[](0).get())->getAstType(), t + "E2");
+        Assert::enumEquals(EulStatementType::VAR_DECLARATION, ((EulStatement*)file->statements->operator[](0).get())->getStatementType(), t + "E3");
         Assert::equals(yy::EulParser::token::VAR, ((VarDeclarationStatement*)file->statements->operator[](0).get())->varType, t + "E4");
         Assert::equals(3, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->size(), t + "E5");
 
         Assert::equals("x", ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->id->name, t + "E6");
-        Assert::equals(EulTokenType::STRING, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "E7");
-        Assert::equals("hello", ((EulStringToken*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->value, t + "E8");
+        Assert::enumEquals(EulTokenType::STRING, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "E7");
+        Assert::equals("hello", ((EulStringNode*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->value, t + "E8");
         Assert::null(((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->varType.get(), t + "E9");
 
         Assert::equals("y", ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](1)->id->name, t + "F1");
@@ -86,8 +86,8 @@ class EulParserTest {
 
 
         Assert::equals("z", ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](2)->id->name, t + "G1");
-        Assert::equals(EulTokenType::CHAR, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](2)->value->getType(), t + "G2");
-        Assert::equals('\n', ((EulCharToken*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](2)->value.get())->value, t + "G3");
+        Assert::enumEquals(EulTokenType::CHAR, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](2)->value->getType(), t + "G2");
+        Assert::equals('\n', ((EulCharNode*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](2)->value.get())->value, t + "G3");
         Assert::null(((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](2)->varType.get(), t + "G4");
     }
 
@@ -105,11 +105,11 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
 
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulInfixExp* inExp = (EulInfixExp*)exp;
         Assert::intToken(inExp->right.get(), 7, 32, false, t + "B1");
@@ -138,11 +138,11 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
 
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulInfixExp* inExp = (EulInfixExp*)exp;
         Assert::stringToken(inExp->left.get(), "5", t + "B1");
@@ -171,11 +171,11 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
 
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulInfixExp* inExp = (EulInfixExp*)exp;
 
@@ -232,11 +232,11 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
 
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulInfixExp* level1 = (EulInfixExp*)exp; //save it for lated checks on its right side
         Assert::equals(&EUL_OPERATORS.plusOperator, level1->oper, t + "C4");
@@ -271,11 +271,11 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
 
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulInfixExp* level1 = (EulInfixExp*)exp; //save it for later checks on its right side
         EulInfixExp* currentInf = Assert::infixExp(level1->left.get(), t + "B1");
@@ -306,10 +306,10 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulInfixExp* infixExp = (EulInfixExp*)exp; //save it for later checks on its right side
         Assert::idToken(infixExp->left.get(), "x", t + "B1");
@@ -334,10 +334,10 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::PREFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::PREFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulPrefixExp* topLevel = (EulPrefixExp*)exp; //save it for later checks on its right side
         Assert::equals(&EUL_OPERATORS.decreaseOperator, topLevel->oper, t + "B2");
@@ -363,10 +363,10 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::SUFFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::SUFFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulSuffixExp* topLevel = (EulSuffixExp*)exp; //save it for later checks on its right side
         Assert::equals(&EUL_OPERATORS.increaseOperator, topLevel->oper, t + "B2");
@@ -390,10 +390,10 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::FUNCTION_CALL, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::FUNCTION_CALL, exp->getExpressionType(), t + "A3");
 
         EulFunctionCallExp* funcCall = (EulFunctionCallExp*)exp; //save it for later checks on its right side
         Assert::idToken(funcCall->func.get(), "y", t + "B1");
@@ -413,10 +413,10 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulInfixExp* root = (EulInfixExp*)exp; //save it for later checks on its right side
 
@@ -461,10 +461,10 @@ class EulParserTest {
 
 
         //2. Assert expression tree
-        Assert::equals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
-        Assert::equals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
+        Assert::enumEquals(EulTokenType::AST, ((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value->getType(), t + "A1");
+        Assert::enumEquals(EulAstType::EXPRESSION, ((EulAst*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get())->getAstType(), t + "A2");
         EulExpression *exp = (EulExpression*)((VarDeclarationStatement*)file->statements->operator[](0).get())->declarations->operator[](0)->value.get();
-        Assert::equals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
+        Assert::enumEquals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), t + "A3");
 
         EulInfixExp* root = (EulInfixExp*)exp; //save it for later checks on its right side
 
@@ -503,16 +503,16 @@ class EulParserTest {
         //2. Assert first statement
         Assert::equals(3, file->statements->size(), t + "A1");
         EulStatement *stmt = Assert::statement(file->statements->operator[](0).get(), t + "A2");
-        Assert::equals(EulStatementType::VAR_DECLARATION, stmt->getStatementType(), t + "A3");
+        Assert::enumEquals(EulStatementType::VAR_DECLARATION, stmt->getStatementType(), t + "A3");
 
         //3. Assert second statement: x=x*6;
         stmt = Assert::statement(file->statements->operator[](1).get(), t + "B1");
-        Assert::equals(EulStatementType::EXPRESSION_STATEMENT, stmt->getStatementType(), t + "B2");
+        Assert::enumEquals(EulStatementType::EXPRESSION_STATEMENT, stmt->getStatementType(), t + "B2");
         Assert::infixExp( ((EulExpStatement*)stmt)->exp.get(), t + "B3");
 
         //4. Assert print instruction
         stmt = Assert::statement(file->statements->operator[](2).get(), t + "C1");
-        Assert::equals(EulStatementType::EXPRESSION_STATEMENT, stmt->getStatementType(), t + "C2");
+        Assert::enumEquals(EulStatementType::EXPRESSION_STATEMENT, stmt->getStatementType(), t + "C2");
         Assert::funcCall( ((EulExpStatement*)stmt)->exp.get(), t + "C3");
     }
 

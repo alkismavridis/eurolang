@@ -1,0 +1,55 @@
+; ModuleID = 'entryPointModule'
+source_filename = "entryPointModule"
+
+@.glob1 = private unnamed_addr constant [23 x i8] c"Even number found: %d\0A\00"
+@.glob2 = private unnamed_addr constant [22 x i8] c"Odd number found: %d\0A\00"
+
+declare void @exit(i32)
+
+declare i32 @puts(i8*)
+
+declare i32 @printf(i8*, ...)
+
+define i32 @_startEul() {
+entry:
+  %0 = call i32 @main()
+  call void @exit(i32 %0)
+  ret i32 0
+}
+
+define i32 @main() {
+entry:
+  %i = alloca i32
+  store i32 1, i32* %i
+  br label %0
+
+; <label>:0:                                      ; preds = %8, %entry
+  %1 = load i32, i32* %i
+  %2 = icmp sle i32 %1, 100
+  br i1 %2, label %3, label %7
+
+; <label>:3:                                      ; preds = %0
+  %4 = load i32, i32* %i
+  %5 = srem i32 %4, 2
+  %6 = icmp eq i32 %5, 0
+  br i1 %6, label %14, label %11
+
+; <label>:7:                                      ; preds = %0
+  ret i32 0
+
+; <label>:8:                                      ; preds = %11, %14
+  %9 = load i32, i32* %i
+  %10 = add i32 %9, 1
+  store i32 %10, i32* %i
+  br label %0
+
+; <label>:11:                                     ; preds = %3
+  %12 = load i32, i32* %i
+  %13 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([22 x i8], [22 x i8]* @.glob2, i32 0, i32 0), i32 %12)
+  br label %8
+
+; <label>:14:                                     ; preds = %3
+  %15 = load i32, i32* %i
+  %16 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([23 x i8], [23 x i8]* @.glob1, i32 0, i32 0), i32 %15)
+  br label %8
+}

@@ -12,7 +12,7 @@ class EulWhileStatement : public EulStatement {
 
 
     //region LIFE CYCLE
-    public: EulWhileStatement(std::shared_ptr<EulToken> condition, std::shared_ptr<EulCodeBlock> codeBlock);
+    public: EulWhileStatement(std::shared_ptr<EulNode> condition, std::shared_ptr<EulCodeBlock> codeBlock);
     //endregion
 
 

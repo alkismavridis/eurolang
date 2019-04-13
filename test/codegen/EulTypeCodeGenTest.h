@@ -36,7 +36,7 @@ class EulTypeCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid int size, but none was thrown.");
         }
         catch (EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"B1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"B1");
             Assert::equals("Wrong int size: 67", e.message, t+"B2");
         }
 
@@ -47,7 +47,7 @@ class EulTypeCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid casting to int, but none was thrown.");
         }
         catch (EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"C1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"C1");
             Assert::equals("Invalid conversion to int.", e.message, t+"C2");
         }
     }
@@ -80,7 +80,7 @@ class EulTypeCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid float size, but none was thrown.");
         }
         catch (EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"B1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"B1");
             Assert::equals("Wrong float size: 67", e.message, t+"B2");
         }
 
@@ -90,7 +90,7 @@ class EulTypeCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid casting to float, but none was thrown.");
         }
         catch (EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"C1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"C1");
             Assert::equals("Invalid conversion to float.", e.message, t+"C2");
         }
     }
@@ -126,7 +126,7 @@ class EulTypeCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid casting to float, but none was thrown.");
         }
         catch (EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"D1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"D1");
             Assert::equals("Invalid conversion to number.", e.message, t+"D2");
         }
 
@@ -135,7 +135,7 @@ class EulTypeCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid casting to float, but none was thrown.");
         }
         catch (EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"E1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"E1");
             Assert::equals("Invalid conversion to number.", e.message, t+"E2");
         }
 
@@ -144,7 +144,7 @@ class EulTypeCodeGenTest {
             Assert::fail(t+" Expected exception due to invalid casting to float, but none was thrown.");
         }
         catch (EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"F1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"F1");
             Assert::equals("Invalid conversion to number.", e.message, t+"F2");
         }
     }
@@ -190,7 +190,7 @@ class EulTypeCodeGenTest {
             Assert::fail(t+"Exception expected due to converting a non integer type to integer, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(NOT_IMPLEMENTED, e.type, t+"C1");
+            Assert::enumEquals(EulErrorType::NOT_IMPLEMENTED, e.type, t+"C1");
             Assert::equals("NOT_IMPLEMENTED only ints can be casted to ints.", e.message, t+"C2");
         }
     }

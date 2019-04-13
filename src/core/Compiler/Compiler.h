@@ -50,7 +50,7 @@ class Compiler {
 
     //region ERROR RELATED ACTIONS
     public: void addError(const EulError& error);
-    public: void addError(int errorType, const std::string& message);
+    public: void addError(EulErrorType errorType, const std::string& message);
     public: void clearErrors();
     //endregion
 };

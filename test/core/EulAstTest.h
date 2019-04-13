@@ -17,11 +17,11 @@ class EulAstTest {
         Assert::that(EulType::isEulType(&type3), t+"A3");
 
         //2. Test a negative case: not a AST
-        EulStringToken notAType1 = EulStringToken("123");
+        EulStringNode notAType1 = EulStringNode("123");
         Assert::thatNot(EulType::isEulType(&notAType1), t+"A4");
 
         //3. Test a negative case: AST, but not a EulType
-        ReturnStatement notAType2 = ReturnStatement(std::make_shared<EulStringToken>("456"));
+        ReturnStatement notAType2 = ReturnStatement(std::make_shared<EulStringNode>("456"));
         Assert::thatNot(EulType::isEulType(&notAType2), t+"A5");
     }
 
@@ -35,7 +35,7 @@ class EulAstTest {
         //3. Make assertions
         Assert::equals(type.get(), ptrType.contentType, t+"A1");
         Assert::equals(4, ptrType.depth, t+"A2");
-        Assert::equals(POINTER_TYPE, ptrType.getTypeEnum(), t+"A3");
+        Assert::enumEquals(EulTypeEnum::POINTER_TYPE, ptrType.getTypeEnum(), t+"A3");
     }
     //endregion
 

@@ -368,7 +368,7 @@ llvm::Value* EulInfixExp::generateAssignment(EulCodeGenContext* ctx, unsigned in
     //1. Get the id token out of the left operand
     if (this->left->getType() != EulTokenType::ID)
         throw new EulError(EulErrorType::NOT_IMPLEMENTED, "NOT_IMPLEMENTED Cannot assign a value to a non id token.");
-    EulIdToken* asId = static_cast<EulIdToken*>(this->left.get());
+    EulSymbolNameNode* asId = static_cast<EulSymbolNameNode*>(this->left.get());
 
     //2. Get the symbol, and assert that it is mutable.
     auto symbol = ctx->currentScope->get(asId->name);

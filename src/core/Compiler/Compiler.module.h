@@ -71,7 +71,7 @@ void Compiler::addError(const EulError& error) {
 }
 
 
-void Compiler::addError(int errorType, const std::string& message) {
+void Compiler::addError(EulErrorType errorType, const std::string& message) {
     this->errors.push_back(EulError(errorType, message));
     if (this->onError != 0) this->onError(this);
 }

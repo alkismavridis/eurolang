@@ -11,10 +11,10 @@ class EulScopeTest {
         auto grandChild = std::make_shared<EulScope>(child1);
 
         //1. Declare some variables to root
-        root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("x")));
+        root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("x")));
         Assert::equals(1, root->getDeclarationCount(), t + "A1");
 
-        root->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("y")));
+        root->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("y")));
         Assert::equals(2, root->getDeclarationCount(), t + "A2");
 
 
@@ -38,10 +38,10 @@ class EulScopeTest {
 
 
         //2. Declare some individual variables on scopes child1 and child2.
-        child1->declare("child1_only", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("child1_only")));
+        child1->declare("child1_only", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("child1_only")));
         Assert::equals(1, child1->getDeclarationCount(), t + "C1");
 
-        child2->declare("child2_only", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("child2_only")));
+        child2->declare("child2_only", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("child2_only")));
         Assert::equals(1, child2->getDeclarationCount(), t + "C2");
 
 
@@ -74,7 +74,7 @@ class EulScopeTest {
     public: static void declareFromStatementTest(const std::string& t) {
         //1. Declare one symbol.
         auto scope = std::make_shared<EulScope>(nullptr);
-        scope->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("x")));
+        scope->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("x")));
 
         //2. Create a var declaration statement.
         VarDeclarationStatement declStatement =  VarDeclarationStatement(
@@ -82,12 +82,12 @@ class EulScopeTest {
             std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>()
         );
         declStatement.declarations->push_back(std::make_shared<VarDeclaration>(
-            std::make_shared<EulIdToken>("a", scope),
+            std::make_shared<EulSymbolNameNode>("a", scope),
             nullptr,
             nullptr
         ));
         declStatement.declarations->push_back(std::make_shared<VarDeclaration>(
-            std::make_shared<EulIdToken>("b", scope),
+            std::make_shared<EulSymbolNameNode>("b", scope),
             nullptr,
             nullptr
         ));
@@ -110,10 +110,10 @@ class EulScopeTest {
         auto grandChild = std::make_shared<EulScope>(child1);
 
         //1. Declare some variables to root
-        root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("x")));
+        root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("x")));
         Assert::equals(1, root->getDeclarationCount(), t + "A1");
 
-        root->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("y")));
+        root->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("y")));
         Assert::equals(2, root->getDeclarationCount(), t + "A2");
 
 
@@ -137,10 +137,10 @@ class EulScopeTest {
 
 
         //2. Declare some individual variables on scopes child1 and child2.
-        child1->declare("child1_only", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("child1_only")));
+        child1->declare("child1_only", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("child1_only")));
         Assert::equals(1, child1->getDeclarationCount(), t + "C1");
 
-        child2->declare("child2_only", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("child2_only")));
+        child2->declare("child2_only", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("child2_only")));
         Assert::equals(1, child2->getDeclarationCount(), t + "C2");
 
 
@@ -175,29 +175,29 @@ class EulScopeTest {
         auto child1 = std::make_shared<EulScope>(root);
 
         //1. Declare some variables to root
-        Assert::that( root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("x"))), t + "A1" );
+        Assert::that( root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("x"))), t + "A1" );
         Assert::equals(1, root->getDeclarationCount(), t + "A2");
 
-        Assert::that( root->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("y"))), t + "A3" );
+        Assert::that( root->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("y"))), t + "A3" );
         Assert::equals(2, root->getDeclarationCount(), t + "A4");
 
         //2. Try to redefine those same symbols
         try {
-            Assert::thatNot( root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("newX"))), t + "B1" );
+            Assert::thatNot( root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("newX"))), t + "B1" );
             Assert::fail(t + " B1: Exception expected due to redefinition of symbol, but none was thrown");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, "B1_code");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, "B1_code");
             Assert::equals("Symbol x already defined on this scope.", e.message, "B1_message");
         }
         Assert::equals(2, root->getDeclarationCount(), t + "B2");
         Assert::stringToken(root->getOwnSymbol("x")->value.get(), "x", t + "B3");
 
         //3. Define those variables in a sub scope. This should be allowed.
-        Assert::that( child1->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("child1_X"))), t + "C1" );
+        Assert::that( child1->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("child1_X"))), t + "C1" );
         Assert::equals(1, child1->getDeclarationCount(), t + "C2");
 
-        Assert::that( child1->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("child1_Y"))), t + "C3" );
+        Assert::that( child1->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("child1_Y"))), t + "C3" );
         Assert::equals(2, child1->getDeclarationCount(), t + "C4");
     }
 
@@ -207,7 +207,7 @@ class EulScopeTest {
         //1. Declare one type and one non type.
         auto type = std::make_shared<EulIntegerType>(32, false);
         root->declare("someType", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, type));
-        root->declare("notAType", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("123")));
+        root->declare("notAType", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("123")));
 
         //2. Get the type
         auto fetched = root->getOwnSymbolAsType("someType");
@@ -219,7 +219,7 @@ class EulScopeTest {
             Assert::fail("Exception expected due to accessing a non-type symbol as a type, but non was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"B1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"B1");
             Assert::equals("Type not found: notAType", e.message, t+"B2");
         }
 
@@ -229,7 +229,7 @@ class EulScopeTest {
             Assert::fail("Exception expected due to accessing a non-type symbol as a type, but non was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"C1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"C1");
             Assert::equals("Type not found: iDoNotExist", e.message, t+"C2");
         }
     }
@@ -239,10 +239,10 @@ class EulScopeTest {
     public: static void resetTest(const std::string& t) {
         //1. Create a couple of declarations
         auto root = std::make_shared<EulScope>(nullptr);
-        Assert::that( root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("x"))), t + "A1" );
+        Assert::that( root->declare("x", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("x"))), t + "A1" );
         Assert::equals(1, root->getDeclarationCount(), t + "A1");
 
-        Assert::that( root->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringToken>("y"))), t + "A3" );
+        Assert::that( root->declare("y", std::make_shared<EulSymbol>(yy::EulParser::token::VAR, nullptr, std::make_shared<EulStringNode>("y"))), t + "A3" );
         Assert::equals(2, root->getDeclarationCount(), t + "A2");
 
         //2. reset the scope

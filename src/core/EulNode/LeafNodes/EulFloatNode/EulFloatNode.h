@@ -1,19 +1,22 @@
 #pragma once
 
 /**
-    This class represents a string token.
+    This class represents a float token. Floats in EUL have a size.
 */
-class EulStringToken : public EulToken {
+class EulFloatNode : public EulNode {
     //region FIELDS
-    public: std::string value;
+    public: double value;
+    public: unsigned char size; //in bytes
     //endregion
 
 
 
 
     //region LIFE CYCLE
-    public: EulStringToken(const std::string& buf);
+    public: EulFloatNode(double value, unsigned char size);
+    public: EulFloatNode(char* text);
     //endregion
+
 
 
     //region SERIALIZING

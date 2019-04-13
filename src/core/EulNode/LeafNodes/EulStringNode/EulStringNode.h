@@ -1,25 +1,24 @@
 #pragma once
 
 /**
-    This class represents an int token. Ints in EUL have a size, and can be signed or unsigned.
+    This class represents a string token.
 */
-class EulBooleanToken : public EulToken {
+class EulStringNode : public EulNode {
     //region FIELDS
-    public: bool value;
+    public: std::string value;
     //endregion
 
 
 
 
     //region LIFE CYCLE
-    public: EulBooleanToken(bool value);
+    public: EulStringNode(const std::string& buf);
     //endregion
 
 
     //region SERIALIZING
     public: virtual void toJson(std::ostream& out, int tabs);
     //endregion
-
 
 
     public: virtual EulTokenType getType();

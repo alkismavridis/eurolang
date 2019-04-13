@@ -1,6 +1,6 @@
 #pragma once
 
-enum EulTypeEnum {
+enum class EulTypeEnum {
     VOID_TYPE,
     NAMED_TYPE,
     INT_TYPE,

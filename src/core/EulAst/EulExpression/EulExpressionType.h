@@ -1,6 +1,6 @@
 #pragma once
 
-enum EulExpressionType {
+enum class EulExpressionType {
     UNKNOWN_EXP,
     PREFIX_EXP,
     SUFFIX_EXP,

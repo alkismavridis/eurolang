@@ -1,4 +1,4 @@
-EulError::EulError(int type, const std::string& message) {
+EulError::EulError(EulErrorType type, const std::string& message) {
     this->type = type;
     this->message = message;
 }

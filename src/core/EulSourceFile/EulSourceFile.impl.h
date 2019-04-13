@@ -31,8 +31,8 @@ std::ostream& operator<<(std::ostream& out, EulSourceFile* file) {
     out << "\t\"type\":\"EulSourceFile\"," << std::endl;
 
     out << "\t\"statements\": TODO";
-    //auto castedVector = std::static_pointer_cast<std::vector<std::shared_ptr<EulToken>>>(file->statements);
-    //EulToken::toJson(out, *castedVector.get(), 1);
+    //auto castedVector = std::static_pointer_cast<std::vector<std::shared_ptr<EulNode>>>(file->statements);
+    //EulNode::toJson(out, *castedVector.get(), 1);
     out << std::endl << "}";
 
     return out;

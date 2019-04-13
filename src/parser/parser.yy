@@ -30,14 +30,14 @@
     # include <vector>
     #include <memory>
 
-    #include "../core/EulToken/EulTokenType.h"
-    #include "../core/EulToken/EulToken.h"
-    #include "../core/EulToken/EulIntToken.h"
-    #include "../core/EulToken/EulFloatToken.h"
-    #include "../core/EulToken/EulCharToken.h"
-    #include "../core/EulToken/EulBooleanToken.h"
-    #include "../core/EulToken/EulStringToken.h"
-    #include "../core/EulToken/EulIdToken.h"
+    #include "../core/EulNode/enums/EulTokenType.h"
+    #include "../core/EulNode/EulNode.h"
+    #include "../core/EulNode/LeafNodes/EulIntNode/EulIntNode.h"
+    #include "../core/EulNode/LeafNodes/EulFloatNode/EulFloatNode.h"
+    #include "../core/EulNode/LeafNodes/EulCharNode/EulCharNode.h"
+    #include "../core/EulNode/LeafNodes/EulBooleanNode/EulBooleanNode.h"
+    #include "../core/EulNode/LeafNodes/EulStringNode/EulStringNode.h"
+    #include "../core/EulNode/LeafNodes/EulSymbolNameNode/EulSymbolNameNode.h"
     #include "../core/EulAst/EulAstType.h"
     #include "../core/EulAst/EulAst.h"
     #include "../core/EulAst/EulType/EulTypeEnum.h"
@@ -204,12 +204,12 @@
 
 
 %token
-    <std::shared_ptr<EulIntToken>> INT
-    <std::shared_ptr<EulFloatToken>> FLOAT
-    <std::shared_ptr<EulStringToken>> STRING
-    <std::shared_ptr<EulCharToken>> CHAR
-    <std::shared_ptr<EulBooleanToken>> BOOLEAN
-    <std::shared_ptr<EulIdToken>> ID
+    <std::shared_ptr<EulIntNode>> INT
+    <std::shared_ptr<EulFloatNode>> FLOAT
+    <std::shared_ptr<EulStringNode>> STRING
+    <std::shared_ptr<EulCharNode>> CHAR
+    <std::shared_ptr<EulBooleanNode>> BOOLEAN
+    <std::shared_ptr<EulSymbolNameNode>> ID
 ;
 
 %destructor {  } <*>
@@ -237,8 +237,8 @@
 %type  <std::shared_ptr<VarDeclaration>> parameter_declaration
 %type  <std::shared_ptr<EulType>> eul_type
 
-%type  <std::shared_ptr<EulToken>> expression
-%type  <std::shared_ptr<std::vector<std::shared_ptr<EulToken>>>> expressions
+%type  <std::shared_ptr<EulNode>> expression
+%type  <std::shared_ptr<std::vector<std::shared_ptr<EulNode>>>> expressions
 
 %type  <std::shared_ptr<EulCodeBlock>> block
 %type  <std::shared_ptr<EulCodeBlock>> block_or_statement
@@ -580,12 +580,12 @@ expression
 
 expressions:
     expressions COMMA expression {
-        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<EulToken>>>();
+        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<EulNode>>>();
         $1->push_back($3);
         $$ = $1;
     } |
     expression {
-        $$ = std::make_shared<std::vector<std::shared_ptr<EulToken>>>();
+        $$ = std::make_shared<std::vector<std::shared_ptr<EulNode>>>();
         $$->push_back($1);
     } |
     %empty { $$ = nullptr; }

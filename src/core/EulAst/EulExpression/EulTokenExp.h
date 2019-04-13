@@ -2,13 +2,13 @@
 
 class EulTokenExp : public EulExpression {
     //region LIFE CYCLE
-    public:std::shared_ptr<EulToken> token;
+    public:std::shared_ptr<EulNode> token;
     //endregion
 
 
 
     //region LIFE CYCLE
-    public: EulTokenExp(std::shared_ptr<EulToken> token);
+    public: EulTokenExp(std::shared_ptr<EulNode> token);
     //endregion
 
 

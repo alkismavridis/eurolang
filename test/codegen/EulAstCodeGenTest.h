@@ -13,9 +13,9 @@ class EulAstCodeGenTest {
 
         //1. Create a var declaration
         VarDeclaration tok(
-            std::make_shared<EulIdToken>("hello", ctx.currentScope),
+            std::make_shared<EulSymbolNameNode>("hello", ctx.currentScope),
             comp.program.nativeTypes.float32Type,           //the symbol has type Float32, but its value is a Float64 literal
-            std::make_shared<EulFloatToken>(7.5, 64)
+            std::make_shared<EulFloatNode>(7.5, 64)
         );
 
         //2. Get its eul type when both declared type and value are present. The declared type must be returned
@@ -35,7 +35,7 @@ class EulAstCodeGenTest {
             Assert::fail(t+"Exception expected due to var declaration with that lacks both type and value. But none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(NOT_IMPLEMENTED, e.type, t+"A3");
+            Assert::enumEquals(EulErrorType::NOT_IMPLEMENTED, e.type, t+"A3");
             Assert::equals("NOT IMPLEMENTED: variable without initial value.", e.message, t+"A4");
         }
     }
@@ -59,14 +59,14 @@ class EulAstCodeGenTest {
 
         tok.declarations->push_back(
             std::make_shared<VarDeclaration>(
-                std::make_shared<EulIdToken>("first", ctx.currentScope),
+                std::make_shared<EulSymbolNameNode>("first", ctx.currentScope),
                 nullptr,
-                std::make_shared<EulIntToken>(123, 32, false)
+                std::make_shared<EulIntNode>(123, 32, false)
             )
         );
         tok.declarations->push_back(
             std::make_shared<VarDeclaration>(
-                std::make_shared<EulIdToken>("second", ctx.currentScope),
+                std::make_shared<EulSymbolNameNode>("second", ctx.currentScope),
                 comp.program.nativeTypes.float64Type,
                 nullptr
             )
@@ -121,7 +121,7 @@ class EulAstCodeGenTest {
             Assert::fail(t+"Exception expected due to unreachable expression statement, But none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"F1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"F1");
             Assert::equals("Unreachable statement.", e.message, t+"F2");
         }
     }
@@ -142,10 +142,10 @@ class EulAstCodeGenTest {
 
         //2. Create an operation (like a binary one), and insert it into an EulExpStatement
         auto funcCallExp = std::make_shared<EulFunctionCallExp>(
-            std::make_shared<EulIdToken>("exit", ctx.currentScope),
-            std::make_shared<std::vector<std::shared_ptr<EulToken>>>()
+            std::make_shared<EulSymbolNameNode>("exit", ctx.currentScope),
+            std::make_shared<std::vector<std::shared_ptr<EulNode>>>()
         );
-        funcCallExp->params->push_back(std::make_shared<EulIntToken>(123,32,false));
+        funcCallExp->params->push_back(std::make_shared<EulIntNode>(123,32,false));
         EulExpStatement tok(funcCallExp);
 
         //3. Execute the expression and check result
@@ -160,7 +160,7 @@ class EulAstCodeGenTest {
             Assert::fail(t+"Exception expected due to unreachable expression statement, But none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"A2");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"A2");
             Assert::equals("Unreachable statement.", e.message, t+"A3");
         }
     }
@@ -176,7 +176,7 @@ class EulAstCodeGenTest {
         ctx.currentFunction = comp.program.makeMain(&ctx);
 
         //2. Create an operation (like a binary one), and insert it into an EulExpStatement
-        ReturnStatement tok(std::make_shared<EulIntToken>(123,32,false));
+        ReturnStatement tok(std::make_shared<EulIntNode>(123,32,false));
 
         //3. Execute the expression and check result
         tok.generateStatement(&ctx);
@@ -195,7 +195,7 @@ class EulAstCodeGenTest {
             Assert::fail(t+"Exception expected due to unreachable expression statement, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"B1");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"B1");
             Assert::equals("Unreachable statement.", e.message, t+"B2");
         }
     }
@@ -219,10 +219,10 @@ class EulAstCodeGenTest {
 
         //2. Setup a call expression
         EulFunctionCallExp tok(
-            std::make_shared<EulIdToken>("exit", ctx.currentScope),
-            std::make_shared<std::vector<std::shared_ptr<EulToken>>>()
+            std::make_shared<EulSymbolNameNode>("exit", ctx.currentScope),
+            std::make_shared<std::vector<std::shared_ptr<EulNode>>>()
         );
-        tok.params->push_back(std::make_shared<EulIntToken>(123,32,false));
+        tok.params->push_back(std::make_shared<EulIntNode>(123,32,false));
 
         //3. Run it and check the result
         auto val = tok.generateValue(&ctx, EulCodeGenFlags_NONE);
@@ -240,13 +240,13 @@ class EulAstCodeGenTest {
 
 
         //4. Test error cases: wrong argument list count
-        tok.params->push_back(std::make_shared<EulIntToken>(123,32,false));
+        tok.params->push_back(std::make_shared<EulIntNode>(123,32,false));
         try {
             tok.generateValue(&ctx, EulCodeGenFlags_NONE);
             Assert::fail(t+" Exception expected due to wrong argument list count, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(NOT_IMPLEMENTED, e.type, t+"D1");
+            Assert::enumEquals(EulErrorType::NOT_IMPLEMENTED, e.type, t+"D1");
             Assert::equals("NOT_IMPLEMENTED wrong parameter list count.", e.message, t+"D2");
         }
     }
@@ -265,9 +265,9 @@ class EulAstCodeGenTest {
 
         //2. Create an infix expression
         EulInfixExp tok(
-            std::make_shared<EulIntToken>(123, 32, false),
+            std::make_shared<EulIntNode>(123, 32, false),
             &EUL_OPERATORS.plusOperator,
-            std::make_shared<EulIntToken>(153, 64, false)
+            std::make_shared<EulIntNode>(153, 64, false)
         );
 
         //3. Run in and see the result
@@ -291,9 +291,9 @@ class EulAstCodeGenTest {
         VarDeclarationStatement declaration(yy::EulParser::token::VAR, std::make_shared<std::vector<std::shared_ptr<VarDeclaration>>>());
         declaration.declarations->push_back(
             std::make_shared<VarDeclaration>(
-                std::make_shared<EulIdToken>("myVar", ctx.currentScope),
+                std::make_shared<EulSymbolNameNode>("myVar", ctx.currentScope),
                 nullptr,
-                std::make_shared<EulIntToken>(123, 32, false)
+                std::make_shared<EulIntNode>(123, 32, false)
             )
         );
         ctx.currentScope->declare(&declaration);
@@ -301,9 +301,9 @@ class EulAstCodeGenTest {
 
         //3.Create an assignment expression
         EulInfixExp tok(
-            std::make_shared<EulIdToken>("myVar", ctx.currentScope),
+            std::make_shared<EulSymbolNameNode>("myVar", ctx.currentScope),
             &EUL_OPERATORS.assignOperator,
-            std::make_shared<EulIntToken>(999, 64, false)
+            std::make_shared<EulIntNode>(999, 64, false)
         );
 
         //4. Generate the llvm statement and assert it
@@ -347,7 +347,7 @@ class EulAstCodeGenTest {
             Assert::fail(t+" Exception expected due to wrong float type size, but none was thrown.");
         }
         catch(EulError e) {
-            Assert::equals(SEMANTIC, e.type, t+"C3");
+            Assert::enumEquals(EulErrorType::SEMANTIC, e.type, t+"C3");
             Assert::equals("Invalid floating point size: 35. Please use one of 32, 64.", e.message, t+"C4");
         }
 

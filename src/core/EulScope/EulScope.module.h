@@ -82,7 +82,7 @@ void EulScope::declare(VarDeclarationStatement* stmt) {
 
 
 //region EUL SYMBOL
-EulSymbol::EulSymbol(int changeType, std::shared_ptr<EulType> varType, std::shared_ptr<EulToken> value) {
+EulSymbol::EulSymbol(int changeType, std::shared_ptr<EulType> varType, std::shared_ptr<EulNode> value) {
     this->changeType = changeType;
     this->varType = varType;
     this->value = value;

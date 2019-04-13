@@ -1,6 +1,6 @@
 #pragma once
 
-enum EulErrorType {
+enum class EulErrorType {
     NO_ERROR,
     LEXER,
     SYNTAX,
@@ -12,10 +12,10 @@ enum EulErrorType {
 
 
 class EulError {
-    public: int type; //NOTE; one of error type enum
+    public: EulErrorType type; //NOTE; one of error type enum
     public: std::string message;
 
-    public: EulError(int type, const std::string& message);
+    public: EulError(EulErrorType type, const std::string& message);
     public: EulError();
 
     public: void reset();

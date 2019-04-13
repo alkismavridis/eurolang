@@ -1,6 +1,6 @@
 #pragma once
 
-enum EulStatementType {
+enum class EulStatementType {
     UNKNOWN_STATEMENT,
     VAR_DECLARATION,
     IMPORT,
