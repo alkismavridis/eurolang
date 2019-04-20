@@ -111,176 +111,125 @@ class Assert {
 
     //region TOKEN TYPES + VALUES
     public: static EulIntNode* intToken(EulNode* token, unsigned long int value, unsigned char size, char isUnsigned, const std::string& label) {
-        Assert::enumEquals(EulTokenType::INT, token->getType(), label + "__tokenType");
+      EulIntNode* intTok = dynamic_cast<EulIntNode*>(token);
+      Assert::that(intTok!=nullptr, label + "__isEulIntNode");
 
-        EulIntNode* intTok = (EulIntNode*)token;
-        Assert::equals(value, intTok->value, label + "__value");
-        Assert::equals(size, intTok->size, label + "__size");
-        Assert::equals(isUnsigned, intTok->isUnsigned, label + "__isUnsigned");
+      Assert::equals(value, intTok->value, label + "__value");
+      Assert::equals(size, intTok->size, label + "__size");
+      Assert::equals(isUnsigned, intTok->isUnsigned, label + "__isUnsigned");
 
-        return intTok;
+      return intTok;
     }
 
 
     public: static EulFloatNode* floatToken(EulNode* token, double value, unsigned char size, const std::string& label) {
-        Assert::enumEquals(EulTokenType::FLOAT, token->getType(), label + "__tokenType");
+      EulFloatNode* floatTok = dynamic_cast<EulFloatNode*>(token);
+      Assert::that(floatTok!=nullptr, label + "__isEulFloatNode");
+      Assert::equals(value, floatTok->value, label + "__value");
+      Assert::equals(size, floatTok->size, label + "__size");
 
-        EulFloatNode* floatTok = (EulFloatNode*)token;
-        Assert::equals(value, floatTok->value, label + "__value");
-        Assert::equals(size, floatTok->size, label + "__size");
-
-        return floatTok;
+      return floatTok;
     }
 
     public: static EulSymbolNameNode* idToken(EulNode* token, const std::string& name, const std::string& label) {
-        Assert::enumEquals(EulTokenType::ID, token->getType(), label + "__tokenType");
-
-        EulSymbolNameNode* idTok = (EulSymbolNameNode*)token;
-        Assert::equals(name, idTok->name, label + "__name");
-
-        return idTok;
+      EulSymbolNameNode* idTok = dynamic_cast<EulSymbolNameNode*>(token);
+      Assert::that(idTok!=nullptr, label + "__isEulSymbolNameNode");
+      Assert::equals(name, idTok->name, label + "__name");
+      return idTok;
     }
 
     public: static EulCharNode* charToken(EulNode* token, unsigned long long int value, unsigned char size, const std::string& label) {
-        Assert::enumEquals(EulTokenType::CHAR, token->getType(), label + "__tokenType");
+      EulCharNode* charTok = dynamic_cast<EulCharNode*>(token);
+      Assert::that(charTok!=nullptr, label + "__isEulCharNode");
+      Assert::equals(value, charTok->value, label + "__value");
+      Assert::equals(size, charTok->size, label + "__size");
 
-        EulCharNode* charTok = (EulCharNode*)token;
-        Assert::equals(value, charTok->value, label + "__value");
-        Assert::equals(size, charTok->size, label + "__size");
-
-        return charTok;
+      return charTok;
     }
 
     public: static EulStringNode* stringToken(EulNode* token, const std::string value, const std::string& label) {
-        Assert::enumEquals(EulTokenType::STRING, token->getType(), label + "__tokenType");
+      EulStringNode* strTok = dynamic_cast<EulStringNode*>(token);
+      Assert::that(strTok!=nullptr, label + "__isEulStringNode");
+      Assert::equals(value, strTok->value, label + "__value");
 
-        EulStringNode* strTok = (EulStringNode*)token;
-        Assert::equals(value, strTok->value, label + "__value");
-
-        return strTok;
+      return strTok;
     }
-
-    /*public: static EulType* eulType(EulNode* token, const llvm::Type* llvmType, const std::string& label) {
-        Assert::enumEquals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ast = (EulAst*)token;
-
-        Assert::enumEquals(EulAstType::EUL_TYPE, ast->getAstType(), label + "__astType");
-        EulType* ret = (EulType*)ast;
-
-        Assert::equals((void*)llvmType, (void*)ret->llvmType, label + "__llvmType");
-        return ret;
-    }*/
     //endregion
 
 
 
     //region TOKEN TYPES
-    public: static EulAst* ast(EulNode* token, const std::string& label) {
-        Assert::enumEquals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ret = (EulAst*)token;
-        return ret;
-    }
-
     public: static EulExpression* expression(EulNode* token, const std::string& label) {
-        Assert::enumEquals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ast = (EulAst*)token;
-
-        Assert::enumEquals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
-        return (EulExpression*)ast;
+      EulExpression* ret = dynamic_cast<EulExpression*>(token);
+      Assert::that(ret!=nullptr, label + "__isExpression");
+      return ret;
     }
 
     public: static EulInfixExp* infixExp(EulNode* token, const std::string& label) {
-        Assert::enumEquals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ast = (EulAst*)token;
-
-        Assert::enumEquals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
-        EulExpression* exp = (EulExpression*)ast;
-
-        Assert::enumEquals(EulExpressionType::INFIX_EXP, exp->getExpressionType(), label + "__expressionType");
-        return (EulInfixExp*)exp;
+      EulInfixExp* ret = dynamic_cast<EulInfixExp*>(token);
+      Assert::that(ret!=nullptr, label + "__isInfixExpression");
+      return ret;
     }
 
     public: static EulPrefixExp* prefixExp(EulNode* token, const std::string& label) {
-        Assert::enumEquals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ast = (EulAst*)token;
-
-        Assert::enumEquals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
-        EulExpression* exp = (EulExpression*)ast;
-
-        Assert::enumEquals(EulExpressionType::PREFIX_EXP, exp->getExpressionType(), label + "__expressionType");
-        return (EulPrefixExp*)exp;
+      EulPrefixExp* ret = dynamic_cast<EulPrefixExp*>(token);
+      Assert::that(ret!=nullptr, label + "__isEulPrefixExp");
+      return ret;
     }
 
     public: static EulSuffixExp* suffixExp(EulNode* token, const std::string& label) {
-        Assert::enumEquals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ast = (EulAst*)token;
-
-        Assert::enumEquals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
-        EulExpression* exp = (EulExpression*)ast;
-
-        Assert::enumEquals(EulExpressionType::SUFFIX_EXP, exp->getExpressionType(), label + "__expressionType");
-        return (EulSuffixExp*)exp;
+      EulSuffixExp* ret = dynamic_cast<EulSuffixExp*>(token);
+      Assert::that(ret!=nullptr, label + "__isEulSuffixExp");
+      return ret;
     }
 
     public: static EulFunctionCallExp* funcCall(EulNode* token, const std::string& label) {
-        Assert::enumEquals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ast = (EulAst*)token;
-
-        Assert::enumEquals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
-        EulExpression* exp = (EulExpression*)ast;
-
-        Assert::enumEquals(EulExpressionType::FUNCTION_CALL, exp->getExpressionType(), label + "__expressionType");
-        return (EulFunctionCallExp*)exp;
+      EulFunctionCallExp* ret = dynamic_cast<EulFunctionCallExp*>(token);
+      Assert::that(ret!=nullptr, label + "__isEulFunctionCallExp");
+      return ret;
     }
 
     public: static EulArrayAccessExp* arrayAccess(EulNode* token, const std::string& label) {
-        Assert::enumEquals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ast = (EulAst*)token;
-
-        Assert::enumEquals(EulAstType::EXPRESSION, ast->getAstType(), label + "__astType");
-        EulExpression* exp = (EulExpression*)ast;
-
-        Assert::enumEquals(EulExpressionType::ARRAY_ACCESS, exp->getExpressionType(), label + "__expressionType");
-        return (EulArrayAccessExp*)exp;
+      EulArrayAccessExp* ret = dynamic_cast<EulArrayAccessExp*>(token);
+      Assert::that(ret!=nullptr, label + "__isEulArrayAccessExp");
+      return ret;
     }
 
 
     public: static EulStatement* statement(EulNode* token, const std::string& label) {
-        Assert::enumEquals(EulTokenType::AST, token->getType(), label + "__tokenType");
-        EulAst* ast = static_cast<EulAst*>(token);
-
-        Assert::enumEquals(EulAstType::STATEMENT, ast->getAstType(), label + "__astType");
-        return static_cast<EulStatement*>(ast);
+      EulStatement* ret = dynamic_cast<EulStatement*>(token);
+      Assert::that(ret!=nullptr, label + "__isEulStatement");
+      return ret;
     }
 
     public: static ReturnStatement* returnStatement(EulNode* token, const std::string& label) {
-        EulStatement* stmt = statement(token, label);
-        Assert::enumEquals(EulStatementType::RETURN_STATEMENT, stmt->getStatementType(), label + "__getStatement");
-        return static_cast<ReturnStatement*>(stmt);
+      ReturnStatement* ret = dynamic_cast<ReturnStatement*>(token);
+      Assert::that(ret!=nullptr, label + "__isReturnStatement");
+      return ret;
     }
 
     public: static EulExpStatement* expStatement(EulNode* token, const std::string& label) {
-        EulStatement* stmt = statement(token, label);
-        Assert::enumEquals(EulStatementType::EXPRESSION_STATEMENT, stmt->getStatementType(), label + "__getStatement");
-        return static_cast<EulExpStatement*>(stmt);
+      EulExpStatement* ret = dynamic_cast<EulExpStatement*>(token);
+      Assert::that(ret!=nullptr, label + "__isEulExpStatement");
+      return ret;
     }
 
     public: static VarDeclarationStatement* varDeclarationStatement(EulNode* token, const std::string& label) {
-        EulStatement* stmt = statement(token, label);
-        Assert::enumEquals(EulStatementType::VAR_DECLARATION, stmt->getStatementType(), label + "__getStatement");
-        return static_cast<VarDeclarationStatement*>(stmt);
+      VarDeclarationStatement* ret = dynamic_cast<VarDeclarationStatement*>(token);
+      Assert::that(ret!=nullptr, label + "__isVarDeclarationStatement");
+      return ret;
     }
 
     public: static EulIfStatement* ifStatement(EulNode* token, const std::string& label) {
-        EulStatement* stmt = statement(token, label);
-        Assert::enumEquals(EulStatementType::IF_STATEMENT, stmt->getStatementType(), label + "__getStatement");
-        return static_cast<EulIfStatement*>(stmt);
+      EulIfStatement* ret = dynamic_cast<EulIfStatement*>(token);
+      Assert::that(ret!=nullptr, label + "__isEulIfStatement");
+      return ret;
     }
 
     public: static EulWhileStatement* whileStatement(EulNode* token, const std::string& label) {
-        EulStatement* stmt = statement(token, label);
-        Assert::enumEquals(EulStatementType::WHILE_STATEMENT, stmt->getStatementType(), label + "__getStatement");
-        return static_cast<EulWhileStatement*>(stmt);
+      EulWhileStatement* ret = dynamic_cast<EulWhileStatement*>(token);
+      Assert::that(ret!=nullptr, label + "__isEulWhileStatement");
+      return ret;
     }
     //endregion
 

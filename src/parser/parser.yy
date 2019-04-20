@@ -30,68 +30,112 @@
     # include <vector>
     #include <memory>
 
-    #include "../core/EulNode/enums/EulTokenType.h"
+    #include "../core/EulNode/enums/EulNodeType.h"
     #include "../core/EulNode/EulNode.h"
-    #include "../core/EulNode/LeafNodes/EulIntNode/EulIntNode.h"
-    #include "../core/EulNode/LeafNodes/EulFloatNode/EulFloatNode.h"
-    #include "../core/EulNode/LeafNodes/EulCharNode/EulCharNode.h"
-    #include "../core/EulNode/LeafNodes/EulBooleanNode/EulBooleanNode.h"
-    #include "../core/EulNode/LeafNodes/EulStringNode/EulStringNode.h"
-    #include "../core/EulNode/LeafNodes/EulSymbolNameNode/EulSymbolNameNode.h"
-    #include "../core/EulAst/EulAstType.h"
-    #include "../core/EulAst/EulAst.h"
-    #include "../core/EulAst/EulType/EulTypeEnum.h"
-    #include "../core/EulAst/EulType/EulType.h"
-    #include "../core/EulAst/EulType/EulIntegerType.h"
-    #include "../core/EulAst/EulType/EulFloatType.h"
-    #include "../core/EulAst/EulType/EulCharType.h"
-    #include "../core/EulAst/EulType/EulStringType.h"
-    #include "../core/EulAst/EulType/EulNamedType.h"
-    #include "../core/EulAst/EulType/EulVoidType.h"
-    #include "../core/EulAst/EulType/EulAnyType.h"
-    #include "../core/EulAst/EulType/EulBooleanType.h"
-    #include "../core/EulAst/EulType/EulFunctionType.h"
+    #include "../core/EulNode/reuseables/ValueNode.h"
+    #include "../core/EulNode/leaf_nodes/EulIntNode/EulIntNode.h"
+    #include "../core/EulNode/leaf_nodes/EulFloatNode/EulFloatNode.h"
+    #include "../core/EulNode/leaf_nodes/EulCharNode/EulCharNode.h"
+    #include "../core/EulNode/leaf_nodes/EulBooleanNode/EulBooleanNode.h"
+    #include "../core/EulNode/leaf_nodes/EulStringNode/EulStringNode.h"
+    #include "../core/EulNode/leaf_nodes/EulSymbolNameNode/EulSymbolNameNode.h"
+    #include "../core/EulNode/enums/EulTypeEnum.h"
+    #include "../core/EulNode/types/EulType/EulType.h"
+    #include "../core/EulNode/types/EulIntegerType/EulIntegerType.h"
+    #include "../core/EulNode/types/EulFloatType/EulFloatType.h"
+    #include "../core/EulNode/types/EulCharType/EulCharType.h"
+    #include "../core/EulNode/types/EulStringType/EulStringType.h"
+    #include "../core/EulNode/types/EulNamedType/EulNamedType.h"
+    #include "../core/EulNode/types/EulVoidType/EulVoidType.h"
+    #include "../core/EulNode/types/EulAnyType/EulAnyType.h"
+    #include "../core/EulNode/types/EulBooleanType/EulBooleanType.h"
+    #include "../core/EulNode/types/EulFunctionType/EulFunctionType.h"
 
-    #include "../core/EulAst/EulStatement/EulStatementType.h"
-    #include "../core/EulAst/EulStatement/EulStatement.h"
-    #include "../core/EulAst/EulStatement/EulImportStatement.h"
-    #include "../core/EulAst/EulStatement/EulExportStatement.h"
-    #include "../core/EulAst/EulStatement/ReturnStatement.h"
+    #include "../core/EulNode/enums/EulStatementType.h"
+    #include "../core/EulNode/statements/EulStatement/EulStatement.h"
+    #include "../core/EulNode/statements/EulImportStatement/EulImportStatement.h"
+    #include "../core/EulNode/statements/EulExportStatement/EulExportStatement.h"
+    #include "../core/EulNode/statements/ReturnStatement/ReturnStatement.h"
 
-    #include "../core/EulAst/EulExpression/EulExpressionType.h"
-    #include "../core/EulAst/EulExpression/EulExpression.h"
-    #include "../core/EulAst/EulExpression/EulInfixExp.h"
-    #include "../core/EulAst/EulExpression/EulSuffixExp.h"
-    #include "../core/EulAst/EulExpression/EulPrefixExp.h"
-    #include "../core/EulAst/EulExpression/EulTokenExp.h"
-    #include "../core/EulAst/EulExpression/EulFunctionCallExp.h"
-    #include "../core/EulAst/EulExpression/EulArrayAccessExp.h"
-    #include "../core/EulAst/EulStatement/EulExpStatement.h"
-
-
-    #include "../core/EulAst/EulDeclaration/VarDeclaration.h"
-    #include "../core/EulAst/EulStatement/VarDeclarationStatement.h"
-
-    #include "../core/EulScope/EulSymbol.h"
-    #include "../core/EulScope/EulScope.h"
-    #include "../core/EulAst/blocks/EulCodeBlock.h"
-    #include "../core/EulAst/blocks/EulFunction.h"
-    #include "../core/EulAst/blocks/EulExpressionCodeBlock.h"
-
-    #include "../core/EulAst/EulStatement/EulIfStatement.h"
-    #include "../core/EulAst/EulStatement/EulWhileStatement.h"
-    #include "../core/EulAst/EulStatement/EulFuncDeclarationStatement.h"
+    #include "../core/EulNode/reuseables/ValueNode.h"
+    #include "../core/EulNode/enums/EulExpressionType.h"
+    #include "../core/EulNode/expressions/EulExpression/EulExpression.h"
+    #include "../core/EulNode/expressions/EulInfixExp/EulInfixExp.h"
+    #include "../core/EulNode/expressions/EulSuffixExp/EulSuffixExp.h"
+    #include "../core/EulNode/expressions/EulPrefixExp/EulPrefixExp.h"
+    #include "../core/EulNode/expressions/EulFunctionCallExp/EulFunctionCallExp.h"
+    #include "../core/EulNode/expressions/EulArrayAccessExp/EulArrayAccessExp.h"
+    #include "../core/EulNode/statements/EulExpStatement/EulExpStatement.h"
 
 
-    #include "../core/EulSourceFile/EulSourceFile.h"
-    #include "../core/EulProgram/EulNativeTypes.h"
-    #include "../core/EulProgram/EulProgram.h"
+    #include "../core/EulNode/reuseables/VarDeclaration/VarDeclaration.h"
+    #include "../core/EulNode/statements/VarDeclarationStatement/VarDeclarationStatement.h"
+
+    #include "../core/misc/EulSymbol/EulSymbol.h"
+    #include "../core/misc/EulScope/EulScope.h"
+    #include "../core/EulNode/reuseables/EulCodeBlock/EulCodeBlock.h"
+    #include "../core/EulNode/reuseables/EulFunction/EulFunction.h"
+    #include "../core/EulNode/reuseables/EulExpressionCodeBlock/EulExpressionCodeBlock.h"
+
+    #include "../core/EulNode/statements/EulIfStatement/EulIfStatement.h"
+    #include "../core/EulNode/statements/EulWhileStatement/EulWhileStatement.h"
+    #include "../core/EulNode/statements/EulFuncDeclarationStatement/EulFuncDeclarationStatement.h"
+
+
+    #include "../core/Compiler/EulSourceFile/EulSourceFile.h"
+    #include "../core/Compiler/EulProgram/EulNativeTypes.h"
+    #include "../core/Compiler/EulProgram/EulProgram.h"
     #include "../core/Compiler/EulError/EulError.h"
     #include "../core/Compiler/Compiler.h"
     #include "../parser/EulParsingContext.h"
     #include "../parser/EulParsingUtils.h"
 
-    #include "../core/Operators/EulOperator.h"
+    #include "../core/EulNode/operators/EulOperator/EulOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignAndOperator/AssignAndOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignDivOperator/AssignDivOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignLeftShiftOperator/AssignLeftShiftOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignMinusOperator/AssignMinusOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignModOperator/AssignModOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignOperator/AssignOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignOrOperator/AssignOrOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignPlusOperator/AssignPlusOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignRightShiftOperator/AssignRightShiftOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignStarOperator/AssignStarOperator.h"
+    #include "../core/EulNode/operators/assignments/AssignXorOperator/AssignXorOperator.h"
+    #include "../core/EulNode/operators/assignments/IncreaseOperator/IncreaseOperator.h"
+    #include "../core/EulNode/operators/assignments/DecreaseOperator/DecreaseOperator.h"
+
+    #include "../core/EulNode/operators/logical/OrOperator/OrOperator.h"
+    #include "../core/EulNode/operators/logical/NotOperator/NotOperator.h"
+    #include "../core/EulNode/operators/logical/AndOperator/AndOperator.h"
+    #include "../core/EulNode/operators/logical/EqualsOperator/EqualsOperator.h"
+    #include "../core/EulNode/operators/logical/NotEqualsOperator/NotEqualsOperator.h"
+    #include "../core/EulNode/operators/logical/NotSameOperator/NotSameOperator.h"
+    #include "../core/EulNode/operators/logical/XorOperator/XorOperator.h"
+    #include "../core/EulNode/operators/logical/SameOperator/SameOperator.h"
+    #include "../core/EulNode/operators/logical/LessOperator/LessOperator.h"
+    #include "../core/EulNode/operators/logical/LessEqualsOperator/LessEqualsOperator.h"
+    #include "../core/EulNode/operators/logical/MoreOperator/MoreOperator.h"
+    #include "../core/EulNode/operators/logical/MoreEqualsOperator/MoreEqualsOperator.h"
+
+    #include "../core/EulNode/operators/arithmetic/BinAndOperator/BinAndOperator.h"
+    #include "../core/EulNode/operators/arithmetic/BinOrOperator/BinOrOperator.h"
+    #include "../core/EulNode/operators/arithmetic/LeftShiftOperator/LeftShiftOperator.h"
+    #include "../core/EulNode/operators/arithmetic/MinusOperator/MinusOperator.h"
+    #include "../core/EulNode/operators/arithmetic/PercentOperator/PercentOperator.h"
+    #include "../core/EulNode/operators/arithmetic/PlusOperator/PlusOperator.h"
+    #include "../core/EulNode/operators/arithmetic/RightShiftOperator/RightShiftOperator.h"
+    #include "../core/EulNode/operators/arithmetic/SlashOperator/SlashOperator.h"
+    #include "../core/EulNode/operators/arithmetic/StarOperator/StarOperator.h"
+    #include "../core/EulNode/operators/arithmetic/TildeOperator/TildeOperator.h"
+
+
+    #include "../core/EulNode/operators/misc/DotOperator/DotOperator.h"
+    #include "../core/EulNode/operators/misc/ColonOperator/ColonOperator.h"
+    #include "../core/EulNode/operators/misc/QuestionOperator/QuestionOperator.h"
+
+    #include "../core/EulNode/operators/EulOperator/EulOperators.h"
+
 
 
 
@@ -237,8 +281,8 @@
 %type  <std::shared_ptr<VarDeclaration>> parameter_declaration
 %type  <std::shared_ptr<EulType>> eul_type
 
-%type  <std::shared_ptr<EulNode>> expression
-%type  <std::shared_ptr<std::vector<std::shared_ptr<EulNode>>>> expressions
+%type  <std::shared_ptr<ValueNode>> expression
+%type  <std::shared_ptr<std::vector<std::shared_ptr<ValueNode>>>> expressions
 
 %type  <std::shared_ptr<EulCodeBlock>> block
 %type  <std::shared_ptr<EulCodeBlock>> block_or_statement
@@ -580,12 +624,12 @@ expression
 
 expressions:
     expressions COMMA expression {
-        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<EulNode>>>();
+        if ($1 == nullptr) $1 = std::make_shared<std::vector<std::shared_ptr<ValueNode>>>();
         $1->push_back($3);
         $$ = $1;
     } |
     expression {
-        $$ = std::make_shared<std::vector<std::shared_ptr<EulNode>>>();
+        $$ = std::make_shared<std::vector<std::shared_ptr<ValueNode>>>();
         $$->push_back($1);
     } |
     %empty { $$ = nullptr; }

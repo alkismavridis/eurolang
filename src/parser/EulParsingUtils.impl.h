@@ -4,5 +4,5 @@
     //1. Search the symbol
     auto symbol = ctx->currentScope->get(typeName);
     if (symbol==nullptr || !EulType::isEulType(symbol->value)) return nullptr;
-    return (EulType*)symbol->value;
+    return ( EulType* ^^^ )symbol->value;
 }*/

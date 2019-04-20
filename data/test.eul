@@ -9,3 +9,8 @@ while i<=100 {
 
     i = i+1
 }
+
+
+var xx = true
+if !xx { print("true!!"); }
+else { print("false!!"); }

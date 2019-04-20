@@ -1,5 +1,4 @@
 #1. Compile
-	echo $1;
 	TARGET_FILE=$1
 	if [ $# -eq 0 ]
 	then
@@ -21,4 +20,3 @@ ld ../out/obj.o -e _startEul \
 
 #3. cleanup
     rm ../out/obj.o
-

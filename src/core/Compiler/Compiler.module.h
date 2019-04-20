@@ -1,6 +1,8 @@
 //INCLUDE INTERNAL IMPLEMENTATIONS
 #pragma once
 #include "./EulError/EulError.impl.h"
+#include "./EulSourceFile/EulSourceFile.impl.h"
+#include "./EulProgram/EulProgram.impl.h"
 
 
 
