@@ -94,88 +94,178 @@ class EulType;
 #include "../src/core/Compiler/Compiler.h"
 #include "../src/lexer/EulScanner.h"
 
-#include "../src/llvm/EulCodeGenFlags.h"
-#include "../src/llvm/EulCodeGenContext.h"
+#include "../src/core/misc/EulCodeGenContext/EulCodeGenContext.h"
 //endregion
 
 
 #include "../src/cli/EulCliParams/EulCliParams.h"
+#include "../src/core/Core.impl.h"
+#include "../src/parser/EulParsingUtils.impl.h"
+#include "../src/core/misc/EulCodeGenContext/EulCodeGenContext.impl.h"
+
+
 #include "test_utils/Assert.h"
 
 
 
-//region IMPLEMENTATIONS
-#include "../src/core/Core.impl.h"
-#include "../src/parser/EulParsingUtils.impl.h"
-#include "../src/llvm/EulCodeGenContext.module.h"
-
-#include "./core/EulNode/EulTokenTest.h"
-#include "./core/EulNode/EulAstTest.h"
-#include "./core/misc/EulScope/EulScopeTest.h"
-#include "./core/Compiler/EulSourceFile/EulSourceFileTest.h"
-#include "./core/Compiler/EulProgram/EulProgramTest.h"
-#include "./core/Compiler/CompilerTest.h"
-
-#include "./lexer/EulScannerTest.h"
-
-#include "./parser/EulParserTest.h"
-#include "./parser/EulIfStatementTest.h"
-#include "./parser/EulWhileStatementTest.h"
 
 
-#include "./core/EulNode/EulProgramCodegenTest.h"
-#include "./core/EulNode/EulTokenCodeGenTest.h"
-#include "./core/EulNode/EulAstCodeGenTest.h"
-#include "./core/EulNode/EulCodeGenContextTest.h"
-#include "./core/EulNode/EulOperatorCodeGenTest.h"
-#include "./core/EulNode/EulTypeCodeGenTest.h"
-#include "./core/EulNode/IfStatementCodeGenTest.h"
-#include "./core/EulNode/WhileStatementCodeGenTest.h"
+
+
+
+//region CORE TESTS
+#include "core/Compiler/EulProgram/EulProgramTest.h"
+#include "core/Compiler/EulSourceFile/EulSourceFileTest.h"
+#include "core/Compiler/CompilerTest.h"
+
+#include "core/misc/EulScope/EulScopeTest.h"
+#include "core/misc/EulCodeGenContext/EulCodeGenContextTest.h"
+
+#include "core/EulNode/expressions/EulFunctionCallExp/EulFunctionCallExpTest.h"
+#include "core/EulNode/expressions/EulInfixExp/EulInfixExpTest.h"
+#include "core/EulNode/expressions/EulPrefixExp/EulPrefixExpTest.h"
+
+#include "core/EulNode/leaf_nodes/EulBooleanNode/EulBooleanNodeTest.h"
+#include "core/EulNode/leaf_nodes/EulCharNode/EulCharNodeTest.h"
+#include "core/EulNode/leaf_nodes/EulFloatNode/EulFloatNodeTest.h"
+#include "core/EulNode/leaf_nodes/EulIntNode/EulIntNodeTest.h"
+#include "core/EulNode/leaf_nodes/EulStringNode/EulStringNodeTest.h"
+#include "core/EulNode/leaf_nodes/EulSymbolNameNode/EulSymbolNameNodeTest.h"
+
+#include "core/EulNode/operators/arithmetic/LeftShiftOperator/LeftShiftOperatorTest.h"
+#include "core/EulNode/operators/arithmetic/MinusOperator/MinusOperatorTest.h"
+#include "core/EulNode/operators/arithmetic/PercentOperator/PercentOperatorTest.h"
+#include "core/EulNode/operators/arithmetic/PlusOperator/PlusOperatorTest.h"
+#include "core/EulNode/operators/arithmetic/RightShiftOperator/RightShiftOperatorTest.h"
+#include "core/EulNode/operators/arithmetic/SlashOperator/SlashOperatorTest.h"
+#include "core/EulNode/operators/arithmetic/StarOperator/StarOperatorTest.h"
+#include "core/EulNode/operators/assignments/AssignOperator/AssignOperatorTest.h"
+#include "core/EulNode/operators/logical/EqualsOperator/EqualsOperatorTest.h"
+#include "core/EulNode/operators/logical/LessEqualsOperator/LessEqualsOperatorTest.h"
+#include "core/EulNode/operators/logical/LessOperator/LessOperatorTest.h"
+#include "core/EulNode/operators/logical/MoreEqualsOperator/MoreEqualsOperatorTest.h"
+#include "core/EulNode/operators/logical/MoreOperator/MoreOperatorTest.h"
+#include "core/EulNode/operators/logical/NotOperator/NotOperatorTest.h"
+#include "core/EulNode/operators/logical/NotEqualsOperator/NotEqualsOperatorTest.h"
+#include "core/EulNode/operators/logical/NotSameOperator/NotSameOperatorTest.h"
+#include "core/EulNode/operators/logical/SameOperator/SameOperatorTest.h"
+
+#include "core/EulNode/reuseables/VarDeclaration/VarDeclarationTest.h"
+#include "core/EulNode/reuseables/EulFunction/EulFunctionTest.h"
+#include "core/EulNode/reuseables/EulCodeBlock/EulCodeBlockTest.h"
+
+#include "core/EulNode/statements/EulExpStatement/EulExpStatementTest.h"
+#include "core/EulNode/statements/EulIfStatement/EulIfStatementTest.h"
+#include "core/EulNode/statements/EulWhileStatement/EulWhileStatementTest.h"
+#include "core/EulNode/statements/ReturnStatement/ReturnStatementTest.h"
+#include "core/EulNode/statements/VarDeclarationStatement/VarDeclarationStatementTest.h"
+#include "core/EulNode/statements/EulFuncDeclarationStatement/EulFuncDeclarationStatementTest.h"
+
+#include "core/EulNode/types/EulFloatType/EulFloatTypeTest.h"
+#include "core/EulNode/types/EulFunctionType/EulFunctionTypeTest.h"
+#include "core/EulNode/types/EulIntegerType/EulIntegerTypeTest.h"
+#include "core/EulNode/types/EulNamedType/EulNamedTypeTest.h"
+#include "core/EulNode/types/EulPointerType/EulPointerTypeTest.h"
+#include "core/EulNode/types/EulBooleanType/EulBooleanTypeTest.h"
+#include "core/EulNode/types/EulCharType/EulCharTypeTest.h"
+#include "core/EulNode/types/EulStringType/EulStringTypeTest.h"
+#include "core/EulNode/types/EulType/EulTypeTest.h"
+#include "core/EulNode/types/EulAnyType/EulAnyTypeTest.h"
+#include "core/EulNode/types/EulVoidType/EulVoidTypeTest.h"
 //endregion
 
 
 
+
+//region FLEX-BISON tests
+#include "./lexer/EulScannerTest.h"
+
+#include "./parser/EulParserTest.h"
+#include "./parser/EulIfStatementParsingTest.h"
+#include "./parser/EulWhileStatementParsingTest.h"
+//endregion
+
+
+
+//region CLI INTERFACE TESTS
+#include "cli/EulCliParams/EulCliParamsTest.h"
+//endregion
+
+
+
+
 int main() {
-    std::cout << "Start running tests...\n";
+  std::cout << "Start running tests...\n";
 
-    //1. Core tests
-	EulTokenTest::runAll();
-	EulAstTest::runAll();
-	EulSourceFileTest::runAll();
-	EulProgramTest::runAll();
-	CompilerTest::runAll();
-	EulScopeTest::runAll();
+  //1. Core tests
+  EulProgramTest::runAll();
+  EulSourceFileTest::runAll();
+  CompilerTest::runAll();
 
-	//2. Lexer tests
-	EulScannerTest::runAll();
+  EulScopeTest::runAll();
+  EulCodeGenContextTest::runAll();
 
-    //3. Parser tests
-    EulParserTest::runAll();
-    EulIfStatementTest::runAll();
-    EulWhileStatementTest::runAll();
-
-
-    //4. Core generation Tests
-    EulProgramCodegenTest::runAll();
-    EulTokenCodeGenTest::runAll();
-    EulAstCodeGenTest::runAll();
-    EulCodeGenContextTest::runAll();
-    EulOperatorCodeGenTest::runAll();
-    EulTypeCodeGenTest::runAll();
-    IfStatementCodeGenTest::runAll(); //TODO <------ not done yet
-    WhileStatementCodeGenTest::runAll(); //TODO <------ not done yet
-
-
-    //============ NOT UNIT TESTS =============
-    //TODO Compiler.produceOutput test
-    //TODO EulProgram.impl.h:  emmitObjCode, emmitIRAssembly
+  EulFunctionCallExpTest::runAll();
+  EulInfixExpTest::runAll();
+  EulPrefixExpTest::runAll();
+  EulBooleanNodeTest::runAll();
+  EulCharNodeTest::runAll();
+  EulFloatNodeTest::runAll();
+  EulIntNodeTest::runAll();
+  EulStringNodeTest::runAll();
+  EulSymbolNameNodeTest::runAll();
 
 
 
-    //============ MINOR IMPORTANCE =============
-    //TODO EulSourceFile    parseAST
+  LeftShiftOperatorTest::runAll();
+  MinusOperatorTest::runAll();
+  PercentOperatorTest::runAll();
+  PlusOperatorTest::runAll();
+  RightShiftOperatorTest::runAll();
+  SlashOperatorTest::runAll();
+  StarOperatorTest::runAll();
+  AssignOperatorTest::runAll();
+  EqualsOperatorTest::runAll();
+  LessEqualsOperatorTest::runAll();
+  LessOperatorTest::runAll();
+  MoreEqualsOperatorTest::runAll();
+  MoreOperatorTest::runAll();
+  NotOperatorTest::runAll();
+  NotEqualsOperatorTest::runAll();
+  NotSameOperatorTest::runAll();
+  SameOperatorTest::runAll();
+
+  VarDeclarationTest::runAll();
+  EulFunctionTest::runAll();
+  EulCodeBlockTest::runAll();
+
+  EulExpStatementTest::runAll();
+  EulIfStatementTest::runAll();
+  EulWhileStatementTest::runAll();
+  ReturnStatementTest::runAll();
+  VarDeclarationStatementTest::runAll();
+  EulFuncDeclarationStatementTest::runAll();
+
+  EulFloatTypeTest::runAll();
+  EulFunctionTypeTest::runAll();
+  EulIntegerTypeTest::runAll();
+  EulNamedTypeTest::runAll();
+  EulPointerTypeTest::runAll();
+  EulBooleanTypeTest::runAll();
+  EulAnyTypeTest::runAll();
+  EulCharTypeTest::runAll();
+  EulStringTypeTest::runAll();
+  EulVoidTypeTest::runAll();
+  EulTypeTest::runAll();
 
 
-	std::cout << "All tests passed successfully.\n";
-	return 0;
+  EulScannerTest::runAll();
+  EulParserTest::runAll();
+  EulIfStatementParsingTest::runAll();
+  EulWhileStatementParsingTest::runAll();
+
+  EulCliParamsTest::runAll();
+
+  std::cout << "\n\n=======================================\n\n\tAll tests passed successfully.\n\n\n";
+  return 0;
 }

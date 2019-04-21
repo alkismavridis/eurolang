@@ -18,11 +18,9 @@ EulExpressionType EulPrefixExp::getExpressionType() { return EulExpressionType::
 
 //region CODE GENERATION
 llvm::Value* EulPrefixExp::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
-
-
   if (this->oper->isAssignment()) {
     //return this->generateAssignment(ctx, flags);
-    std::cout << "TODO EulPrefixExp::generateValue isAssignment NOT IMPLEMENTED\n\n" << std::endl;
+    std::cout << "EulPrefixExp::generateValue.isAssignment TODO NOT IMPLEMENTED\n\n" << std::endl;
     return nullptr;
   }
 

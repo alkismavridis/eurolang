@@ -23,25 +23,4 @@ llvm::Value* NotOperator::performPrefix(llvm::Value* arg, std::shared_ptr<EulTyp
   *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
 
   return  ctx->builder.CreateICmpEQ(arg, llvm::ConstantInt::get(ctx->context, llvm::APInt(1, 0, true)));
-
-
-
-  // //1. Calculate result type
-  // auto targetEulType = EulType::doCommonNumberMerging(leftType, rightType, ctx);
-  // auto targetLlvmType = targetEulType->getLlvmType(ctx);
-  //
-  // //2. Cast operands, if needed
-  // if (targetLlvmType != left->getType()) left = targetEulType->castValue(left, leftType.get(), false, ctx);
-  // if (targetLlvmType != right->getType()) right = targetEulType->castValue(right, rightType.get(), false, ctx);
-  // *resultTypeAddr = ctx->compiler->program.nativeTypes.booleanType;
-  //
-  //  //3. Create an instruction based on the result type
-  // if (targetEulType->getTypeEnum() == EulTypeEnum::INT_TYPE) {
-  //     auto asInt = static_cast<EulIntegerType*>(targetEulType.get());
-  //     return asInt->isUnsigned?
-  //         ctx->builder.CreateICmpUGE(left, right) :
-  //         ctx->builder.CreateICmpSGE(left, right);
-  // }
-  // else return ctx->builder.CreateFCmpUGE(left, right); //TODO ordered or unordered?
-
 }

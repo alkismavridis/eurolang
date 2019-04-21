@@ -12,8 +12,7 @@ EulTypeEnum EulVoidType::getTypeEnum() { return EulTypeEnum::VOID_TYPE; }
 
 //region CODE GENERATION
 llvm::Value* EulVoidType::castValue(llvm::Value* sourceValue, EulType* sourceType, bool isExplicit, EulCodeGenContext* ctx) {
-    if (sourceValue != nullptr)
-        throw EulError(EulErrorType::NOT_IMPLEMENTED, "Cannot cast a value to void.");
+    if (sourceValue != nullptr) throw EulError(EulErrorType::NOT_IMPLEMENTED, "Cannot cast a value to void.");
     return nullptr;
 }
 

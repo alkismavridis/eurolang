@@ -14,11 +14,21 @@ auto enumToInt(Enumeration const value)
 }
 
 class Assert {
-
+    //region VARIOUS UTILS
     public: static void fail(const std::string& message) {
         std::cout << message << std::endl;
         exit(1);
     }
+
+
+  public: static void warnNotTested(const std::string& label) {
+    std::cout << "WARNING. You have some tests to write: " << label << "\n";
+  }
+    //endregion
+
+
+
+
 
     //region NUMERIC
     template <class E>

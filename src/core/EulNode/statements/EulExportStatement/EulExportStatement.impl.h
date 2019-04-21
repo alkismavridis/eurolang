@@ -17,6 +17,6 @@ EulStatementType EulExportStatement::getStatementType() { return EulStatementTyp
 
 //region SERIALIZATION
 void EulExportStatement::toJson(std::ostream& out, int tabs) {
-    out << "EulExportStatement" << std::endl;
+    out << "EulExportStatement TODO NOT IMPLEMENTED" << std::endl;
 }
 //endregion

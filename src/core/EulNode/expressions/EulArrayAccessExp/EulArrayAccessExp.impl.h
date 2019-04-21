@@ -19,8 +19,8 @@ EulExpressionType EulArrayAccessExp::getExpressionType() { return EulExpressionT
 
 //region CODE GENERATION
 llvm::Value* EulArrayAccessExp::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
-    std::cout << "EulArrayAccessExp" << std::endl;
-    return nullptr; //TODO
+    std::cout << "EulArrayAccessExp::generateValue TODO NOT IMPLEMENTED" << std::endl;
+    return nullptr;
 }
 //endregion
 

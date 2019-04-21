@@ -127,6 +127,8 @@ class CompilerTest {
 
 
     public: static void runAll() {
+        Assert::warnNotTested("CompilerTest.produceOutput");
+
         constructorTest("CompilerTest.constructorTest ");
         resetTest("CompilerTest.resetTest ");
         compileTest("CompilerTest.compileTest ");

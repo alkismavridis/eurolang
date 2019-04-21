@@ -19,7 +19,7 @@ EulExpressionType EulSuffixExp::getExpressionType() { return EulExpressionType::
 
 //region CODE GENERATION
 llvm::Value* EulSuffixExp::generateValue(EulCodeGenContext* ctx, unsigned int flags) {
-    std::cout << "EulSuffixExp::generateValue" << std::endl;
+    std::cout << "EulSuffixExp::generateValue TODO NOT IMPLEMENTED" << std::endl;
     return nullptr; //TODO
 }
 //endregion

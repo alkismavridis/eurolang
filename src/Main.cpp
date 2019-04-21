@@ -97,8 +97,7 @@ class EulType;
 #include "../src/core/Compiler/Compiler.h"
 #include "../src/lexer/EulScanner.h"
 
-#include "../src/llvm/EulCodeGenFlags.h"
-#include "../src/llvm/EulCodeGenContext.h"
+#include "../src/core/misc/EulCodeGenContext/EulCodeGenContext.h"
 //endregion
 
 
@@ -109,7 +108,7 @@ class EulType;
 
 //region IMPLEMENTATIONS
 #include "../src/core/Core.impl.h"
-#include "../src/llvm/EulCodeGenContext.module.h"
+#include "../src/core/misc/EulCodeGenContext/EulCodeGenContext.impl.h"
 #include "../src/cli/EulcCli.impl.h"
 #include "../src/parser/EulParsingUtils.impl.h"
 //endregion

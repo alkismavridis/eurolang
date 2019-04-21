@@ -252,11 +252,13 @@ class EulScopeTest {
 
 
     public: static void runAll() {
-        declarationGetterTest("EulScopeTest.declarationGetterTest ");
-        declareFromStatementTest("EulScopeTest.declareFromStatementTest ");
-        getOwnSymbolTest("EulScopeTest.getOwnSymbolTest ");
-        declareTest("EulScopeTest.declareTest ");
-        resetTest("EulScopeTest.resetTest ");
-        getOwnSymbolAsTypeTest("EulScopeTest.getOwnSymbolAsTypeTest ");
+      Assert::warnNotTested("EulScopeTest::declareVarDeclarationStatement");
+      
+      declarationGetterTest("EulScopeTest.declarationGetterTest ");
+      declareFromStatementTest("EulScopeTest.declareFromStatementTest ");
+      getOwnSymbolTest("EulScopeTest.getOwnSymbolTest ");
+      declareTest("EulScopeTest.declareTest ");
+      resetTest("EulScopeTest.resetTest ");
+      getOwnSymbolAsTypeTest("EulScopeTest.getOwnSymbolAsTypeTest ");
     }
 };

@@ -95,12 +95,6 @@ EulNodeType EulNode::getNodeType() { return EulNodeType::UNKNOWN; }
 
 
 
-//region CORE FUNCTIONS
-//endregion
-
-
-
-
 //region SERIALIZATION
 void EulNode::toJson(std::ostream& out, int tabs) {
     out << "{\"type\":\"EulNode\"}";

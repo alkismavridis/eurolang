@@ -17,6 +17,6 @@ EulStatementType EulImportStatement::getStatementType() { return EulStatementTyp
 
 //region SERIALIZATION
 void EulImportStatement::toJson(std::ostream& out, int tabs) {
-    out << "Unknown token" << std::endl;
+  out << "EulImportStatement TODO NOT IMPLEMENTED" << std::endl;
 }
 //endregion

@@ -19,5 +19,4 @@ EulCliParams::EulCliParams(const int argc, const char **argv) {
 
     //2. Setup output file
     this->outputFile.assign(argv[2]);
-
 }
