@@ -147,7 +147,5 @@ int main(const int argc, const char **argv) {
         std::cout << "Error: " << e.message << std::endl;
         return 1;
     }
-
-    std::cout << "Done." << std::endl;
     return 0;
 }

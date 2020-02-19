@@ -1,6 +1,6 @@
 //This was the first eurolang "useful" program to ever compile and run successfully! 2018.09.15
 
-const numToTest = 49
+const numToTest = 6
 
 if numToTest % 2 == 0 {
     print("not a prime")
