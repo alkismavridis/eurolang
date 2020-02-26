@@ -1,0 +1,98 @@
+#include "ast/values/BooleanNode.h"
+
+#include "analyzer/model/meta/AstMetadata.h"
+#include "analyzer/model/error/ValueTypeAlreadySetException.h"
+#include "analyzer/model/error/ValueTypeNotSetException.h"
+#include "analyzer/types/AnyType.h"
+
+#include "test_utils/Assert.h"
+
+#include "AstMetadataTest.h"
+
+
+
+using namespace std;
+
+void hasErrorsShouldReturnFalseIfNoErrorsExist(UnitTest* t) {
+  AstMetadata meta;
+  Assert::thatNot(meta.hasErrors(), t, "1");
+}
+
+void hasErrorsShouldReturnTrueIfErrorsExist(UnitTest* t) {
+  AstMetadata meta;
+  meta.addError(make_unique<EulException>("foo", "bar", AstLocation(2, 3)));
+  Assert::that(meta.hasErrors(), t, "1");
+}
+
+void getTypeFor_shouldReturnExistingType(UnitTest* t) {
+  AstMetadata meta;
+  BooleanNode node(true, AstLocation(5,5));
+  AnyType anyType;
+  meta.putType(&node, &anyType);
+
+  const EulType* result = meta.getTypeFor(&node);
+  Assert::same(result, &anyType, t, "1");
+}
+
+void getTypeFor_shouldReturnNullForNonExistingType(UnitTest* t) {
+  AstMetadata meta;
+  BooleanNode node(true, AstLocation(5,5));
+  const EulType* type = meta.getTypeFor(&node);
+  Assert::null(type, t, "1");
+}
+
+void getTypeFor_shouldThrowExceptionOnDuplicatePut(UnitTest* t) {
+  AstMetadata meta;
+  BooleanNode node(true, AstLocation(5,6));
+  AnyType anyType;
+  meta.putType(&node, &anyType);
+
+  auto result = Assert::throws<ValueTypeAlreadySetException>(
+    [&]()-> void { meta.putType(&node, &anyType); },
+    t,
+    "1"
+  );
+  Assert::equals(result.message, "PutType failed. Type already set.", t, "2");
+  Assert::equals(result.location.line, 5, t, "3");
+  Assert::equals(result.location.row, 6, t, "4");
+}
+
+void requireTypeFor_shouldThrowExceptionIfTypeDoesNotExists(UnitTest* t) {
+  AstMetadata meta;
+  BooleanNode node(true, AstLocation(5,6));
+
+  auto result = Assert::throws<ValueTypeNotSetException>(
+    [&]()-> void { meta.requireTypeFor(&node); },
+    t,
+    "1"
+  );
+  Assert::equals(result.message, "RequiredType not present.", t, "2");
+  Assert::equals(result.location.line, 5, t, "3");
+  Assert::equals(result.location.row, 6, t, "4");
+}
+
+void requireTypeFor_shouldReturnExistingType(UnitTest* t) {
+  AstMetadata meta;
+  BooleanNode node(true, AstLocation(5,5));
+  AnyType anyType;
+  meta.putType(&node, &anyType);
+
+  const EulType* result = meta.requireTypeFor(&node);
+  Assert::same(result, &anyType, t, "1");
+}
+
+
+void AstMetadataTest::runAll() {
+  this
+    ->logStart()
+    ->run("hasErrorsShouldReturnFalseIfNoErrorsExist", hasErrorsShouldReturnFalseIfNoErrorsExist)
+    ->run("hasErrorsShouldReturnTrueIfErrorsExist", hasErrorsShouldReturnTrueIfErrorsExist)
+
+    ->run("getTypeFor_shouldReturnExistingType", getTypeFor_shouldReturnExistingType)
+    ->run("getTypeFor_shouldReturnNullForNonExistingType", getTypeFor_shouldReturnNullForNonExistingType)
+    ->run("getTypeFor_shouldThrowExceptionOnDuplicatePut", getTypeFor_shouldThrowExceptionOnDuplicatePut)
+
+    ->run("requireTypeFor_shouldThrowExceptionIfTypeDoesNotExists", requireTypeFor_shouldThrowExceptionIfTypeDoesNotExists)
+    ->run("requireTypeFor_shouldReturnExistingType", requireTypeFor_shouldReturnExistingType)
+    ;
+}

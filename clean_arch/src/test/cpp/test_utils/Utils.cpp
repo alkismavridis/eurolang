@@ -73,7 +73,7 @@ void Assert::equals(double expected, double actual, double tolerance, const Unit
 
 void Assert::equals(const std::string& expected, const std::string& actual, const UnitTest* t, const std::string& label) {
   if (expected==actual) return;
-  std::cout << "\n\n" << t->getCurrentTestFullName() << " " << label << "\n\tExpected: "<< expected <<",\n\tFound: " << actual << "\n\n";
+  std::cout << "\n\n" << t->getCurrentTestFullName() << " " << label << "\n\tExpected: "<< expected <<"\n\tFound: " << actual << "\n\n";
   exit(1);
 }
 
@@ -95,19 +95,19 @@ void Assert::thatNot(char cond, const UnitTest* t, const std::string& label) {
   exit(1);
 }
 
-void Assert::same(void* expected, void* actual, const UnitTest* t, const std::string& label) {
+void Assert::same(const void* expected, const void* actual, const UnitTest* t, const std::string& label) {
   if (expected==actual) return;
   std::cout << "\n\n"<< t->getCurrentTestFullName() << " " << label << "\n\tAssert equals pointers failed.\n\n";
   exit(1);
 }
 
-void Assert::null(void* ptr, const UnitTest* t, const std::string& label) {
+void Assert::null(const void* ptr, const UnitTest* t, const std::string& label) {
   if (ptr==0) return;
   std::cout << "\n\n"<< t->getCurrentTestFullName() << " " << label << "\n\tAssert null failed.\n\n";
   exit(1);
 }
 
-void Assert::notNull(void* ptr, const UnitTest* t, const std::string& label) {
+void Assert::notNull(const void* ptr, const UnitTest* t, const std::string& label) {
   if (ptr!=0) return;
   std::cout << "\n\n"<< t->getCurrentTestFullName() << " " << label << "\n\tAssert not null failed.\n\n";
   exit(1);
