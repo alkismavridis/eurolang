@@ -14,8 +14,16 @@
 */
 struct WhileStatement : public EulStatement {
   const std::unique_ptr<const EulValue> condition;
-  std::list<std::unique_ptr<const EulStatement>> statements;
+  const std::list<std::unique_ptr<const EulStatement>> statements;
 
-  WhileStatement(std::unique_ptr<const EulValue> condition, AstLocation location);
+  WhileStatement(
+    std::unique_ptr<const EulValue> condition,
+    std::list<std::unique_ptr<const EulStatement>> statements,
+    AstLocation location
+  ) :
+    EulStatement(location),
+    statements(move(statements)),
+    condition(move(condition)) {}
+
   StatementType getType() { return StatementType::WHILE; }
 };

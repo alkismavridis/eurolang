@@ -25,19 +25,17 @@ SuffixExpression::SuffixExpression(unique_ptr<const EulValue> left, unique_ptr<c
   oper(move(oper)) {}
 
 
-FunctionCallExpression::FunctionCallExpression(unique_ptr<const EulValue> func, AstLocation location) :
+FunctionCallExpression::FunctionCallExpression(unique_ptr<const EulValue> func, vector<unique_ptr<const EulValue>> params, AstLocation location) :
   EulValue(location),
+  params(move(params)),
   func(move(func)) {}
 
-FunctionCallExpression* FunctionCallExpression::addParam(unique_ptr<const EulValue> param) {
-  this->params.push_back(move(param));
-  return this;
-}
 
 ArrayAccessExpression::ArrayAccessExpression(unique_ptr<const EulValue> arr, unique_ptr<const EulValue> index, AstLocation location) :
   EulValue(location),
   arr(move(arr)),
   index(move(index)) {}
+
 
 OperatorNode::OperatorNode(const EulOperator* eulOperator, AstLocation location) :
   AstNode(location),

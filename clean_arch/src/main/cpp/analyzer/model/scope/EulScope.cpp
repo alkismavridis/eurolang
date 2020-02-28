@@ -1,6 +1,6 @@
 #include "ast/statements/SymbolChangeType.h"
 #include "EulScope.h"
-#include "analyzer/model/error/VariableAlreadyDeclaredException.h"
+#include "VariableAlreadyDeclaredException.h"
 
 using namespace std;
 
@@ -41,3 +41,10 @@ void EulScope::declare(SymbolChangeType changeType, const string& key, const Eul
 
   this->declarations[key] = make_unique<SymbolDeclaration>(changeType, type, value, location);
 }
+
+
+
+//SECTION Exceptions
+VariableAlreadyDeclaredException::VariableAlreadyDeclaredException(const std::string& message, AstLocation prevDeclarationLoacation, AstLocation location) :
+  EulException("VariableAlreadyDeclaredException", message, location),
+  prevDeclarationLoacation(prevDeclarationLoacation) {}

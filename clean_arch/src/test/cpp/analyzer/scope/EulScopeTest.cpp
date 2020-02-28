@@ -2,10 +2,10 @@
 
 #include "ast/values/BooleanNode.h"
 #include "ast/statements/SymbolChangeType.h"
-#include "analyzer/types/AnyType.h"
+#include "analyzer/model/types/AnyType.h"
 
 #include "analyzer/model/scope/EulScope.h"
-#include "analyzer/model/error/VariableAlreadyDeclaredException.h"
+#include "analyzer/model/scope/VariableAlreadyDeclaredException.h"
 
 #include "test_utils/Assert.h"
 #include "EulScopeTest.h"

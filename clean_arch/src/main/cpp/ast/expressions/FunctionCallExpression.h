@@ -7,9 +7,7 @@
 
 struct FunctionCallExpression : public EulValue {
   const std::unique_ptr<const EulValue> func;
-  std::vector<std::unique_ptr<const EulValue>> params;
+  const std::vector<std::unique_ptr<const EulValue>> params;
 
-  FunctionCallExpression(std::unique_ptr<const EulValue> func, AstLocation location);
-
-  FunctionCallExpression* addParam(std::unique_ptr<const EulValue> param);
+  FunctionCallExpression(std::unique_ptr<const EulValue> func, std::vector<std::unique_ptr<const EulValue>> params, AstLocation location);
 };

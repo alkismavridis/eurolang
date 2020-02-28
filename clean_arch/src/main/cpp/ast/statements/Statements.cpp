@@ -2,11 +2,8 @@
 #include "ExpressionStatement.h"
 #include "ReturnStatement.h"
 #include "VarDeclarationStatement.h"
-#include "WhileStatement.h"
 #include "ConditionalBlock.h"
-#include "IfStatement.h"
 #include "TypeNode.h"
-#include "FunctionDeclarationStatement.h"
 #include "StatementType.h"
 
 
@@ -14,7 +11,7 @@ using namespace std;
 
 EulStatement::EulStatement(AstLocation location) : AstNode(location) {}
 
-TypeNode::TypeNode(const std::string& name, AstLocation location) :
+TypeNode::TypeNode(const string& name, AstLocation location) :
   AstNode(location),
   name(name) {}
 
@@ -43,31 +40,7 @@ VarDeclarationStatement::VarDeclarationStatement(SymbolChangeType changeType, un
   value(move(value)) {}
 
 
-WhileStatement::WhileStatement(unique_ptr<const EulValue> condition, AstLocation location) :
-  EulStatement(location),
-  condition(move(condition)) {}
-
-
-
 ConditionalBlock::ConditionalBlock(unique_ptr<const EulValue> condition, list<unique_ptr<const EulStatement>> statements, AstLocation location) :
   AstNode(location),
   condition(move(condition)),
   statements(move(statements)) {}
-
-
-
-IfStatement::IfStatement(unique_ptr<const ConditionalBlock> ifBlock, AstLocation location) :
-  EulStatement(location),
-  ifBlock(move(ifBlock)),
-  elseBlock(nullptr) {}
-
-IfStatement::IfStatement(unique_ptr<const ConditionalBlock> ifBlock, unique_ptr<const ConditionalBlock> elseBlock, AstLocation location) :
-  EulStatement(location),
-  ifBlock(move(ifBlock)),
-  elseBlock(move(elseBlock)) {}
-
-
-FunctionDeclarationStatement::FunctionDeclarationStatement(unique_ptr<const SymbolNameNode> name, unique_ptr<const TypeNode> returnType, AstLocation location) :
-  EulStatement(location),
-  name(move(name)),
-  returnType(move(returnType)) {}

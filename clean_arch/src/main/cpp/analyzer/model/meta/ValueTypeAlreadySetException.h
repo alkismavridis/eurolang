@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "EulException.h"
+#include "analyzer/model/error/EulException.h"
 
 struct ValueTypeAlreadySetException : public EulException {
   ValueTypeAlreadySetException(const std::string& message, AstLocation location);

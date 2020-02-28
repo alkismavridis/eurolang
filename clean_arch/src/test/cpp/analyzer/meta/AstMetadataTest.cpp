@@ -1,9 +1,9 @@
 #include "ast/values/BooleanNode.h"
 
 #include "analyzer/model/meta/AstMetadata.h"
-#include "analyzer/model/error/ValueTypeAlreadySetException.h"
-#include "analyzer/model/error/ValueTypeNotSetException.h"
-#include "analyzer/types/AnyType.h"
+#include "analyzer/model/meta/ValueTypeAlreadySetException.h"
+#include "analyzer/model/meta/ValueTypeNotSetException.h"
+#include "analyzer/model/types/AnyType.h"
 
 #include "test_utils/Assert.h"
 
@@ -13,6 +13,20 @@
 
 using namespace std;
 
+
+
+//SECTION UTILS
+struct TypeThatCountsDestructors : public EulType {
+  int* const counter;
+
+   TypeThatCountsDestructors(int* counter) : counter(counter) {}
+   ~TypeThatCountsDestructors() {
+     (*counter)++;
+   }
+};
+
+
+//SECTION TESTS
 void hasErrorsShouldReturnFalseIfNoErrorsExist(UnitTest* t) {
   AstMetadata meta;
   Assert::thatNot(meta.hasErrors(), t, "1");
@@ -81,6 +95,29 @@ void requireTypeFor_shouldReturnExistingType(UnitTest* t) {
   Assert::same(result, &anyType, t, "1");
 }
 
+void putAndOwnType_shouldPutTypeInMap(UnitTest* t) {
+  AstMetadata meta;
+  BooleanNode node(true, AstLocation(5,5));
+  auto anyType = make_unique<AnyType>();
+  auto anyTypePtr = anyType.get();
+  meta.putAndOwnType(&node, move(anyType));
+
+  const EulType* result = meta.requireTypeFor(&node);
+  Assert::same(result, anyTypePtr, t, "1");
+}
+
+void putAndOwnType_shouldDeallocateMemory(UnitTest* t) {
+  unique_ptr<AstMetadata> meta = make_unique<AstMetadata>();
+  BooleanNode node(true, AstLocation(5,5));
+  int counter = 0;
+  auto destructorCountingType = make_unique<TypeThatCountsDestructors>(&counter);
+  meta->putAndOwnType(&node, move(destructorCountingType));
+
+  //delete the metadata. destructorCountingType should also be deleted
+  meta = nullptr;
+  Assert::equals(counter, 1, t, "1");
+}
+
 
 void AstMetadataTest::runAll() {
   this
@@ -94,5 +131,7 @@ void AstMetadataTest::runAll() {
 
     ->run("requireTypeFor_shouldThrowExceptionIfTypeDoesNotExists", requireTypeFor_shouldThrowExceptionIfTypeDoesNotExists)
     ->run("requireTypeFor_shouldReturnExistingType", requireTypeFor_shouldReturnExistingType)
+    ->run("putAndOwnType_shouldPutTypeInMap", putAndOwnType_shouldPutTypeInMap)
+    ->run("putAndOwnType_shouldDeallocateMemory", putAndOwnType_shouldDeallocateMemory)
     ;
 }

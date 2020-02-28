@@ -13,11 +13,19 @@
 */
 struct IfStatement : public EulStatement {
   const std::unique_ptr<const ConditionalBlock> ifBlock;
-  std::list<std::unique_ptr<const ConditionalBlock>> elseIfBlocks;
+  const std::list<std::unique_ptr<const ConditionalBlock>> elseIfBlocks;
   const std::unique_ptr<const ConditionalBlock> elseBlock;
 
-  IfStatement(std::unique_ptr<const ConditionalBlock> ifBlock, AstLocation location);
-  IfStatement(std::unique_ptr<const ConditionalBlock> ifBlock, std::unique_ptr<const ConditionalBlock> elseBlock, AstLocation location);
+  IfStatement(
+    std::unique_ptr<const ConditionalBlock> ifBlock,
+    std::list<std::unique_ptr<const ConditionalBlock>> elseIfBlocks,
+    std::unique_ptr<const ConditionalBlock> elseBlock,
+    AstLocation location
+  ) :
+    EulStatement(location),
+    ifBlock(move(ifBlock)),
+    elseIfBlocks(move(elseIfBlocks)),
+    elseBlock(move(elseBlock)) {}
 
   StatementType getType() { return StatementType::IF; }
 };

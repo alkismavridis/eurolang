@@ -3,7 +3,7 @@
 #include "ast/statements/SymbolChangeType.h"
 #include "ast/values/EulValue.h"
 
-#include "analyzer/types/EulType.h"
+#include "analyzer/model/types/EulType.h"
 
 
 struct SymbolDeclaration {

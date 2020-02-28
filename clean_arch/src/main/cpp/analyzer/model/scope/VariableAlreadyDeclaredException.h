@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "EulException.h"
+#include "analyzer/model/error/EulException.h"
 
 struct VariableAlreadyDeclaredException : public EulException {
   const AstLocation prevDeclarationLoacation;

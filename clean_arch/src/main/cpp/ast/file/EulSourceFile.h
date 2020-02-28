@@ -6,7 +6,7 @@
 
 struct EulSourceFile {
   const std::string name;
-  std::list<std::unique_ptr<const EulStatement>> statements;
+  const std::list<std::unique_ptr<const EulStatement>> statements;
 
-  EulSourceFile(std::string& name);
+  EulSourceFile(std::string& name, std::list<std::unique_ptr<const EulStatement>> statements);
 };
