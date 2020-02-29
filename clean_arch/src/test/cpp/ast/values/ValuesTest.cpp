@@ -4,12 +4,12 @@
 using namespace std;
 
 void constructorTest(UnitTest* t) {
-  //Assert::equals(1, 0, t, "hazo");
+	//Assert::equals(1, 0, t, "hazo");
 }
 
 void ValuesTest::runAll() {
-    this
-      ->logStart()
-      ->warnNotTested("sdfsdf")
-      ->run("constructorTest", constructorTest);
+	this
+		->logStart()
+		->warnNotTested("sdfsdf")
+		->run("constructorTest", constructorTest);
 }

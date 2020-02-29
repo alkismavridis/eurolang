@@ -1,7 +1,7 @@
 #pragma once
 
 enum class SymbolChangeType {
-  VAR,
-  VAL,
-  CONST
+	VAR,
+	VAL,
+	CONST
 };

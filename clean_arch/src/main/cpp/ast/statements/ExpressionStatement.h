@@ -10,8 +10,8 @@
  For example an assignment statement or a function call.
 */
 struct ExpressionStatement : public EulStatement {
-  const std::unique_ptr<const EulValue> expression;
+	const std::unique_ptr<const EulValue> expression;
 
-  ExpressionStatement(std::unique_ptr<const EulValue> expression, AstLocation location);
-  StatementType getType() { return StatementType::EXPRESSION; }
+	ExpressionStatement(std::unique_ptr<const EulValue> expression, AstLocation location);
+	StatementType getType() const { return StatementType::EXPRESSION; }
 };

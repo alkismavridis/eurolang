@@ -3,8 +3,8 @@
 #include "StatementType.h"
 
 struct EulStatement : public AstNode {
-  EulStatement(AstLocation location);
-  virtual ~EulStatement() {}
+	EulStatement(AstLocation location);
+	virtual ~EulStatement() {}
 
-  virtual StatementType getType() { return StatementType::UNKNOWN; }
+	virtual StatementType getType() const { return StatementType::UNKNOWN; }
 };

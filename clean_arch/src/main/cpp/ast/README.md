@@ -5,4 +5,4 @@
   It only knows the structured data that should come out of it.
 
 - NO error logging in here. As less error throwing as possible.
-  The analyzer should deal with the errors.
+  The analyser should deal with the errors.

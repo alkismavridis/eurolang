@@ -13,7 +13,7 @@ The compiler has 5 modules.
 
 
 
-======= analyzer =======
+======= analyser =======
   DEPENDS ON: ast
 
   HAS:
@@ -45,7 +45,7 @@ The compiler has 5 modules.
 
 
 ======= codegen =======
-  DEPENDS ON: ast, analyzer
+  DEPENDS ON: ast, analyser
 
   EXTERNAL DEPENDENCIES: llvm
 
@@ -56,7 +56,7 @@ The compiler has 5 modules.
 
 
 ======= cli =======
-  DEPENDS ON: ast, analyzer, parser, codegen
+  DEPENDS ON: ast, analyser, parser, codegen
 
   HAS:
     - Gets the input parameters from the user and makes sense of them.

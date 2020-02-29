@@ -3,7 +3,7 @@
 #include "ast/AstNode.h"
 
 struct EulValue : public AstNode {
-  virtual ~EulValue() {}
+	virtual ~EulValue() {}
 
-  EulValue(AstLocation location);
+	EulValue(AstLocation location);
 };

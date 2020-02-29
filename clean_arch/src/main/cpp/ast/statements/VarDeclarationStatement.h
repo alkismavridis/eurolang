@@ -10,19 +10,19 @@
 
 
 struct VarDeclarationStatement : public EulStatement {
-  const SymbolChangeType changeType;
-  const std::unique_ptr<const SymbolNameNode> name;
-  const std::unique_ptr<const EulValue> value;
+	const SymbolChangeType changeType;
+	const std::unique_ptr<const SymbolNameNode> name;
+	const std::unique_ptr<const EulValue> value;
 
 
-  VarDeclarationStatement(SymbolChangeType changeType, std::unique_ptr<const SymbolNameNode> name, AstLocation location);
+	VarDeclarationStatement(SymbolChangeType changeType, std::unique_ptr<const SymbolNameNode> name, AstLocation location);
 
-  VarDeclarationStatement(
-    SymbolChangeType changeType,
-    std::unique_ptr<const SymbolNameNode> name,
-    std::unique_ptr<const EulValue> value,
-    AstLocation location
-  );
+	VarDeclarationStatement(
+		SymbolChangeType changeType,
+		std::unique_ptr<const SymbolNameNode> name,
+		std::unique_ptr<const EulValue> value,
+		AstLocation location
+	);
 
-  StatementType getType() { return StatementType::VAR_DECLARATION; }
+	StatementType getType() const { return StatementType::VAR_DECLARATION; }
 };
