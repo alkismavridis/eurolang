@@ -18,7 +18,7 @@ class UnitTest {
 	//SECTION CHAINING
 	UnitTest* logStart();
 	UnitTest* run(const std::string testName, void (testCallback)(UnitTest*));
-	UnitTest* warnNotTested(const std::string& testName);
+	UnitTest* todo(const std::string& message);
 
 
 	//SECTION RUNNING

@@ -5,7 +5,7 @@
 using namespace std;
 
 
-// SECTION UNIT TEST
+/// UNIT TEST
 UnitTest::UnitTest(const string& tn) :
 	displayName(tn),
 	currentCaseName("") {}
@@ -28,7 +28,7 @@ UnitTest* UnitTest::run(const string testName, void (testCallback)(UnitTest*)) {
 	this->currentCaseName = testName;
 
 	cout
-		<< "RUN: "
+		<< "    RUN: "
 		<< this->displayName
 		<< "."
 		<< testName
@@ -38,12 +38,12 @@ UnitTest* UnitTest::run(const string testName, void (testCallback)(UnitTest*)) {
 	return this;
 };
 
-UnitTest* UnitTest::warnNotTested(const string& testName) {
+UnitTest* UnitTest::todo(const string& message) {
 	cout
-		<< "TODO: "
+		<< "    TODO: "
 		<< this->getName()
-		<< "."
-		<< testName
+		<< ".   "
+		<< message
 		<< endl;
 
 		return this;
